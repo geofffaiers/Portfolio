@@ -17,7 +17,7 @@ export const create = async (req: Request): Promise<DefaultResponse<User>> => {
         (username, password, email, first_name, last_name)
       VALUES
         (?, ?, ?, ?, ?)`,
-      [user.username, user.password, user.email, user.firstName, user.lastName, user.profilePicture]
+      [user.username, user.password, user.email, user.firstName, user.lastName]
     )
     user.id = result.insertId
     return {

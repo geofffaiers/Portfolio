@@ -6,19 +6,6 @@ dotenv.config({ path: envPath })
 
 
 const getConfig = (): mysql.PoolOptions => {
-  console.log({
-    host: process.env.MY_SQL_HOST,
-    user: process.env.MY_SQL_ROOT_USER,
-    password: process.env.MYSQL_ROOT_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-    waitForConnections: true,
-    connectionLimit: 10,
-    maxIdle: 10,
-    idleTimeout: 60000,
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 0
-  })
   return {
     host: process.env.MY_SQL_HOST,
     user: process.env.MY_SQL_ROOT_USER,
