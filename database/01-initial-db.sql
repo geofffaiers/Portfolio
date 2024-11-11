@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `first_name` VARCHAR(255),
   `last_name` VARCHAR(255),
   `last_login` TIMESTAMP NULL DEFAULT NULL,
-  `is_active` BOOLEAN DEFAULT TRUE,
+  `active` BOOLEAN DEFAULT FALSE,
   `profile_picture` VARCHAR(255),
   `reset_token` VARCHAR(255),
   `reset_token_expires` TIMESTAMP NULL DEFAULT NULL,
