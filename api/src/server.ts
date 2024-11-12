@@ -78,11 +78,11 @@ export class Server {
     this.#wss = new WebSocketServer({ noServer: true })
     handleWebSocketConnection(this.#wss)
     this.#serverInstance.on('upgrade', (request: IncomingMessage, socket, head) => {
-      const pathname = new URL(request.url ?? '', `http://${request.headers.host}`).pathname
+      const pathname = new URL(request.url ?? '', `http://${request.headers.host ?? ''}`).pathname
 
       if (pathname === '/ws') {
-        this.#wss!.handleUpgrade(request, socket, head, (ws) => {
-          this.#wss!.emit('connection', ws, request)
+        this.#wss?.handleUpgrade(request, socket, head, (ws) => {
+          this.#wss?.emit('connection', ws, request)
         })
       } else {
         socket.destroy()
@@ -97,18 +97,19 @@ export class Server {
   close = async (): Promise<void> => {
     const closeHttpServer = new Promise<void>((resolve, reject) => {
       if (this.#serverInstance !== undefined) {
-        this.#serverInstance.close(async (err: any) => {
-          if (err) {
+        this.#serverInstance.close((err: any) => {
+          if (err != null) {
             console.error('Error closing the server: ', err)
             reject(err)
           } else {
-            try {
-              await closePool()
-              resolve()
-            } catch (poolErr) {
-              console.error('Error closing the database pool: ', poolErr)
-              reject(poolErr)
-            }
+            closePool()
+              .then(() => {
+                resolve()
+              })
+              .catch((err: any) => {
+                console.error('Error closing the database pool: ', err)
+                reject(err)
+              })
           }
         })
       } else {

@@ -9,19 +9,28 @@ import { authenticateTokenForSocket } from '../middlewares'
 export const clients: Map<string, Client> = new Map()
 
 export const handleWebSocketConnection = (wss: WebSocketServer): void => {
-  wss.on('connection', async (ws: WebSocket, req: Request): Promise<void> => {
+  wss.on('connection', (ws: WebSocket, req: Request) => {
     const clientId: string = uuid()
+    const client: Client = { clientId, ws, userId: -1 }
     try {
-      const userId: number = await authenticateTokenForSocket(ws, req)
-      const client: Client = { clientId, ws, userId }
-      clients.set(clientId, client)
-      console.log(`New WebSocket connection: ${clientId}`, userId)
-      ws.on('message', async (msg: Buffer): Promise<void> => {
+      authenticateTokenForSocket(ws, req)
+        .then((userId: number) => {
+          client.userId = userId
+          clients.set(clientId, client)
+          console.log(`New WebSocket connection: ${clientId}`, userId)
+        })
+        .catch((err: any) => {
+          ws.close(1008, err.message)
+        })
+      ws.on('message', (msg: Buffer) => {
         try {
           const message: SocketMessage = JSON.parse(msg.toString())
           const route: MessageRoute | undefined = messageRouter.find((route: MessageRoute) => route.type === message.type)
           if (route != null) {
-            await route.fn(client, message)
+            route.fn(client, message)
+              .catch((err: any) => {
+                console.error('Error handling message:', err)
+              })
             return
           }
           console.error('No route found for message:', message)
