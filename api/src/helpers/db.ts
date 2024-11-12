@@ -4,7 +4,6 @@ import mysql from 'mysql2/promise'
 const envPath = process.env.NODE_ENV == null ? '../.env' : `../.env.${process.env.NODE_ENV}`
 dotenv.config({ path: envPath })
 
-
 const getConfig = (): mysql.PoolOptions => {
   return {
     host: process.env.MY_SQL_HOST,

@@ -8,7 +8,7 @@ interface Res {
 
 export const refreshToken = async (req: Request): Promise<DefaultResponse<Res>> => {
   const { refreshToken } = req.body
-  if (!refreshToken) {
+  if (refreshToken == null) {
     return {
       success: false,
       message: 'Refresh token is required'

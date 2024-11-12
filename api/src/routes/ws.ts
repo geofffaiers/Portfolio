@@ -8,20 +8,20 @@ import { authenticateTokenForSocket } from '../middlewares'
 
 export const clients: Map<string, Client> = new Map()
 
-export const handleWebSocketConnection = (wss: WebSocketServer) => {
-  wss.on('connection', async (ws: WebSocket, req: Request) => {
+export const handleWebSocketConnection = (wss: WebSocketServer): void => {
+  wss.on('connection', async (ws: WebSocket, req: Request): Promise<void> => {
     const clientId: string = uuid()
     try {
       const userId: number = await authenticateTokenForSocket(ws, req)
       const client: Client = { clientId, ws, userId }
       clients.set(clientId, client)
       console.log(`New WebSocket connection: ${clientId}`, userId)
-      ws.on('message', (msg: Buffer) => {
+      ws.on('message', async (msg: Buffer): Promise<void> => {
         try {
           const message: SocketMessage = JSON.parse(msg.toString())
           const route: MessageRoute | undefined = messageRouter.find((route: MessageRoute) => route.type === message.type)
           if (route != null) {
-            route.fn(client, message)
+            await route.fn(client, message)
             return
           }
           console.error('No route found for message:', message)
@@ -45,7 +45,7 @@ export const handleWebSocketConnection = (wss: WebSocketServer) => {
 
 interface MessageRoute {
   type: MessageType
-  fn: (client: Client, message: SocketMessage) => void
+  fn: (client: Client, message: SocketMessage) => Promise<void>
 }
 
 const messageRouter: MessageRoute[] = [

@@ -8,5 +8,5 @@ export class ErrorMessage extends BaseMessage {
 
   @IsString()
   @Expose({ name: 'message' })
-  message: string = ''
+    message: string = ''
 }

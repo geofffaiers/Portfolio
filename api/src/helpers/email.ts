@@ -32,8 +32,8 @@ const sendEmail = async ({ to, subject, text, html }: EmailParams): Promise<void
     secure: false,
     auth: {
       user: 'noreply@gfaiers.com',
-      pass: process.env.EMAIL_PASSWORD,
-    },
+      pass: process.env.EMAIL_PASSWORD
+    }
   })
   const mailOptions: Mail.Options = {
     from: 'noreply@gfaiers.com',
@@ -48,7 +48,7 @@ const sendEmail = async ({ to, subject, text, html }: EmailParams): Promise<void
 const loadEmailTemplate = (): EmailTemplate => {
   if (emailTemplate.main === '') {
     try {
-      const basePath = path.resolve(__dirname, '../emails');
+      const basePath = path.resolve(__dirname, '../emails')
       emailTemplate.main = fs.readFileSync(path.join(basePath, 'main.html'), 'utf8')
       emailTemplate.header = fs.readFileSync(path.join(basePath, 'header.html'), 'utf8')
       emailTemplate.body = fs.readFileSync(path.join(basePath, 'body.html'), 'utf8')
@@ -65,7 +65,7 @@ export const sendResetPasswordEmail = async (user: User): Promise<void> => {
   const template: EmailTemplate = loadEmailTemplate()
   const resetButton: string = structuredClone(template.button)
     .replaceAll('{{TEXT}}', 'Reset Password')
-    .replaceAll('{{URL}}', `${process.env.CLIENT_URL}/reset-password/${user.resetToken}`)
+    .replaceAll('{{URL}}', `${process.env.CLIENT_URL ?? ''}/reset-password/${user.resetToken ?? ''}`)
     .replace('{{SIZE}}', 'm')
   template.body = template.body
     .replace(
@@ -78,7 +78,7 @@ export const sendResetPasswordEmail = async (user: User): Promise<void> => {
         If you have requested to reset, please click the button below.
       </p>
       <p class="infoBlockMiddle">
-        This link is valid for 5 minutes, until ${user.resetTokenExpires?.toLocaleString('en-GB')}.
+        This link is valid for 5 minutes, until ${user.resetTokenExpires?.toLocaleString('en-GB') ?? 'expiry time not set'}.
       </p>
       ${resetButton}`
     )
@@ -90,7 +90,7 @@ export const sendResetPasswordEmail = async (user: User): Promise<void> => {
   await sendEmail({
     to: user.email,
     subject: 'Password Reset',
-    text: `Click the link to reset your password`,
+    text: 'Click the link to reset your password',
     html
   })
 }

@@ -7,7 +7,7 @@ import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
 import { generateJwt } from './methods'
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+const delay = async (ms: number): Promise<void> => await new Promise(resolve => setTimeout(resolve, ms))
 
 interface Res {
   user: User
@@ -20,7 +20,7 @@ export const login = async (req: Request): Promise<DefaultResponse<Res>> => {
     await delay(1000)
     const { username, password } = req.body
     const [result] = await pool.query<User[] & RowDataPacket[]>(
-      `SELECT * FROM users WHERE username = ?`,
+      'SELECT * FROM users WHERE username = ?',
       [username]
     )
     if (result.length === 0) {

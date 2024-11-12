@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt'
 import { Request } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
@@ -9,14 +8,14 @@ import { DefaultResponse, User } from '../../models'
 export const generateResetToken = async (req: Request): Promise<DefaultResponse> => {
   try {
     const { email } = req.body
-    if (!email) {
+    if (email == null) {
       return {
         success: false,
         message: 'Email is required'
       }
     }
     const [result] = await pool.query<User[] & RowDataPacket[]>(
-      `SELECT * FROM users WHERE email = ?`,
+      'SELECT * FROM users WHERE email = ?',
       [email]
     )
     if (result.length === 0) {
@@ -31,7 +30,7 @@ export const generateResetToken = async (req: Request): Promise<DefaultResponse>
     user.resetTokenExpires = new Date(Date.now() + (5 * 1000 * 60))
 
     await pool.query(
-      `UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE id = ?`,
+      'UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE id = ?',
       [user.resetToken, user.resetTokenExpires, user.id]
     )
     await sendResetPasswordEmail(user)

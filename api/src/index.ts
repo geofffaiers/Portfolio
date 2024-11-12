@@ -11,11 +11,11 @@ const PORT: string | undefined = process.env.API_PORT
 const server: Server = new Server(express())
 server.start(PORT)
 
-process.on('uncaughtException', (err: Error) => {
+process.on('uncaughtException', async (err: Error): Promise<void> => {
   console.error('Uncaught exception:', err)
-  reportError(err)
+  await reportError(err)
 })
-process.on('unhandledRejection', (err: Error) => {
+process.on('unhandledRejection', async (err: Error): Promise<void> => {
   console.error('Unhandled rejection:', err)
-  reportError(err)
+  await reportError(err)
 })

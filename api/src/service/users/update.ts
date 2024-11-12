@@ -6,6 +6,7 @@ import { RowDataPacket } from 'mysql2'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
 import { addToPreviousPasswords } from './methods'
+import { zxcvbn, ZxcvbnResult } from '@zxcvbn-ts/core'
 
 export const update = async (req: Request): Promise<DefaultResponse<User>> => {
   try {
@@ -13,6 +14,17 @@ export const update = async (req: Request): Promise<DefaultResponse<User>> => {
     await validateOrReject(user)
     if (await isPasswordChanged(user)) {
       if (await isPasswordNew(user)) {
+        const passwordStrength: ZxcvbnResult = zxcvbn(user.password)
+        if (passwordStrength.score < 3) {
+          let message: string = passwordStrength.feedback.warning ?? ''
+          if (passwordStrength.feedback.suggestions.length > 0) {
+            message += ` ${passwordStrength.feedback.suggestions.join(' ')}`
+          }
+          return {
+            success: false,
+            message
+          }
+        }
         user.password = await bcrypt.hash(user.password, 10)
         await updateAll(user)
       } else {

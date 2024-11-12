@@ -1,5 +1,5 @@
-import { Client, ErrorMessage, MessageType, SocketMessage } from "../../models"
-import { clients } from "../../routes/ws"
+import { Client, ErrorMessage, MessageType, SocketMessage } from '../../models'
+import { clients } from '../../routes/ws'
 
 export const findMatchingClientUserId = (userId: number): Client[] => {
   const foundClients: Client[] = []

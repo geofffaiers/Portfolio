@@ -7,6 +7,9 @@ import { closePool } from './helpers/db'
 import { handleWebSocketConnection } from './routes/ws'
 import { defaultError } from './service/errors'
 import { router } from './routes'
+import { zxcvbnOptions } from '@zxcvbn-ts/core'
+import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common'
+import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en'
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -42,6 +45,14 @@ export class Server {
     this.#app.use(cors(corsOptions))
     this.#app.use(express.json())
     this.#app.use(express.urlencoded({ extended: true }))
+    zxcvbnOptions.setOptions({
+      dictionary: {
+        ...zxcvbnCommonPackage.dictionary,
+        ...zxcvbnEnPackage.dictionary
+      },
+      graphs: zxcvbnCommonPackage.adjacencyGraphs,
+      translations: zxcvbnEnPackage.translations
+    })
   }
 
   #errorHandler (): void {
@@ -50,10 +61,11 @@ export class Server {
     })
   }
 
-  start = (port: string | undefined) => {
+  start = (port: string | undefined): void => {
+    const p: string = port ?? '3000'
     this.#serverInstance = this.#app
-      .listen(parseInt(port ?? '3000'), '0.0.0.0', () => {
-        console.log(`Server is listening on port ${port}`)
+      .listen(parseInt(p), '0.0.0.0', () => {
+        console.log(`Server is listening on port ${p}`)
       })
       .on('error', (err: any) => {
         if (err.code === 'EADDRINUSE') {
