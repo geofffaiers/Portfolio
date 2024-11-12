@@ -5,10 +5,17 @@ import { validateOrReject } from 'class-validator'
 import { RowDataPacket } from 'mysql2'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
+import { generateJwt } from './methods'
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-export const login = async (req: Request): Promise<DefaultResponse<User>> => {
+interface Res {
+  user: User
+  token: string
+  refreshToken: string
+}
+
+export const login = async (req: Request): Promise<DefaultResponse<Res>> => {
   try {
     await delay(1000)
     const { username, password } = req.body
@@ -22,7 +29,7 @@ export const login = async (req: Request): Promise<DefaultResponse<User>> => {
         message: 'User not found'
       }
     }
-    const user: User = plainToInstance(User, result[0])
+    const user: User = plainToInstance(User, result[0], { excludeExtraneousValues: true })
     await validateOrReject(user)
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
@@ -34,7 +41,11 @@ export const login = async (req: Request): Promise<DefaultResponse<User>> => {
     user.password = ''
     return {
       success: true,
-      data: user
+      data: {
+        user,
+        token: await generateJwt(user, '2h'),
+        refreshToken: await generateJwt(user, '7d')
+      }
     }
   } catch (err: any) {
     throw new Error(err)

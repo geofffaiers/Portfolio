@@ -1,2 +1,6 @@
 export * from './create'
+export * from './generateResetToken'
 export * from './login'
+export * from './refreshToken'
+export * from './resetPassword'
+export * from './update'

@@ -1,14 +1,15 @@
+import bcrypt from 'bcrypt'
 import { Request } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
 import { ResultSetHeader } from 'mysql2'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
-import bcrypt from 'bcrypt'
+import { addToPreviousPasswords } from './methods'
 
 export const create = async (req: Request): Promise<DefaultResponse<User>> => {
   try {
-    const user: User = plainToInstance(User, req.body)
+    const user: User = plainToInstance(User, req.body, { excludeExtraneousValues: true })
     user.id = 0
     user.password = await bcrypt.hash(user.password, 10)
     await validateOrReject(user)
@@ -20,6 +21,7 @@ export const create = async (req: Request): Promise<DefaultResponse<User>> => {
       [user.username, user.password, user.email, user.firstName, user.lastName]
     )
     user.id = result.insertId
+    await addToPreviousPasswords(user)
     return {
       success: true,
       data: user
