@@ -2,9 +2,9 @@ import { SignJWT } from 'jose'
 import { User } from '../../models'
 import { pool } from '../../helpers/db'
 
-export const generateJwt = async (user: User, duration: string): Promise<string> => {
+export const generateJwt = async (userId: number, duration: string): Promise<string> => {
   const secret = new TextEncoder().encode(process.env.JWT_SECRET)
-  const jwt = await new SignJWT({ userId: user.id })
+  const jwt = await new SignJWT({ userId })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuer('https://www.gfaiers.com')
     .setIssuedAt()

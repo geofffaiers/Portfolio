@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { Request } from 'express'
+import { CookieOptions, Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
 import { RowDataPacket } from 'mysql2'
@@ -9,13 +9,7 @@ import { generateJwt } from './methods'
 
 const delay = async (ms: number): Promise<void> => await new Promise(resolve => setTimeout(resolve, ms))
 
-interface Res {
-  user: User
-  token: string
-  refreshToken: string
-}
-
-export const login = async (req: Request): Promise<DefaultResponse<Res>> => {
+export const login = async (req: Request, res: Response): Promise<DefaultResponse<User>> => {
   try {
     await delay(1000)
     const { username, password } = req.body
@@ -39,13 +33,16 @@ export const login = async (req: Request): Promise<DefaultResponse<Res>> => {
       }
     }
     user.password = ''
+    const cookieOptions: CookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    }
+    res.cookie('token', await generateJwt(user.id, '2h'), cookieOptions)
+    res.cookie('refreshToken', await generateJwt(user.id, '7d'), cookieOptions)
     return {
       success: true,
-      data: {
-        user,
-        token: await generateJwt(user, '2h'),
-        refreshToken: await generateJwt(user, '7d')
-      }
+      data: user
     }
   } catch (err: any) {
     throw new Error(err)

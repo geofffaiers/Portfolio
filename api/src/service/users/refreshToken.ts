@@ -1,33 +1,27 @@
-import { Request } from 'express'
-import { jwtVerify, SignJWT } from 'jose'
-import { DefaultResponse } from '../../models'
+import { CookieOptions, Request, Response } from 'express'
+import { jwtVerify } from 'jose'
+import { DefaultResponse, ErrorCheck } from '../../models'
+import { generateJwt } from './methods'
 
-interface Res {
-  token: string
-}
 
-export const refreshToken = async (req: Request): Promise<DefaultResponse<Res>> => {
-  const { refreshToken } = req.body
-  if (refreshToken == null) {
-    return {
-      success: false,
-      message: 'Refresh token is required'
-    }
-  }
-
+export const refreshToken = async (req: Request, res: Response): Promise<DefaultResponse<undefined>> => {
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET)
-    const { payload } = await jwtVerify(refreshToken, secret)
-
-    const token = await new SignJWT({ userId: payload.userId })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime('2h')
-      .sign(secret)
-
+    
+    const [error, userId]: ErrorCheck<number> = await getUserId(req)
+    if (error != null) {
+      return {
+        success: false,
+        message: error
+      }
+    }
+    const cookieOptions: CookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    }
+    res.cookie('token', await generateJwt(userId, '2h'), cookieOptions)
     return {
-      success: true,
-      data: { token }
+      success: true
     }
   } catch (err: any) {
     return {
@@ -35,4 +29,18 @@ export const refreshToken = async (req: Request): Promise<DefaultResponse<Res>> 
       message: 'Invalid refresh token'
     }
   }
+}
+
+const getUserId = async (req: Request): Promise<ErrorCheck<number>> => {
+  const refreshToken: string | undefined = req.cookies.refreshToken
+  if (refreshToken == null || typeof refreshToken !== 'string') {
+    return ['Invalid refresh token', null]
+  }
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+  const { payload } = await jwtVerify(refreshToken, secret)
+  if (typeof payload.userId !== 'number') {
+    return ['Invalid refresh token', null]
+  }
+  const userId: number = payload.userId
+  return [null, userId]
 }

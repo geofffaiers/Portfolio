@@ -1,5 +1,6 @@
 import express, { Application, Request as ExpressRequest, NextFunction, Response } from 'express'
 import morgan from 'morgan'
+import cookieParser from 'cookie-parser'
 import cors, { CorsOptions } from 'cors'
 import { Server as HttpServer, IncomingMessage } from 'http'
 import { WebSocketServer } from 'ws'
@@ -43,6 +44,7 @@ export class Server {
     })
     this.#app.use(morgan('dev'))
     this.#app.use(cors(corsOptions))
+    this.#app.use(cookieParser())
     this.#app.use(express.json())
     this.#app.use(express.urlencoded({ extended: true }))
     zxcvbnOptions.setOptions({

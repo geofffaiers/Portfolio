@@ -20,7 +20,7 @@ export default class UsersController {
 
   async login (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await login(req))
+      res.status(200).json(await login(req, res))
     } catch (err: any) {
       next(err)
     }
@@ -28,7 +28,7 @@ export default class UsersController {
 
   async refreshToken (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await refreshToken(req))
+      res.status(200).json(await refreshToken(req, res))
     } catch (err: any) {
       next(err)
     }

@@ -3,16 +3,14 @@ import { NextFunction, Request, Response } from 'express'
 import { JWTPayload, jwtVerify } from 'jose'
 
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const headers = req.headers
-  const authHeader: string | string[] | undefined = headers.authorization ?? headers.Authorization ?? undefined
-  if (authHeader == null || typeof authHeader !== 'string' || !authHeader.startsWith('Bearer ')) {
+  const token: string | undefined = req.cookies.token
+  if (token == null || typeof token !== 'string') {
     res.status(401).json({
       success: false,
       message: 'Unauthorized'
     })
     return
   }
-  const token = authHeader.split(' ')[1]
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET)
     const { payload }: { payload: JWTPayload } = await jwtVerify(token, secret)
@@ -24,13 +22,11 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
 }
 
 export const authenticateTokenForSocket = async (ws: WebSocket, req: Request): Promise<number> => {
-  const headers = req.headers
-  const authHeader: string | string[] | undefined = headers.authorization ?? headers.Authorization ?? undefined
-  if (authHeader == null || typeof authHeader !== 'string' || !authHeader.startsWith('Bearer ')) {
+  const token: string | undefined = req.cookies.token
+  if (token == null || typeof token !== 'string') {
     ws.close(1008, 'Unauthorized')
     return -1
   }
-  const token = authHeader.split(' ')[1]
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET)
     const { payload }: { payload: JWTPayload } = await jwtVerify(token, secret)
