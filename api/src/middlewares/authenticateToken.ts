@@ -22,7 +22,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
 }
 
 export const authenticateTokenForSocket = async (ws: WebSocket, req: Request): Promise<number> => {
-  const token: string | undefined = req.cookies.token
+  const token: string | undefined = req.cookies?.token ?? req.headers?.cookie?.split(';')?.find(c => c.trim().startsWith('token='))?.split('=')[1]
   if (token == null || typeof token !== 'string') {
     ws.close(1008, 'Unauthorized')
     return -1

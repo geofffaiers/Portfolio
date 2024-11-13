@@ -6,7 +6,6 @@ import { generateJwt } from './methods'
 
 export const refreshToken = async (req: Request, res: Response): Promise<DefaultResponse<undefined>> => {
   try {
-    
     const [error, userId]: ErrorCheck<number> = await getUserId(req)
     if (error != null) {
       return {
