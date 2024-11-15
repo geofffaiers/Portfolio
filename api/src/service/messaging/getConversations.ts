@@ -12,8 +12,15 @@ export const getConversations = async (req: Request): Promise<DefaultResponse<Us
       FROM users u
       JOIN messages m
         ON (u.id = m.receiver_id AND m.sender_id = ?)
-        OR (u.id = m.sender_id AND m.receiver_id = ?)`,
-      [req.userId, req.userId]
+        OR (u.id = m.sender_id AND m.receiver_id = ?)
+      ORDER BY (
+        SELECT MAX(m2.created_at)
+        FROM messages m2
+        WHERE
+          (m2.receiver_id = u.id AND m2.sender_id = ?)
+          OR (m2.sender_id = u.id AND m2.receiver_id = ?)
+      ) DESC`,
+      [req.userId, req.userId, req.userId, req.userId]
     )
     if (result.length === 0) {
       return {
