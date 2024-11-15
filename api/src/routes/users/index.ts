@@ -7,7 +7,7 @@ const controller: UsersController = new UsersController()
 
 router.post('/create', controller.create)
 router.post('/generate-reset-token', controller.generateResetToken)
-router.post('/get-user-for-reset-token', controller.getUserForResetToken)
+router.get('/get-user-for-reset-token', controller.getUserForResetToken)
 router.post('/login', controller.login)
 router.post('/reset-password', controller.resetPassword)
 router.post('/logout', authenticateToken, controller.logout)

@@ -10,5 +10,5 @@ export class NewMessage extends BaseMessage {
   @ValidateNested()
   @Type(() => Message)
   @Expose({ name: 'message' })
-    message: Message = new Message()
+  message: Message = new Message()
 }

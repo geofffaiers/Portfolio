@@ -5,5 +5,5 @@ import { Expose } from 'class-transformer'
 export class BaseMessage {
   @Expose({ name: 'type' })
   @IsEnum(MessageType)
-    type: string | null = null
+  type: string | null = null
 }

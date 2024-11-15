@@ -8,5 +8,5 @@ export class ReadMessage extends BaseMessage {
 
   @IsNumber()
   @Expose({ name: 'messageId' })
-    messageId: number = -1
+  messageId: number = -1
 }

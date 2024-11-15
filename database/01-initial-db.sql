@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS `errors` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `username` VARCHAR(255) NOT NULL,
+  `username` VARCHAR(255) NOT NULL UNIQUE,
   `password` CHAR(60) NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL UNIQUE,
   `first_name` VARCHAR(255),
   `last_name` VARCHAR(255),
   `last_login` TIMESTAMP NULL DEFAULT NULL,
