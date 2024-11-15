@@ -18,13 +18,13 @@ export const resetPassword = async (req: Request): Promise<DefaultResponse<User>
       }
     }
     const [result] = await pool.query<User[] & RowDataPacket[]>(
-      'SELECT * FROM users WHERE id = ? AND reset_token = ? AND reset_token_expires > NOW()',
+      'SELECT * FROM users WHERE id = ? AND reset_token = ?',
       [userId, resetToken]
     )
     if (result.length === 0) {
       return {
         success: false,
-        message: 'Invalid or expired reset token'
+        message: 'Invalid reset token'
       }
     }
     const user: User = plainToInstance(User, result[0], { excludeExtraneousValues: true })

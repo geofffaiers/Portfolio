@@ -5,9 +5,7 @@ import { validateOrReject } from 'class-validator'
 import { RowDataPacket } from 'mysql2'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
-import { generateJwt } from './methods'
-
-const delay = async (ms: number): Promise<void> => await new Promise(resolve => setTimeout(resolve, ms))
+import { delay, generateJwt } from './methods'
 
 export const login = async (req: Request, res: Response): Promise<DefaultResponse<User>> => {
   try {

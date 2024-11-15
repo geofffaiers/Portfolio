@@ -2,6 +2,8 @@ import { SignJWT } from 'jose'
 import { User } from '../../models'
 import { pool } from '../../helpers/db'
 
+export const delay = async (ms: number): Promise<void> => await new Promise(resolve => setTimeout(resolve, ms))
+
 export const generateJwt = async (userId: number, duration: string): Promise<string> => {
   const secret = new TextEncoder().encode(process.env.JWT_SECRET)
   const jwt = await new SignJWT({ userId })
