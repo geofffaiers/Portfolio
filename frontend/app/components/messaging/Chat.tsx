@@ -1,41 +1,93 @@
-import { Box, IconButton, Input, Stack, Typography } from '@mui/joy'
-import { faPaperPlane, faWindowMaximize, faWindowMinimize } from '@fortawesome/free-solid-svg-icons'
+import { Box, IconButton, Input, Stack, styled, Typography } from '@mui/joy'
+import { faPaperPlane, faWindowMaximize, faWindowMinimize, faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Messages } from './Messages'
+import { User } from '@/app/models'
+import { useMemo, useState } from 'react'
+import { ProfileIcon } from '../ProfileIcon'
 
-export default function Chat (): JSX.Element {
+interface Props {
+  user: User
+  expanded: boolean
+  loggedInUser: User
+  closeChat: (user: User) => void
+}
+
+const StyledBox = styled(Box)`
+  display: flex;
+  min-width: 300px;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  .icon-button {
+    color: var(--foreground);
+  }
+  .icon-button:hover {
+    color: var(--background);
+  }
+
+  .header,
+  .messages,
+  .new-message {
+    background-color: var(--background);
+    border: 1px solid var(--foreground);
+    border-bottom: none;
+  }
+
+  .header {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+  .messages {
+    border-top: none;
+  }
+  
+`
+
+export default function Chat ({ user, expanded, loggedInUser, closeChat }: Props): JSX.Element {
+  const [state, setState] = useState({
+    expanded,
+    messages: [],
+    newMessage: ''
+  })
+  
+  const name: string = useMemo(() => `${user.firstName ?? 'No first name'} ${user.lastName ?? 'No last name'}`, [user])
+
+  const handleSendMessage = async () => {
+
+  }
+
   return (
-    <Box
-      sx={{
-        position: 'fixed',
-        width: '300px',
-        backgroundColor: 'var(--background)',
-        border: '1px solid var(--foreground)',
-        bottom: 0,
-        right: 20,
-        zIndex: 4,
-        borderRadius: 2,
-        boxShadow: 3,
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-    >
-      <Box sx={{ padding: 2, borderBottom: '1px solid var(--foreground)' }}>
-        <Stack direction='row' spacing={1} justifyContent={'space-between'}>
-          <Typography level='h4' component='h2' textColor={'var(--foreground)'}>
-            Messaging
+    <StyledBox>
+      <Box className='header' sx={{ padding: 1, borderBottom: '1px solid var(--foreground)' }}>
+        <Stack direction='row' spacing={1} justifyContent='space-between' alignItems='center'>
+          <ProfileIcon size='sm' user={user} />
+          <Typography level='body-sm' component='p' textColor='var(--foreground)'>
+            {name}
           </Typography>
           <IconButton
+            className='icon-button'
             aria-label={state.expanded ? 'Collapse' : 'Expand'}
             onClick={() => setState(s => ({ ...s, expanded: !s.expanded }))}
-            variant='solid'
+            variant='plain'
+            size='sm'
+            sx={{ marginLeft: 'auto!important' }}
           >
             <FontAwesomeIcon icon={state.expanded ? faWindowMinimize : faWindowMaximize}/>
           </IconButton>
+          <IconButton
+            className='icon-button'
+            aria-label={state.expanded ? 'Collapse' : 'Expand'}
+            onClick={() => closeChat(user)}
+            variant='plain'
+            size='sm'
+          >
+            <FontAwesomeIcon icon={faX}/>
+          </IconButton>
         </Stack>
       </Box>
-      <Messages loggedInUser={loggedInUser} expanded={state.expanded} messages={state.messages}/>
-      <Box sx={{ display: state.expanded ? 'flex' : 'none', padding: 2, borderTop: '1px solid var(--foreground)' }}>
+      <Messages className='messages' loggedInUser={loggedInUser} expanded={state.expanded} messages={state.messages}/>
+      <Box className='new-message' sx={{ display: state.expanded ? 'flex' : 'none', padding: 2, borderTop: '1px solid var(--foreground)' }}>
         <Stack direction='row' spacing={1} sx={{ maxWidth: '100%' }}>
           <Input
             sx={{ flex: 1 }}
@@ -48,6 +100,6 @@ export default function Chat (): JSX.Element {
           </IconButton>
         </Stack>
       </Box>
-    </Box>
+    </StyledBox>
   )
 }

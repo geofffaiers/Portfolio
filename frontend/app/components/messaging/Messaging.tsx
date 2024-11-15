@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { User } from '../../models'
 import Conversations from './Conversations'
+import Chats from './Chats'
+import { Box, styled } from '@mui/joy'
 
 interface Props {
   children: React.ReactNode
@@ -18,14 +20,29 @@ interface State {
   socketState: SocketState
   expanded: boolean
   conversations: User[]
+  openChats: User[]
   error: string
 }
+
+const StyledBox = styled(Box)`
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  z-index: 4;
+  width: 100%;
+  height: 0;
+  bottom: 0;
+  overflow: visible;
+  gap: 0.5rem;
+`
 
 export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
   const [state, setState] = useState<State>({
     socketState: SocketState.DISCONNECTED,
     expanded: true,
     conversations: [],
+    openChats: [],
     error: ''
   })
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -77,12 +94,29 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
     }
   }, [])
 
+  const handleOpenChat = (user: User) => {
+    console.log(user, state.openChats)
+    const openChats: User[] = state.openChats
+    if (openChats.includes(user)) {
+      return
+    }
+    setState(s => ({
+      ...s,
+      openChats: [user, ...s.openChats]
+    }))
+  }
+
   return (
     <>
       {loggedInUser && (
-        <>
-          <Conversations loggedInUser={loggedInUser} conversations={state.conversations}/>
-        </>
+        <StyledBox paddingInline={1}>
+          <Chats openChats={state.openChats} loggedInUser={loggedInUser}/>
+          <Conversations
+            loggedInUser={loggedInUser}
+            conversations={state.conversations}
+            handleOpenChat={handleOpenChat}
+          />
+        </StyledBox>
       )}
       {children}
     </>
