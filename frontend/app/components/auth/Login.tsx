@@ -1,7 +1,8 @@
 'use client'
-import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Link, Modal, ModalClose, ModalDialog, Snackbar, Stack } from '@mui/joy'
+import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Modal, ModalClose, ModalDialog, Snackbar, Stack } from '@mui/joy'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { DefaultResponse, User } from '@/app/models'
+import { ForgotPassword } from './ForgotPassword'
 
 interface Props {
   readingFromLocalStorage: boolean
@@ -28,6 +29,7 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser }: Props): JSX.
 
   const handleLogin = async (evt: FormEvent<HTMLFormElement>): Promise<void> => {
     evt.preventDefault()
+    evt.stopPropagation()
     const formData: FormData = new FormData(evt.currentTarget)
     const formJson: { [k: string]: FormDataEntryValue } = Object.fromEntries(formData.entries())
     const username: string = formJson.username as string
@@ -44,6 +46,7 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser }: Props): JSX.
       error
     }))
   }
+
   const requestLogin = async (username: string, password: string): Promise<string> => {
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
@@ -92,73 +95,11 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser }: Props): JSX.
       abortControllerRef.current.abort()
     }
   }
-
-  const handleForgotPassword = (): void => {
-    setState(s => ({
-      ...s,
-      openPasswordDialog: true
-    }))
-  }
-
-  const handleClosePasswordDialog = (): void => {
-    setState(s => ({
-      ...s,
-      openPasswordDialog: false
-    }))
-  }
-
-  const handleGenerateResetToken = async (evt: FormEvent<HTMLFormElement>): Promise<void> => {
-    evt.preventDefault()
-    const formData: FormData = new FormData(evt.currentTarget)
-    const formJson: { [k: string]: FormDataEntryValue } = Object.fromEntries(formData.entries())
-    const email: string = formJson.email as string
-    setState(s => ({
-      ...s,
-      openPasswordDialog: false
-    }))
-    const error: string = await requestResetToken(email)
-    setState(s => ({
-      ...s,
-      openMessageDialog: error === '',
-      openLoginDialog: error === '',
-      error
-    }))
-  }
-
-  const requestResetToken = async (email: string): Promise<string> => {
-    abortControllerRef.current = new AbortController()
-    const { signal } = abortControllerRef.current
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/generate-reset-token`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email }),
-        signal
-      })
-      if (!response.ok) {
-        return 'Reset password failed'
-      }
-      const json: DefaultResponse = await response.json()
-      return json.message ?? ''
-    } catch (error: unknown) {
-      console.error('Error:', error)
-      return `${error}`
-    }
-  }
-  const handleCloseMessageDialog = (): void => {
-    setState(s => ({
-      ...s,
-      openMessageDialog: false
-    }))
-  }
   
   useEffect(() => {
     return () => {
       if (abortControllerRef.current != null) {
-        abortControllerRef.current.abort()
+        abortControllerRef.current.abort('Login: Component unmounted')
       }
     }
   }, [])
@@ -193,46 +134,10 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser }: Props): JSX.
                 <FormLabel>Password</FormLabel>
                 <Input name='password' type='password' required/>
               </FormControl>
-              <Link onClick={handleForgotPassword} fontSize={12}>
-                Forgot Password?
-              </Link>
+              <ForgotPassword />
               <Button type='submit'>Login</Button>
             </Stack>
           </form>
-        </ModalDialog>
-      </Modal>
-      <Modal
-        open={state.openPasswordDialog}
-        onClose={handleClosePasswordDialog}
-      >
-        <ModalDialog>
-          <ModalClose />
-          <DialogTitle>Forgot Password</DialogTitle>
-          <DialogContent>
-            Please enter your email address, we&apos;ll email you a link to reset your password.
-          </DialogContent>
-          <form onSubmit={handleGenerateResetToken}>
-            <Stack spacing={2}>
-              <FormControl>
-                <FormLabel>Email</FormLabel>
-                <Input autoFocus name='email' type='email' required/>
-              </FormControl>
-              <Button type='submit'>Send email</Button>
-            </Stack>
-          </form>
-        </ModalDialog>
-      </Modal>
-      <Modal
-        open={state.openMessageDialog}
-        onClose={handleCloseMessageDialog}
-      >
-        <ModalDialog>
-          <ModalClose />
-          <DialogTitle>Forgot Password</DialogTitle>
-          <DialogContent>
-            Please check your emails.
-          </DialogContent>
-          <Button onClick={handleCloseMessageDialog}>OK</Button>
         </ModalDialog>
       </Modal>
       <Snackbar

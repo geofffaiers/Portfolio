@@ -42,7 +42,6 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser }: Props): J
     } else {
       setPasswordError('')
     }
-    console.log(password, confirmPassword, password !== confirmPassword)
     if (password !== confirmPassword) {
       setConfirmPasswordError('Passwords do not match')
       formValid = false
