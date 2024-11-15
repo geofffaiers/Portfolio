@@ -62,7 +62,7 @@ export const Logout = ({ setLoggedInUser }: Props): JSX.Element => {
 
   return (
     <Button
-      disabled={state.loggingOut}
+      loading={state.loggingOut}
       variant='solid'
       color='neutral'
       onClick={handleLogout}

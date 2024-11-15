@@ -107,7 +107,7 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser }: Props): JSX.
   return (
     <>
       <Button
-        disabled={state.loggingIn || readingFromLocalStorage}
+        loading={state.loggingIn || readingFromLocalStorage}
         variant='solid'
         color='neutral'
         onClick={handleOpenDialog}

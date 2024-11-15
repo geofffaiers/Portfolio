@@ -181,7 +181,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser }: Props): J
   return (
     <>
       <Button
-        disabled={state.waiting || readingFromLocalStorage}
+        loading={state.waiting || readingFromLocalStorage}
         variant='solid'
         color='neutral'
         onClick={handleOpenDialog}
