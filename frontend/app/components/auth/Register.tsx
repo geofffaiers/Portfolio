@@ -2,7 +2,7 @@
 import { Button, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, Input, Modal, ModalClose, ModalDialog, Snackbar, Stack } from '@mui/joy'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { DefaultResponse, User } from '@/app/models'
-import { PasswordStrength } from './PasswordStength'
+import { PasswordStrength } from './PasswordStrength'
 
 interface Props {
   readingFromLocalStorage: boolean

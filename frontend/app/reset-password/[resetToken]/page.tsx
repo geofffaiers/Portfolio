@@ -2,10 +2,9 @@
 import { useState, FormEvent, useCallback, useEffect, useRef } from 'react'
 import { Container, Box, Input, Button, Typography, Stack, FormControl, FormLabel, FormHelperText, CircularProgress } from '@mui/joy'
 import { FloatingBubbles } from '../../components'
-import { PasswordStrength } from '@/app/components/auth/PasswordStength'
+import { PasswordStrength } from '@/app/components/auth/PasswordStrength'
 import { useParams } from 'next/navigation'
-import { DefaultResponse, User } from '@/app/models'
-import { ErrorCheck } from '@/app/models/ErrorCheck'
+import { DefaultResponse, ErrorCheck, User } from '@/app/models'
 
 export default function ResetPasswordPage (): JSX.Element {
   const { resetToken } = useParams()
