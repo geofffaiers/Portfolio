@@ -8,7 +8,7 @@ import { DefaultResponse, User } from '../../models'
 import { addToPreviousPasswords } from './methods'
 import { zxcvbn, ZxcvbnResult } from '@zxcvbn-ts/core'
 
-export const resetPassword = async (req: Request): Promise<DefaultResponse<User>> => {
+export const resetPassword = async (req: Request): Promise<DefaultResponse<undefined>> => {
   try {
     const { userId, newPassword, resetToken } = req.body
     if (userId == null || newPassword == null || resetToken == null) {
@@ -46,10 +46,8 @@ export const resetPassword = async (req: Request): Promise<DefaultResponse<User>
       [user.password, userId]
     )
     await addToPreviousPasswords(user)
-    user.password = ''
     return {
-      success: true,
-      data: user
+      success: true
     }
   } catch (err: any) {
     throw new Error(err)
