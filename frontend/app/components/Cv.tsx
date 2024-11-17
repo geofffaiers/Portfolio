@@ -1,6 +1,6 @@
 import { Container, Typography, Card, CardContent, IconButton, Grid, Box } from '@mui/joy'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFacebook, faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
+import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
 const data = [
@@ -108,9 +108,6 @@ export const Cv = (): JSX.Element => {
             </IconButton>
             <IconButton href='https://github.com/geofffaiers' component='a' target='_blank' aria-label='GitHub' size='lg' variant='solid'>
               <FontAwesomeIcon icon={faGithub}/>
-            </IconButton>
-            <IconButton href='https://www.facebook.com/gfaiers' component='a' target='_blank' aria-label='Facebook' size='lg' variant='solid'>
-              <FontAwesomeIcon icon={faFacebook}/>
             </IconButton>
             <IconButton href='mailto:geoff@gfaiers.com' component='a' aria-label='Email' size='lg' variant='solid'>
               <FontAwesomeIcon icon={faEnvelope}/>
