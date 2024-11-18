@@ -8,7 +8,7 @@ import { delay } from './methods'
 
 export const getUserForResetToken = async (req: Request): Promise<DefaultResponse<User>> => {
   try {
-    const { resetToken } = req.body
+    const { resetToken } = req.query
     if (resetToken == null) {
       return {
         success: false,

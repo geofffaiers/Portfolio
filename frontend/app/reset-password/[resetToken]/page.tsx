@@ -23,12 +23,11 @@ export default function ResetPasswordPage (): JSX.Element {
       abortControllerRef.current = new AbortController()
       const { signal } = abortControllerRef.current
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/get-user-for-reset-token`, {
-          method: 'POST',
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/get-user-for-reset-token?resetToken=${resetToken}`, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ resetToken }),
           signal
         })
         if (!response.ok) {
