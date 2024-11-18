@@ -91,7 +91,7 @@ export class Server {
     this.#serverInstance.on('upgrade', (request: IncomingMessage, socket, head) => {
       const pathname = new URL(request.url ?? '', `http://${request.headers.host ?? ''}`).pathname
 
-      if (pathname === '/ws') {
+      if (pathname === '/api/messaging') {
         this.#wss?.handleUpgrade(request, socket, head, (ws) => {
           this.#wss?.emit('connection', ws, request)
         })

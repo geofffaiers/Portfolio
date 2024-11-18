@@ -5,6 +5,8 @@ import { Client } from '../models/sockets/Client'
 import { SocketMessage, MessageType } from '../models/sockets'
 import { newMessageHandler, readMessageHandler } from '../service/sockets/messaging'
 import { authenticateTokenForSocket } from '../middlewares'
+import { pool } from '../helpers'
+import { ResultSetHeader } from 'mysql2'
 
 export const clients: Map<string, Client> = new Map()
 
@@ -18,6 +20,10 @@ export const handleWebSocketConnection = (wss: WebSocketServer): void => {
           client.userId = userId
           clients.set(clientId, client)
           console.log(`New WebSocket connection: ${clientId}`, userId)
+          setUserActive(userId, true)
+            .catch((err: any) => {
+              console.error('Error setting user active:', err)
+            })
         })
         .catch((err: any) => {
           ws.close(1008, err.message)
@@ -41,15 +47,30 @@ export const handleWebSocketConnection = (wss: WebSocketServer): void => {
       ws.on('close', () => {
         console.log('WebSocket connection closed')
         clients.delete(clientId)
+        setUserActive(client.userId, false)
+          .catch((err: any) => {
+            console.error('Error setting user inactive:', err)
+          })
       })
     } catch (err: any) {
       const client: Client | undefined = clients.get(clientId)
       if (client != null) {
         clients.delete(clientId)
+        setUserActive(client.userId, false)
+          .catch((err: any) => {
+            console.error('Error setting user inactive:', err)
+          })
       }
       ws.close(1002, err.message)
     }
   })
+}
+
+const setUserActive = async (userId: number, active: boolean): Promise<void> => {
+  await pool.query<ResultSetHeader>(
+    'UPDATE users SET active = ? WHERE id = ?',
+    [active, userId]
+  )
 }
 
 interface MessageRoute {

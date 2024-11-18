@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
-import { getConversations, getMessagesForPage } from '../service/messaging'
+import { getChatHeaders, getMessagesForPage } from '../service/messaging'
 
 export default class MessagingController {
-  async getConversations (req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getChatHeaders (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(201).json(await getConversations(req))
+      res.status(200).json(await getChatHeaders(req))
     } catch (err: any) {
       next(err)
     }
@@ -12,7 +12,7 @@ export default class MessagingController {
 
   async getMessagesForPage (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(201).json(await getMessagesForPage(req))
+      res.status(200).json(await getMessagesForPage(req))
     } catch (err: any) {
       next(err)
     }
