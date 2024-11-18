@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer'
 import { Message } from '../../models/Message'
-import { Client, MessageType, NewMessage, SocketMessage } from '../../models/sockets'
+import { Client, MessageType, NewMessage, SocketMessage, UpdatedMessage } from '../../models/sockets'
 import { findMatchingClientUserId, sendErrorToClient } from './methods'
 import { pool } from '../../helpers'
 import { ResultSetHeader, RowDataPacket } from 'mysql2'
@@ -26,10 +26,11 @@ export const readMessageHandler = async (client: Client, message: SocketMessage)
   try {
     const request: ReadMessage = plainToInstance(ReadMessage, message, { excludeExtraneousValues: true })
     const toMessage: Message = await updateMessageInDatabase(client, request)
-    const response: ReadMessage = {
-      type: MessageType.READ_MESSAGE,
-      messageId: toMessage.id
+    const response: UpdatedMessage = {
+      type: MessageType.UPDATED_MESSAGE,
+      message: toMessage
     }
+    sendMessageToClient(response, toMessage.receiverId)
     sendMessageToClient(response, toMessage.senderId)
   } catch (err: any) {
     sendErrorToClient(err, client)
@@ -66,12 +67,14 @@ const updateMessageInDatabase = async (client: Client, request: ReadMessage): Pr
   if (updatedMessage.receiverId !== client.userId) {
     throw new Error('You are not the receiver of this message')
   }
+  const readTime: Date = new Date()
   await pool.query(
     `UPDATE messages
      SET read_at = ?
      WHERE id = ?`,
-    [new Date(), messageId]
+    [readTime, messageId]
   )
+  updatedMessage.readAt = readTime
   return updatedMessage
 }
 
