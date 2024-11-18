@@ -1,5 +1,5 @@
 'use client'
-import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Modal, ModalClose, ModalDialog, Snackbar, Stack } from '@mui/joy'
+import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Modal, ModalClose, ModalDialog, Stack } from '@mui/joy'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { DefaultResponse, User } from '@/app/models'
 import { ForgotPassword } from './ForgotPassword'
@@ -7,6 +7,7 @@ import { ForgotPassword } from './ForgotPassword'
 interface Props {
   readingFromLocalStorage: boolean
   setLoggedInUser: (user: User | null) => void
+  setError: (error: string) => void
 }
 
 interface State {
@@ -14,16 +15,14 @@ interface State {
   openPasswordDialog: boolean
   openMessageDialog: boolean
   loggingIn: boolean
-  error: string
 }
 
-export const Login = ({ readingFromLocalStorage, setLoggedInUser }: Props): JSX.Element => {
+export const Login = ({ readingFromLocalStorage, setLoggedInUser, setError }: Props): JSX.Element => {
   const [state, setState] = useState<State>({
     openLoginDialog: false,
     openPasswordDialog: false,
     openMessageDialog: false,
-    loggingIn: false,
-    error: ''
+    loggingIn: false
   })
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -40,10 +39,10 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser }: Props): JSX.
       openLoginDialog: false
     }))
     const error: string = await requestLogin(username, password)
+    setError(error)
     setState(s => ({
       ...s,
-      loggingIn: false,
-      error
+      loggingIn: false
     }))
   }
 
@@ -134,19 +133,12 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser }: Props): JSX.
                 <FormLabel>Password</FormLabel>
                 <Input name='password' type='password' required/>
               </FormControl>
-              <ForgotPassword />
+              <ForgotPassword setError={setError}/>
               <Button type='submit'>Login</Button>
             </Stack>
           </form>
         </ModalDialog>
       </Modal>
-      <Snackbar
-        open={state.error !== ''}
-        autoHideDuration={6000}
-        onClose={() => setState(s => ({ ...s, error: '' }))}
-      >
-        {state.error}
-      </Snackbar>
     </>
   )
 }

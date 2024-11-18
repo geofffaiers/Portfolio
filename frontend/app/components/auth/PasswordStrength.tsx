@@ -9,7 +9,7 @@ interface Props {
 
 export const PasswordStrength = ({ password, setPasswordScore }: Props): JSX.Element => {
   const [passwordStrength, setPasswordStrength] = useState<ZxcvbnResult | null>(null)
-
+  console.log(passwordStrength)
   useEffect(() => {
     const checkPassword = async (): Promise<void> => {
       const passwordStrength: ZxcvbnResult = await zxcvbnAsync(password)

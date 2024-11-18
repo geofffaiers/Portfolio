@@ -4,18 +4,17 @@ import { useEffect, useRef, useState } from "react"
 
 interface Props {
   setLoggedInUser: (user: User | null) => void
+  setError: (error: string) => void
 }
 
 interface State {
   loggingOut: boolean
-  error: string
 }
 
-export const Logout = ({ setLoggedInUser }: Props): JSX.Element => {
+export const Logout = ({ setLoggedInUser, setError }: Props): JSX.Element => {
   const abortControllerRef = useRef<AbortController | null>(null)
   const [state, setState] = useState<State>({
-    loggingOut: false,
-    error: ''
+    loggingOut: false
   })
   
   const handleLogout = async (): Promise<void> => {
@@ -32,9 +31,9 @@ export const Logout = ({ setLoggedInUser }: Props): JSX.Element => {
         signal
       })
       if (!response.ok) {
+        setError('Logout failed')
         setState(s => ({
           ...s,
-          error: 'Logout failed',
           loggingOut: false
         }))
       }
@@ -42,13 +41,17 @@ export const Logout = ({ setLoggedInUser }: Props): JSX.Element => {
       if (json.success) {
         setLoggedInUser(null)
       }
+      setError(json.message ?? '')
       setState(s => ({
         ...s,
-        error: json.message ?? '',
         loggingOut: false
       }))
-    } catch (error) {
-      console.error('Error:', error)
+    } catch (error: unknown) {
+      setError(`${error}`)
+      setState(s => ({
+        ...s,
+        loggingOut: false
+      }))
     }
   }
   

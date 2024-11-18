@@ -1,9 +1,11 @@
-import {  Box, styled } from '@mui/joy'
+import {  Box, IconButton, Snackbar, styled } from '@mui/joy'
 import { User } from '../../models'
 import { Login } from './Login'
 import { Logout } from './Logout'
 import { Register } from './Register'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faClose } from '@fortawesome/free-solid-svg-icons'
 
 interface State {
   loggedInUser: User | null
@@ -67,6 +69,10 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
     return data.message ?? 'Refresh token failed'
   }
 
+  const handleSetError = useCallback((error: string) => {
+    setState(s => ({ ...s, error }))
+  }, [setState])
+
   useEffect(() => {
     const loadFromStorage = async () => {
       const savedUser = localStorage.getItem('loggedInUser')
@@ -106,13 +112,32 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
   return (
     <>
       {loggedInUser == null && <StyledBox>
-        <Register readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser}/>
-        <Login readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} />
+        <Register readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
+        <Login readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
       </StyledBox>}
       {loggedInUser != null && <StyledBox>
-        <Logout setLoggedInUser={handleSetLoggedInUser} />
+        <Logout setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
       </StyledBox>}
       {children}
+      <Snackbar
+        open={state.error !== ''}
+        autoHideDuration={6000}
+        onClose={() => handleSetError('')}
+        variant='soft'
+        color='danger'
+        size='md'
+        endDecorator={
+          <IconButton
+            variant='soft'
+            color='danger'
+            onClick={() => handleSetError('')}
+          >
+            <FontAwesomeIcon icon={faClose}/>
+          </IconButton>
+        }
+      >
+        {state.error}
+      </Snackbar>
     </>
   )
 }

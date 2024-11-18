@@ -1,5 +1,5 @@
 'use client'
-import { Button, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, Input, Modal, ModalClose, ModalDialog, Snackbar, Stack } from '@mui/joy'
+import { Button, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, Input, Modal, ModalClose, ModalDialog, Stack } from '@mui/joy'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { DefaultResponse, User } from '@/app/models'
 import { PasswordStrength } from './PasswordStrength'
@@ -7,19 +7,18 @@ import { PasswordStrength } from './PasswordStrength'
 interface Props {
   readingFromLocalStorage: boolean
   setLoggedInUser: (user: User | null) => void
+  setError: (error: string) => void
 }
 
 interface State {
   openDialog: boolean
   waiting: boolean
-  error: string
 }
 
-export const Register = ({ readingFromLocalStorage, setLoggedInUser }: Props): JSX.Element => {
+export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }: Props): JSX.Element => {
   const [state, setState] = useState<State>({
     openDialog: false,
-    waiting: false,
-    error: ''
+    waiting: false
   })
   const [emailError, setEmailError] = useState<string>('')
   const [passwordError, setPasswordError] = useState<string>('')
@@ -68,19 +67,23 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser }: Props): J
       waiting: true,
       openDialog: false
     }))
+    setPassword('')
+    setEmailError('')
+    setPasswordError('')
+    setConfirmPasswordError('')
     const registerError: string = await requestRegister(email, username, password)
     if (registerError === '') {
       const loginError: string = await requestLogin(username, password)
+      setError(loginError)
       setState(s => ({
         ...s,
-        waiting: false,
-        error: loginError
+        waiting: false
       }))
     } else {
+      setError(registerError)
       setState(s => ({
         ...s,
-        waiting: false,
-        error: registerError
+        waiting: false
       }))
     }
   }
@@ -108,7 +111,6 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser }: Props): J
         return json.message ?? ''
       }
     } catch (error: unknown) {
-      console.error('Error:', error)
       return `${error}`
     }
   }
@@ -137,7 +139,6 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser }: Props): J
         return json.message ?? ''
       }
     } catch (error: unknown) {
-      console.error('Error:', error)
       return `${error}`
     }
   }
@@ -226,13 +227,6 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser }: Props): J
           </form>
         </ModalDialog>
       </Modal>
-      <Snackbar
-        open={state.error !== ''}
-        autoHideDuration={6000}
-        onClose={() => setState(s => ({ ...s, error: '' }))}
-      >
-        {state.error}
-      </Snackbar>
     </>
   )
 }

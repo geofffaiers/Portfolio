@@ -1,19 +1,21 @@
 'use client'
 import { DefaultResponse } from "@/app/models"
-import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Link, Modal, ModalClose, ModalDialog, Snackbar, Stack } from "@mui/joy"
+import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Link, Modal, ModalClose, ModalDialog, Stack } from "@mui/joy"
 import { FormEvent, useEffect, useRef, useState } from "react"
+
+interface Props {
+  setError: (error: string) => void
+}
 
 interface State {
   openPasswordDialog: boolean
   openMessageDialog: boolean
-  error: string
 }
 
-export const ForgotPassword = (): JSX.Element => {
+export const ForgotPassword = ({ setError }: Props): JSX.Element => {
   const [state, setState] = useState<State>({
     openPasswordDialog: false,
-    openMessageDialog: false,
-    error: ''
+    openMessageDialog: false
   })
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -42,11 +44,11 @@ export const ForgotPassword = (): JSX.Element => {
       openPasswordDialog: false
     }))
     const error: string = await requestResetToken(email)
+    setError(error)
     setState(s => ({
       ...s,
       openMessageDialog: error === '',
-      openLoginDialog: error === '',
-      error
+      openLoginDialog: error === ''
     }))
   }
 
@@ -127,13 +129,6 @@ export const ForgotPassword = (): JSX.Element => {
           <Button onClick={handleCloseMessageDialog}>OK</Button>
         </ModalDialog>
       </Modal>
-      <Snackbar
-        open={state.error !== ''}
-        autoHideDuration={6000}
-        onClose={() => setState(s => ({ ...s, error: '' }))}
-      >
-        {state.error}
-      </Snackbar>
     </>
   )
 }
