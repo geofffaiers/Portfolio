@@ -6,6 +6,7 @@ import Chat from './Chat'
 interface Props {
   openChats: User[]
   loggedInUser: User
+  handleCloseChat: (user: User) => void
 }
 
 interface State {
@@ -17,27 +18,19 @@ interface OpenChat {
   expanded: boolean
 }
 
-export default function Chats ({ openChats, loggedInUser }: Props): JSX.Element {
+export default function Chats ({ openChats, loggedInUser, handleCloseChat }: Props): JSX.Element {
   const [state, setState] = useState<State>({
     openChats: []
   })
 
-  console.log(state)
-
   useEffect(() => {
-    setState((s) => ({
+    setState(() => ({
       openChats: openChats.map((user) => ({
         user,
         expanded: true
       }))
     }))
   }, [openChats])
-
-  const handleCloseChat = (user: User): void => {
-    setState((s) => ({
-      openChats: s.openChats.filter((chat) => chat.user.id !== user.id)
-    }))
-  }
 
   return (
     <>

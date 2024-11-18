@@ -27,8 +27,8 @@ interface State {
 const StyledBox = styled(Box)`
   position: fixed;
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
   z-index: 4;
   width: 100%;
   height: 0;
@@ -95,7 +95,6 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
   }, [])
 
   const handleOpenChat = (user: User) => {
-    console.log(user, state.openChats)
     const openChats: User[] = state.openChats
     if (openChats.includes(user)) {
       return
@@ -106,15 +105,26 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
     }))
   }
 
+  const handleCloseChat = (user: User) => {
+    setState(s => ({
+      ...s,
+      openChats: s.openChats.filter(u => u !== user)
+    }))
+  }
+
   return (
     <>
       {loggedInUser && (
         <StyledBox paddingInline={1}>
-          <Chats openChats={state.openChats} loggedInUser={loggedInUser}/>
           <Conversations
             loggedInUser={loggedInUser}
             conversations={state.conversations}
             handleOpenChat={handleOpenChat}
+          />
+          <Chats
+            openChats={state.openChats}
+            loggedInUser={loggedInUser}
+            handleCloseChat={handleCloseChat}
           />
         </StyledBox>
       )}

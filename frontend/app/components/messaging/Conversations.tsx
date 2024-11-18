@@ -78,7 +78,7 @@ export default function Conversations ({ loggedInUser, conversations, handleOpen
           <Conversation user={user} key={user.id} handleOpenChat={handleOpenChat}/>
         ))}
         {conversations.length === 0 && (
-          <Typography level='body-sm' component='p' textColor='var(--foreground)'>
+          <Typography level='body-sm' component='p' textColor='var(--foreground)' padding={1}>
             No conversations
           </Typography>
         )}
