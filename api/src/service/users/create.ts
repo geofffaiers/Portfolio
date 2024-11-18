@@ -54,6 +54,7 @@ export const create = async (req: Request): Promise<DefaultResponse<User>> => {
     )
     user.id = result.insertId
     await addToPreviousPasswords(user)
+    await addInitialMessage(user)
     return {
       success: true,
       data: user
@@ -71,4 +72,14 @@ const isUsernameUnique = async (username: string): Promise<boolean> => {
 const isEmailUnique = async (email: string): Promise<boolean> => {
   const [rows] = await pool.query<RowDataPacket[]>('SELECT id FROM users WHERE email = ?', [email])
   return rows.length === 0
+}
+
+const addInitialMessage = async (user: User): Promise<void> => {
+  await pool.query<ResultSetHeader>(
+    `INSERT INTO messages
+      (sender_id, receiver_id, content)
+    VALUES
+      (?, ?, ?)`,
+    [1, user.id, 'Welcome to my portfolio, feel free to message me anytime!']
+  )
 }

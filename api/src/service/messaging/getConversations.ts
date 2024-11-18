@@ -28,12 +28,9 @@ export const getConversations = async (req: Request): Promise<DefaultResponse<Us
         message: 'User has no conversations'
       }
     }
-    const users: User[] = await Promise.all(result.map(async (row: User) => {
-      const u: User = plainToInstance(User, row, { excludeExtraneousValues: true })
-      u.password = ''
-      await validateOrReject(u)
-      return u
-    }))
+    const users: User[] = plainToInstance(User, result, { excludeExtraneousValues: true })
+    users.forEach((u: User) => u.password = '')
+    await Promise.all(users.map((u: User) => validateOrReject(u)))
     return {
       success: true,
       data: users

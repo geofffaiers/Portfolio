@@ -40,3 +40,6 @@ CREATE TABLE IF NOT EXISTS `messages` (
   FOREIGN KEY (`sender_id`) REFERENCES `users`(`id`),
   FOREIGN KEY (`receiver_id`) REFERENCES `users`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `users` (`username`, `password`, `email`, `first_name`, `last_name`)
+VALUES ('gfaiers', '', 'geoff@gfaiers.com', 'Geoff', 'Faiers');
