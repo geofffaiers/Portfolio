@@ -5,11 +5,31 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Next.js server side",
+      "type": "node-terminal",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/frontend",
+      "command": "npm run dev"
+    },
+    {
+      "name": "Debug Express.js server side",
+      "type": "node-terminal",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/api",
+      "command": "npm run dev"
+    },
+    {
       "type": "msedge",
       "request": "launch",
       "name": "Debug Frontend",
-      "url": "http://localhost:5001",
+      "url": "http://localhost:4001",
       "webRoot": "${workspaceFolder}/frontend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Next.js, Frontend, and Express API",
+      "configurations": ["Debug Next.js server side", "Debug Express.js server side", "Debug Frontend"]
     }
   ]
 }

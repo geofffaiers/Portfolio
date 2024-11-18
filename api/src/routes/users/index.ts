@@ -10,8 +10,8 @@ router.post('/generate-reset-token', controller.generateResetToken)
 router.get('/get-user-for-reset-token', controller.getUserForResetToken)
 router.post('/login', controller.login)
 router.post('/reset-password', controller.resetPassword)
+router.post('/refresh-token', controller.refreshToken)
 router.post('/logout', authenticateToken, controller.logout)
-router.post('/refresh-token', authenticateToken, controller.refreshToken)
 router.post('/update', authenticateToken, controller.update)
 
 export default router
