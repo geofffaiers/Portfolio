@@ -17,12 +17,12 @@ export const getChatHeaders = async (req: Request): Promise<DefaultResponse<Chat
     const messages: Message[] = await getLatestMessages(req.userId)
     const chatHeaders: ChatHeader[] = await Promise.all(users.map(async (u: User) => {
       const message: Message | undefined = messages.find((m: Message) => m.senderId === u.id || m.receiverId === u.id)
-      const lastSentMessageRead: boolean = await isLastReceivedMessageRead(req.userId, u.id)
+      const lastReceivedMessage: Message | undefined = await getLastReceivedMessage(req.userId, u.id)
       return {
         user: u,
         lastMessage: message?.content ?? '',
         lastMessageTime: message?.createdAt ?? new Date(),
-        lastSentMessageRead
+        lastReceivedMessage
       }
     }))
     return {
@@ -81,7 +81,7 @@ const getLatestMessages = async (userId: number | undefined): Promise<Message[]>
   return plainToInstance(Message, result, { excludeExtraneousValues: true })
 }
 
-const isLastReceivedMessageRead = async (userId: number | undefined, otherUserId: number): Promise<boolean> => {
+const getLastReceivedMessage = async (userId: number | undefined, otherUserId: number): Promise<Message | undefined> => {
   const [result] = await pool.query<Message[] & RowDataPacket[]>(
     `SELECT *
     FROM messages
@@ -91,8 +91,9 @@ const isLastReceivedMessageRead = async (userId: number | undefined, otherUserId
     [otherUserId, userId]
   )
   if (result.length === 0) {
-    return true
+    return
   }
   const message: Message = plainToInstance(Message, result, { excludeExtraneousValues: true })[0]
-  return message.readAt != null
+  await validateOrReject(message)
+  return message
 }

@@ -1,6 +1,7 @@
 import { Expose, Type } from 'class-transformer'
 import { User } from './User'
-import { IsBoolean, IsDate, IsOptional, IsString, ValidateNested } from 'class-validator'
+import { IsDate, IsOptional, IsString, ValidateNested } from 'class-validator'
+import { Message } from './Message'
 
 export class ChatHeader {
   @Expose({ name: 'user' })
@@ -20,7 +21,8 @@ export class ChatHeader {
   lastMessageTime?: Date
 
   @IsOptional()
-  @Expose({ name: 'isUnread' })
-  @IsBoolean()
-  lastSentMessageRead?: boolean
+  @Type(() => Message)
+  @Expose({ name: 'lastReceivedMessage'})
+  @ValidateNested()
+  lastReceivedMessage?: Message
 }
