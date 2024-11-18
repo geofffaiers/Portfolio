@@ -3,7 +3,7 @@ import { User } from '../../models'
 import { Login } from './Login'
 import { Logout } from './Logout'
 import { Register } from './Register'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface State {
   loggedInUser: User | null
@@ -37,14 +37,14 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
   const abortControllerRef = useRef<AbortController | null>(null)
   const { loggedInUser, readingFromLocalStorage } = state
 
-  const handleSetLoggedInUser = (user: User | null) => {
+  const handleSetLoggedInUser = useCallback((user: User | null) => {
     setLoggedInUser(user)
     setState({
       readingFromLocalStorage: false,
       loggedInUser: user,
       error: ''
     })
-  }
+  }, [setLoggedInUser])
 
   const refreshToken = async (): Promise<string> => {
     abortControllerRef.current = new AbortController()
@@ -72,7 +72,7 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
       const savedUser = localStorage.getItem('loggedInUser')
       if (savedUser) {
         const refreshError: string = await refreshToken()
-        if (refreshError !== '') {
+        if (refreshError === '') {
           handleSetLoggedInUser(JSON.parse(savedUser))
         } else {
           setState({
@@ -93,7 +93,7 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
     if (readingFromLocalStorage) {
       loadFromStorage()
     }
-  }, [readingFromLocalStorage])
+  }, [readingFromLocalStorage, handleSetLoggedInUser])
 
   useEffect(() => {
     if (loggedInUser) {

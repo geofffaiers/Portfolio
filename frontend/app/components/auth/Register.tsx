@@ -151,6 +151,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser }: Props): J
   }
 
   const handleCloseDialog = (): void => {
+    setPassword('')
     setEmailError('')
     setPasswordError('')
     setConfirmPasswordError('')

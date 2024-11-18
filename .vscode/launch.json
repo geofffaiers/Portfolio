@@ -17,19 +17,12 @@
       "request": "launch",
       "cwd": "${workspaceFolder}/api",
       "command": "npm run dev"
-    },
-    {
-      "type": "msedge",
-      "request": "launch",
-      "name": "Debug Frontend",
-      "url": "http://localhost:4001",
-      "webRoot": "${workspaceFolder}/frontend"
     }
   ],
   "compounds": [
     {
-      "name": "Debug Next.js, Frontend, and Express API",
-      "configurations": ["Debug Next.js server side", "Debug Express.js server side", "Debug Frontend"]
+      "name": "Debug Next.js, and Express API",
+      "configurations": ["Debug Express.js server side", "Debug Next.js server side"]
     }
   ]
 }
