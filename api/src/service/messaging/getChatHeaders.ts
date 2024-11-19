@@ -20,8 +20,7 @@ export const getChatHeaders = async (req: Request): Promise<DefaultResponse<Chat
       const lastReceivedMessage: Message | undefined = await getLastReceivedMessage(req.userId, u.id)
       return {
         user: u,
-        lastMessage: message?.content ?? '',
-        lastMessageTime: message?.createdAt ?? new Date(),
+        lastMessage: message,
         lastReceivedMessage
       }
     }))
