@@ -6,6 +6,7 @@ import Conversations from './Conversations'
 import Chats from './Chats'
 import { Box, styled } from '@mui/joy'
 import { plainToInstance } from 'class-transformer'
+import { validateOrReject } from 'class-validator'
 
 interface Props {
   children: React.ReactNode
@@ -69,7 +70,11 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
         }
         const json = await response.json()
         if (json.success) {
-          return json.data as ChatHeader[]
+          return await Promise.all(json.data.map(async (h: ChatHeader) => {
+            const header: ChatHeader = plainToInstance(ChatHeader, h, { excludeExtraneousValues: true })
+            await validateOrReject(header)
+            return header
+          }))
         }
         throw new Error(json.message ?? 'Failed to get conversations')
       } catch (error: unknown) {
@@ -129,7 +134,7 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
               newHeader.lastReceivedMessage = message
             }
           }
-          return newHeader
+          return plainToInstance(ChatHeader, newHeader, { excludeExtraneousValues: true })
         }
         return chatHeader
       })
@@ -196,13 +201,13 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
 
   const handleOpenChat = (user: User) => {
     const openChats: User[] = state.openChats
-    if (openChats.includes(user)) {
-      return
+    const index: number = openChats.findIndex(u => u.id === user.id)
+    if (index === -1) {
+      setState(s => ({
+        ...s,
+        openChats: [...s.openChats, user]
+      }))
     }
-    setState(s => ({
-      ...s,
-      openChats: [user, ...s.openChats]
-    }))
   }
 
   const handleCloseChat = (user: User) => {

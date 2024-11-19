@@ -1,6 +1,6 @@
 import { ChatHeader, User } from '@/app/models'
 import { Box, IconButton, Stack, Typography } from '@mui/joy'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { styled } from '@mui/joy/styles'
@@ -49,6 +49,18 @@ export default function Conversations ({ loggedInUser, chatHeaders, handleOpenCh
     expanded: true
   })
 
+  const sortedHeaders = useMemo(() => {
+    return chatHeaders.sort((a, b) => {
+      if (a.lastMessage == null || b.lastMessage == null) {
+        return -1
+      }
+      if (a.lastMessage.createdAt == null || b.lastMessage.createdAt == null) {
+        return -1
+      }
+      return a.lastMessage.createdAt > b.lastMessage.createdAt ? -1 : 1
+    })
+  }, [chatHeaders])
+
   return (
     <StyledBox>
       <Stack className='header' spacing={1} direction='row' alignItems='center' padding={1} sx={{ cursor: 'pointer' }} onClick={() => setState(s => ({ ...s, expanded: !s.expanded }))}>
@@ -72,10 +84,10 @@ export default function Conversations ({ loggedInUser, chatHeaders, handleOpenCh
         </IconButton>
       </Stack>
       <Stack className='conversations' spacing={1} sx={{ display: state.expanded ? 'flex' : 'none' }}>
-        {chatHeaders.length > 0 && chatHeaders.map((chatHeader: ChatHeader) => (
+        {sortedHeaders.length > 0 && sortedHeaders.map((chatHeader: ChatHeader) => (
           <Conversation loggedInUser={loggedInUser} chatHeader={chatHeader} key={chatHeader.user.id} handleOpenChat={handleOpenChat}/>
         ))}
-        {chatHeaders.length === 0 && (
+        {sortedHeaders.length === 0 && (
           <Typography level='body-sm' component='p' textColor='var(--foreground)' padding={1}>
             No conversations
           </Typography>

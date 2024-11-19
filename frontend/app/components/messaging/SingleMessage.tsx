@@ -36,38 +36,41 @@ export const SingleMessage = ({ user, loggedInUser, message, createdAt, showDate
   }, [message.readAt])
 
   useEffect(() => {
-    messageRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (message.readAt == null) {
+    if (message.receiverId === loggedInUser.id && message.readAt == null) {
+      console.log('update observer', message.id)
+      messageRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
             if (entry.isIntersecting) {
               const socketMessage: ReadMessage = { type: MessageType.READ_MESSAGE, messageId: message.id }
               handleSendSocketMessage(socketMessage)
             }
-          } else {
-            messageRef.current?.disconnect()
-          }
-        })
-      },
-      { threshold: 1.0 }
-    )
+          })
+        },
+        { threshold: 1.0 }
+      )
+    }
 
     return () => {
       if (messageRef.current) {
+        console.log('disconnect observer 2', message.id)
         messageRef.current.disconnect()
       }
     }
-  }, [message, handleSendSocketMessage])
+  }, [message, handleSendSocketMessage, loggedInUser.id])
 
 
   const setObserver = (element: HTMLElement | null): void => {
     if (messageRef.current != null && element != null && message.receiverId === loggedInUser.id && message.readAt == null) {
       messageRef.current.observe(element)
+    } else if (messageRef.current != null) {
+      console.log('disconnect observer 3', message.id)
+      messageRef.current.disconnect()
     }
   }
 
   return (
-    <Box data-message-id={message.id} ref={setObserver}>
+    <Box ref={setObserver}>
       {showDate && (
         <Typography level='body-sm' sx={{ textAlign: 'center', marginBottom: '0.5rem', fontWeight: 'bold' }}>
           {createdAt.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}

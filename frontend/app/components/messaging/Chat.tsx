@@ -84,8 +84,11 @@ export default function Chat ({ messages, user, expanded, loggedInUser, closeCha
   }, [user])
 
   const handleSendMessage = async () => {
+    if (state.newMessage.trim() === '') {
+      return
+    }
     const message: Message = new Message()
-    message.content = state.newMessage
+    message.content = state.newMessage.trim()
     message.senderId = loggedInUser.id
     message.receiverId = user.id
     setState(s => ({ ...s, newMessage: '', scrollDown: true }))
@@ -104,11 +107,13 @@ export default function Chat ({ messages, user, expanded, loggedInUser, closeCha
     return oldMessages
   }, [messages])
   
-  const getMessagesForPage = useCallback(async () => {
+  const getMessagesForPage = useCallback(async (u: User) => {
     try {
       abortControllerRef.current = new AbortController()
       const { signal } = abortControllerRef.current
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/messaging/get-messages-for-page?userId=${user.id}&page=${state.page}`, {
+      const r: string = `${process.env.NEXT_PUBLIC_API_URL}/api/messaging/get-messages-for-page?userId=${u.id}&page=${state.page}`
+      console.log(r)
+      const response = await fetch(r, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -137,14 +142,14 @@ export default function Chat ({ messages, user, expanded, loggedInUser, closeCha
     } catch (error: unknown) {
       setState(s => ({ ...s, error: `${error}` }))
     }
-  }, [addMessages, handleNewMessages, state.page, user.id])
+  }, [addMessages, handleNewMessages, state.page])
 
   useEffect(() => {
     if (initialLoadRef.current) {
       initialLoadRef.current = false
-      getMessagesForPage()
+      getMessagesForPage(user)
     }
-  }, [getMessagesForPage])
+  }, [getMessagesForPage, user])
 
   const scrollToBottom = (): void => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'instant' })
@@ -164,9 +169,9 @@ export default function Chat ({ messages, user, expanded, loggedInUser, closeCha
   useEffect(() => {
     if (loadMore.current) {
       loadMore.current = false
-      getMessagesForPage()
+      getMessagesForPage(user)
     }
-  }, [getMessagesForPage])
+  }, [getMessagesForPage, user])
 
   return (
     <StyledBox>
