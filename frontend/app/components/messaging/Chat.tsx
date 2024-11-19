@@ -2,22 +2,27 @@ import { Box, IconButton, Input, Stack, styled, Typography } from '@mui/joy'
 import { faPaperPlane, faWindowMaximize, faWindowMinimize, faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Messages } from './Messages'
-import { Message, User } from '@/app/models'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Message, NewMessage, SocketMessage, User } from '@/app/models'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ProfileIcon } from '../ProfileIcon'
+import { plainToInstance } from 'class-transformer'
+import { validateOrReject } from 'class-validator'
 
 interface Props {
+  messages: Message[]
   user: User
   expanded: boolean
   loggedInUser: User
   closeChat: (user: User) => void
+  handleSendSocketMessage: (message: SocketMessage) => void
+  addMessages: (messages: Message[]) => void
 }
 
 interface State {
   page: number
   expanded: boolean
   moreToLoad: boolean
-  messages: Message[]
+  scrollDown: boolean
   newMessage: string
   error: string
 }
@@ -38,8 +43,9 @@ const StyledBox = styled(Box)`
   .messages,
   .new-message {
     background-color: var(--background);
-    border: 1px solid var(--background);
+    border: 1px solid var(--foreground);
     border-bottom: none;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
   }
   .header {
     border-top-left-radius: 5px;
@@ -50,85 +56,117 @@ const StyledBox = styled(Box)`
   }
 `
 
-export default function Chat ({ user, expanded, loggedInUser, closeChat }: Props): JSX.Element {
+export default function Chat ({ messages, user, expanded, loggedInUser, closeChat, handleSendSocketMessage, addMessages }: Props): JSX.Element {
   const [state, setState] = useState<State>({
     page: 0,
     expanded,
     moreToLoad: true,
-    messages: [],
+    scrollDown: true,
     newMessage: '',
     error: ''
   })
   const abortControllerRef = useRef<AbortController | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const initialLoadRef = useRef<boolean>(true)
-  
-  const name: string = useMemo(() => `${user.firstName ?? 'No first name'} ${user.lastName ?? 'No last name'}`, [user])
+  const loadMore = useRef<boolean>(false)
+
+  const userName = useMemo((): string => {
+    if (user.firstName != null && user.lastName != null) {
+      return `${user.firstName} ${user.lastName}`
+    }
+    if (user.firstName != null) {
+      return user.firstName
+    }
+    if (user.lastName != null) {
+      return user.lastName
+    }
+    return user.username
+  }, [user])
 
   const handleSendMessage = async () => {
-
+    const message: Message = new Message()
+    message.content = state.newMessage
+    message.senderId = loggedInUser.id
+    message.receiverId = user.id
+    setState(s => ({ ...s, newMessage: '', scrollDown: true }))
+    const socketMessage: NewMessage = new NewMessage(message)
+    handleSendSocketMessage(socketMessage)
   }
 
-  const handleNewMessages = (oldMessages: Message[], newMessages: Message[]): Message[] => {
-    const messages: Message[] = [...oldMessages]
+  const handleNewMessages = useCallback((newMessages: Message[]): Message[] => {
+    const oldMessages: Message[] = [...messages]
     newMessages.forEach((m: Message) => {
-      if (!messages.some((msg: Message) => msg.id === m.id)) {
-        messages.push(m)
+      if (!oldMessages.some((msg: Message) => msg.id === m.id)) {
+        oldMessages.push(m)
       }
     })
-    messages.sort((a: Message, b: Message) => a.id - b.id)
-    return messages
-  }
+    oldMessages.sort((a: Message, b: Message) => a.id - b.id)
+    return oldMessages
+  }, [messages])
   
-  useEffect(() => {
-    const getMessagesForPage = async () => {
-      try {
-        abortControllerRef.current = new AbortController()
-        const { signal } = abortControllerRef.current
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/messaging/get-messages-for-page?userId=${user.id}&page=${state.page}`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          signal
-        })
-        if (!response.ok) {
-          throw new Error(response.statusText)
-        }
-        const json = await response.json()
-        if (json.success) {
-          setState(s => ({
-            ...s,
-            error: '',
-            moreToLoad: json.data.length % 20 === 0,
-            messages: handleNewMessages(s.messages, json.data)
-          }))
-        }
-        setState(s => ({ ...s, error: json.message ?? 'Failed to get conversations' }))
-      } catch (error: unknown) {
-        setState(s => ({ ...s, error: `${error}` }))
+  const getMessagesForPage = useCallback(async () => {
+    try {
+      abortControllerRef.current = new AbortController()
+      const { signal } = abortControllerRef.current
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/messaging/get-messages-for-page?userId=${user.id}&page=${state.page}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal
+      })
+      if (!response.ok) {
+        throw new Error(response.statusText)
       }
+      const json = await response.json()
+      if (json.success) {
+        setState(s => ({
+          ...s,
+          error: '',
+          moreToLoad: json.data.length % 20 === 0
+        }))
+        const messages: Message[] = await Promise.all(json.data.map(async (msg: Message) => {
+          const m: Message = plainToInstance(Message, msg, { excludeExtraneousValues: true })
+          await validateOrReject(m)
+          return m
+        }))
+        addMessages(handleNewMessages(messages))
+      }
+      setState(s => ({ ...s, error: json.message ?? 'Failed to get conversations' }))
+    } catch (error: unknown) {
+      setState(s => ({ ...s, error: `${error}` }))
     }
+  }, [addMessages, handleNewMessages, state.page, user.id])
 
-    getMessagesForPage()
-  }, [user, state.page])
+  useEffect(() => {
+    if (initialLoadRef.current) {
+      initialLoadRef.current = false
+      getMessagesForPage()
+    }
+  }, [getMessagesForPage])
 
   const scrollToBottom = (): void => {
-    console.log(messagesEndRef.current)
     messagesEndRef.current?.scrollIntoView({ behavior: 'instant' })
   }
 
   useEffect(() => {
-    if (initialLoadRef.current && state.messages.length > 0) {
+    if (state.scrollDown) {
       scrollToBottom()
-      initialLoadRef.current = false
     }
-  }, [state.messages])
+  }, [messages, state.scrollDown])
 
   const handleLoadMore = () => {
-    setState(s => ({ ...s, page: s.page + 1 }))
+    loadMore.current = true
+    setState(s => ({ ...s, page: s.page + 1, scrollDown: false }))
   }
+
+  useEffect(() => {
+    if (loadMore.current) {
+      loadMore.current = false
+      getMessagesForPage()
+    }
+  }, [getMessagesForPage])
 
   return (
     <StyledBox>
@@ -136,7 +174,7 @@ export default function Chat ({ user, expanded, loggedInUser, closeChat }: Props
         <Stack direction='row' gap={1} justifyContent='space-between' alignItems='center'>
           <ProfileIcon size='sm' user={user} />
           <Typography level='body-sm' component='p' textColor='var(--foreground)'>
-            {name}
+            {userName}
           </Typography>
           <IconButton
             className='icon-button'
@@ -159,7 +197,17 @@ export default function Chat ({ user, expanded, loggedInUser, closeChat }: Props
           </IconButton>
         </Stack>
       </Box>
-      <Messages className='messages' user={user} loggedInUser={loggedInUser} expanded={state.expanded} messages={state.messages} handleLoadMore={handleLoadMore} messagesEndRef={messagesEndRef} moreToLoad={state.moreToLoad}/>
+      <Messages
+        className='messages'
+        user={user}
+        loggedInUser={loggedInUser}
+        expanded={state.expanded}
+        messages={messages}
+        handleLoadMore={handleLoadMore}
+        messagesEndRef={messagesEndRef}
+        moreToLoad={state.moreToLoad}
+        handleSendSocketMessage={handleSendSocketMessage}
+      />
       <Box className='new-message' sx={{ display: state.expanded ? 'flex' : 'none', padding: 2, borderTop: '1px solid var(--foreground)' }}>
         <Stack direction='row' spacing={1} sx={{ width: '100%' }}>
           <Input

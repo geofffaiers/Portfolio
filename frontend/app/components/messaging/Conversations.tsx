@@ -1,4 +1,4 @@
-import { User } from '@/app/models'
+import { ChatHeader, User } from '@/app/models'
 import { Box, IconButton, Stack, Typography } from '@mui/joy'
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,7 +9,7 @@ import { ProfileIcon } from '../ProfileIcon'
 
 interface Props {
   loggedInUser: User
-  conversations: User[]
+  chatHeaders: ChatHeader[]
   handleOpenChat: (user: User) => void
 }
 
@@ -22,14 +22,13 @@ const StyledBox = styled(Box)`
   width: 300px;
   flex-direction: column;
   justify-content: flex-end;
-
   .header,
   .conversations {
     background-color: var(--background);
     border: 1px solid var(--foreground);
     border-bottom: none;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
   }
-
   .header {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -37,7 +36,6 @@ const StyledBox = styled(Box)`
   .conversations {
     border-top: none;
   }
-  
   .icon-button {
     color: var(--foreground);
   }
@@ -46,7 +44,7 @@ const StyledBox = styled(Box)`
   }
 `
 
-export default function Conversations ({ loggedInUser, conversations, handleOpenChat }: Props): JSX.Element {
+export default function Conversations ({ loggedInUser, chatHeaders, handleOpenChat }: Props): JSX.Element {
   const [state, setState] = useState<State>({
     expanded: true
   })
@@ -74,10 +72,10 @@ export default function Conversations ({ loggedInUser, conversations, handleOpen
         </IconButton>
       </Stack>
       <Stack className='conversations' spacing={1} sx={{ display: state.expanded ? 'flex' : 'none' }}>
-        {conversations.length > 0 && conversations.map((user: User) => (
-          <Conversation user={user} key={user.id} handleOpenChat={handleOpenChat}/>
+        {chatHeaders.length > 0 && chatHeaders.map((chatHeader: ChatHeader) => (
+          <Conversation loggedInUser={loggedInUser} chatHeader={chatHeader} key={chatHeader.user.id} handleOpenChat={handleOpenChat}/>
         ))}
-        {conversations.length === 0 && (
+        {chatHeaders.length === 0 && (
           <Typography level='body-sm' component='p' textColor='var(--foreground)' padding={1}>
             No conversations
           </Typography>
