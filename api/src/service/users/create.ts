@@ -80,6 +80,6 @@ const addInitialMessage = async (user: User): Promise<void> => {
       (sender_id, receiver_id, content)
     VALUES
       (?, ?, ?)`,
-    [1, user.id, 'Welcome to my portfolio, feel free to message me anytime!']
+    [1, user.id, `Welcome to my portfolio, ${user.username}. Please feel free to message me anytime!`]
   )
 }

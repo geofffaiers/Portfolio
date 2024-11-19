@@ -1,0 +1,75 @@
+# .github/workflows/ci-cd-pipeline.yml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker images
+        run: docker-compose build
+
+      - name: Run Docker Compose
+        env:
+          MYSQL_HOST: ${{ vars.MYSQL_HOST }}
+          MYSQL_ROOT_USER: ${{ vars.MYSQL_ROOT_USER }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
+          MYSQL_PORT: ${{ vars.MYSQL_PORT }}
+          API_PORT: ${{ vars.API_PORT }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+          CLIENT_PORT: ${{ vars.CLIENT_PORT }}
+          CLIENT_URL: ${{ vars.CLIENT_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: docker-compose up -d
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to DigitalOcean Droplet
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          port: 22
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio:latest
+            docker stop portfolio || true
+            docker rm portfolio || true
+            docker run -d --name portfolio -p 80:80 \
+              -e MYSQL_HOST=${{ vars.MYSQL_HOST }} \
+              -e MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }} \
+              -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
+              -e MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }} \
+              -e MYSQL_PORT=${{ vars.MYSQL_PORT }} \
+              -e API_PORT=${{ vars.API_PORT }} \
+              -e NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} \
+              -e CLIENT_PORT=${{ vars.CLIENT_PORT }} \
+              -e CLIENT_URL=${{ vars.CLIENT_URL }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} \
+              ${{ secrets.DOCKER_USERNAME }}/portfolio:latest
