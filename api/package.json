@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "NODE_ENV=tests jest",
     "build": "tsc",
     "dev": "NODE_ENV=development nodemon ./src/index.ts",
     "start": "node ./build/index.js"
