@@ -30,6 +30,18 @@ jobs:
           docker-compose version
 
       - name: Build Docker images
+        env:
+          MYSQL_HOST: ${{ vars.MYSQL_HOST }}
+          MYSQL_ROOT_USER: ${{ vars.MYSQL_ROOT_USER }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
+          MYSQL_PORT: ${{ vars.MYSQL_PORT }}
+          API_PORT: ${{ vars.API_PORT }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+          CLIENT_PORT: ${{ vars.CLIENT_PORT }}
+          CLIENT_URL: ${{ vars.CLIENT_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: docker-compose build
 
       - name: Run Docker Compose
