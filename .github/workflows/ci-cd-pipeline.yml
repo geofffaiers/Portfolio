@@ -29,34 +29,24 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose version
 
+      - name: Create .env file
+        run: |
+          echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> .env
+          echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> .env
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+          echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> .env
+          echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> .env
+          echo "API_PORT=${{ vars.API_PORT }}" >> .env
+          echo "NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}" >> .env
+          echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> .env
+          echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
+
       - name: Build Docker images
-        env:
-          MYSQL_HOST: ${{ vars.MYSQL_HOST }}
-          MYSQL_ROOT_USER: ${{ vars.MYSQL_ROOT_USER }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
-          MYSQL_PORT: ${{ vars.MYSQL_PORT }}
-          API_PORT: ${{ vars.API_PORT }}
-          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
-          CLIENT_PORT: ${{ vars.CLIENT_PORT }}
-          CLIENT_URL: ${{ vars.CLIENT_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: docker-compose build
 
       - name: Run Docker Compose
-        env:
-          MYSQL_HOST: ${{ vars.MYSQL_HOST }}
-          MYSQL_ROOT_USER: ${{ vars.MYSQL_ROOT_USER }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
-          MYSQL_PORT: ${{ vars.MYSQL_PORT }}
-          API_PORT: ${{ vars.API_PORT }}
-          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
-          CLIENT_PORT: ${{ vars.CLIENT_PORT }}
-          CLIENT_URL: ${{ vars.CLIENT_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: docker-compose up -d
 
   deploy:
