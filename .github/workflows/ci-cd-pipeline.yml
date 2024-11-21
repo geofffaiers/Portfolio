@@ -77,16 +77,16 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      - name: Copy Docker Compose File to Droplet
-        uses: appleboy/scp-action@v0.1.0
-        with:
-          source: 'docker-compose.yml'
-          target: '/root/docker-compose.yml'
-          host: ${{ secrets.DROPLET_IP }}
-          username: ${{ secrets.DROPLET_USERNAME }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-          port: 22
+      # - name: Copy Docker Compose File to Droplet
+      #   uses: appleboy/scp-action@v0.1.0
+      #   with:
+      #     source: 'docker-compose.yml'
+      #     target: '/root/docker-compose.yml'
+      #     host: ${{ secrets.DROPLET_IP }}
+      #     username: ${{ secrets.DROPLET_USERNAME }}
+      #     key: ${{ secrets.DROPLET_SSH_KEY }}
+      #     passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+      #     port: 22
 
       - name: Install Docker Compose on Droplet
         uses: appleboy/ssh-action@v0.1.5
