@@ -34,6 +34,9 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose version
 
+      - name: Clear .env file
+        run: rm -f $GITHUB_WORKSPACE/.env
+
       - name: Create .env file
         run: |
           echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> $GITHUB_WORKSPACE/.env
@@ -77,29 +80,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # - name: Copy Project Files to Droplet
-      #   uses: appleboy/scp-action@v0.1.5
-      #   with:
-      #     source: '.'
-      #     target: '/root/project'
-      #     host: ${{ secrets.DROPLET_IP }}
-      #     username: ${{ secrets.DROPLET_USERNAME }}
-      #     key: ${{ secrets.DROPLET_SSH_KEY }}
-      #     passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-      #     port: 22
-
-      # - name: Install Docker Compose on Droplet
-      #   uses: appleboy/ssh-action@v0.1.5
-      #   with:
-      #     host: ${{ secrets.DROPLET_IP }}
-      #     username: ${{ secrets.DROPLET_USERNAME }}
-      #     key: ${{ secrets.DROPLET_SSH_KEY }}
-      #     passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-      #     port: 22
-      #     script: |
-      #       sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-      #       sudo chmod +x /usr/local/bin/docker-compose
-      #       docker-compose version
+      - name: Clear .env file on Droplet
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          port: 22
+          script: rm -f /root/.env
 
       - name: Deploy to DigitalOcean Droplet
         uses: appleboy/ssh-action@v0.1.5
