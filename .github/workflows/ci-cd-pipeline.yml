@@ -78,20 +78,10 @@ jobs:
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
           port: 22
           script: |
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PAT }}
+            echo ${{ secrets.DOCKER_PAT }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
             docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
             docker stop portfolio-api || true
             docker rm portfolio-api || true
             docker run -d --name portfolio-api -p 80:80 \
-              -e MYSQL_HOST=${{ vars.MYSQL_HOST }} \
-              -e MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }} \
-              -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
-              -e MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }} \
-              -e MYSQL_PORT=${{ vars.MYSQL_PORT }} \
-              -e API_PORT=${{ vars.API_PORT }} \
-              -e NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} \
-              -e CLIENT_PORT=${{ vars.CLIENT_PORT }} \
-              -e CLIENT_URL=${{ vars.CLIENT_URL }} \
-              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} \
+              --env-file .env \
               ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
