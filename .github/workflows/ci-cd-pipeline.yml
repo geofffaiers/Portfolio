@@ -10,6 +10,7 @@ on:
       version:
         description: 'Image version'
         required: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -113,15 +114,15 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
             docker stop portfolio-api || true
             docker rm portfolio-api || true
-            echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> .env
-            echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> .env
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-            echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> .env
-            echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> .env
-            echo "API_PORT=${{ vars.API_PORT }}" >> .env
-            echo "NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}" >> .env
-            echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> .env
-            echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> .env
-            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-            echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
+            echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> /root/.env
+            echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> /root/.env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /root/.env
+            echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> /root/.env
+            echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> /root/.env
+            echo "API_PORT=${{ vars.API_PORT }}" >> /root/.env
+            echo "NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}" >> /root/.env
+            echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> /root/.env
+            echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> /root/.env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/.env
+            echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/.env
             docker-compose -f /root/docker-compose.yml up -d
