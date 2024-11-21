@@ -80,9 +80,9 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PAT }}
             docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
-            docker stop portfolio || true
-            docker rm portfolio || true
-            docker run -d --name portfolio -p 80:80 \
+            docker stop portfolio-api || true
+            docker rm portfolio-api || true
+            docker run -d --name portfolio-api -p 80:80 \
               -e MYSQL_HOST=${{ vars.MYSQL_HOST }} \
               -e MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }} \
               -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
