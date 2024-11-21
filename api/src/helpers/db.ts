@@ -6,8 +6,8 @@ dotenv.config({ path: envPath })
 
 const getConfig = (): mysql.PoolOptions => {
   return {
-    host: process.env.MY_SQL_HOST,
-    user: process.env.MY_SQL_ROOT_USER,
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_ROOT_USER,
     password: process.env.MYSQL_ROOT_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     waitForConnections: true,

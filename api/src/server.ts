@@ -27,8 +27,8 @@ export class Server {
   #wss: WebSocketServer | undefined
 
   constructor (app: Application) {
-    if (process.env.MY_SQL_ROOT_USER == null || process.env.MYSQL_ROOT_PASSWORD == null) {
-      throw new Error('Add .env file with values: MY_SQL_ROOT_USER and MYSQL_ROOT_PASSWORD')
+    if (process.env.MYSQL_ROOT_USER == null || process.env.MYSQL_ROOT_PASSWORD == null) {
+      throw new Error('Add .env file with values: MYSQL_ROOT_USER and MYSQL_ROOT_PASSWORD')
     }
     this.#app = app
     this.#config()
