@@ -36,17 +36,17 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> .env
-          echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> .env
-          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-          echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> .env
-          echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> .env
-          echo "API_PORT=${{ vars.API_PORT }}" >> .env
-          echo "NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}" >> .env
-          echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> .env
-          echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
+          echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> $GITHUB_WORKSPACE/.env
+          echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> $GITHUB_WORKSPACE/.env
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> $GITHUB_WORKSPACE/.env
+          echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> $GITHUB_WORKSPACE/.env
+          echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> $GITHUB_WORKSPACE/.env
+          echo "API_PORT=${{ vars.API_PORT }}" >> $GITHUB_WORKSPACE/.env
+          echo "NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}" >> $GITHUB_WORKSPACE/.env
+          echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> $GITHUB_WORKSPACE/.env
+          echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> $GITHUB_WORKSPACE/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_WORKSPACE/.env
+          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> $GITHUB_WORKSPACE/.env
 
       - name: Build Docker images
         run: docker-compose build
@@ -127,6 +127,6 @@ jobs:
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
             # cd /root/project
             # docker-compose up -d
-            docker run -d --name portfolio-api -p 80:80 \
+            docker run -d --name portfolio-api -p 80:3000 \
               --env-file .env \
               ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
