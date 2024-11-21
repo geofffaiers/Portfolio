@@ -114,17 +114,19 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
             docker stop portfolio-api || true
             docker rm portfolio-api || true
+            echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> .env
+            echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> .env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+            echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> .env
+            echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> .env
+            echo "API_PORT=${{ vars.API_PORT }}" >> .env
+            echo "NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}" >> .env
+            echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> .env
+            echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+            echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
             # cd /root/project
             # docker-compose up -d
             docker run -d --name portfolio-api -p 80:80 \
-              -e MYSQL_HOST=${{ vars.MYSQL_HOST }} \
-              -e MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }} \
-              -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
-              -e MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }} \
-              -e MYSQL_PORT=${{ vars.MYSQL_PORT }} \
-              -e API_PORT=${{ vars.API_PORT }} \
-              -e NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} \
-              -e CLIENT_PORT=${{ vars.CLIENT_PORT }} \
-              -e CLIENT_URL=${{ vars.CLIENT_URL }} \
-              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} \
+              --env-file .env \
+              ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
