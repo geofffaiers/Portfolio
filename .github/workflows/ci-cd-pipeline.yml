@@ -114,8 +114,13 @@ jobs:
             echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> .env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
-            # cd /root/project
-            # docker-compose -f /root/docker-compose.yml up -d
-            docker run -d --name portfolio-api -p 80:3000 \
+            docker run -d --name mysql-db \
+              -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
+              -e MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }} \
+              -e MYSQL_USER=${{ vars.MYSQL_ROOT_USER }} \
+              -e MYSQL_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
+              -p ${{ vars.MYSQL_PORT }}:${{ vars.MYSQL_PORT }} \
+              mysql:latest
+            docker run -d --name portfolio-api -p 80:${{ vars.API_PORT }} \
               --env-file .env \
               ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
