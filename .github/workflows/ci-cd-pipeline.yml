@@ -64,7 +64,7 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
 
       - name: Archive and Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: docker-compose
           path: docker-compose.yml
@@ -78,7 +78,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: docker-compose
           path: ./docker-compose.yml
