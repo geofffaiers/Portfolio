@@ -97,6 +97,7 @@ jobs:
           port: 22
           script: |
             echo ${{ secrets.DOCKER_PAT }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+            docker network create portfolio || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
             docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
             docker stop portfolio-mysql-db portfolio-api || true
@@ -112,5 +113,5 @@ jobs:
             echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> /root/.env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/.env
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/.env
-            docker run -d --name portfolio-mysql-db --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
-            docker run -d --name portfolio-api --env-file /root/.env -p 80:${{ vars.API_PORT }} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
+            docker run -d --name portfolio-mysql-db --network portfolio --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
+            docker run -d --name portfolio-api --network portfolio --env-file /root/.env -p 80:${{ vars.API_PORT }} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
