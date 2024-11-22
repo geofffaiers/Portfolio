@@ -34,9 +34,6 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose version
 
-      - name: Clear .env file
-        run: rm -f $GITHUB_WORKSPACE/.env
-
       - name: Create .env file
         run: |
           echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> $GITHUB_WORKSPACE/.env
@@ -56,6 +53,12 @@ jobs:
 
       - name: List Docker images
         run: docker images
+
+      - name: Tag Docker image
+        run: docker tag mysql-db:latest ${{ secrets.DOCKER_USERNAME }}/mysql-db:latest
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/mysql-db:latest
 
       - name: Tag Docker image
         run: docker tag portfolio-api:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest

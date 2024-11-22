@@ -1,20 +1,11 @@
 services:
   mysql-db:
-    image: mysql:latest
+    build: ./database
     container_name: mysql-db
-    env_file:
+    env_file: 
       - .env
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-    volumes:
-      - ./database:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD-SHELL", "mysql -p${MYSQL_ROOT_PASSWORD} -e 'select 1'"]
-      interval: 5s
-      retries: 50
     restart: unless-stopped
   api:
     build: ./api
