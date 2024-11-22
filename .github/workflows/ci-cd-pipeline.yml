@@ -51,29 +51,12 @@ jobs:
       - name: Build Docker images
         run: docker-compose build
 
-      - name: Tag Docker image
-        run: docker tag portfolio-mysql-db:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
-
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
-
-      - name: Tag Docker image
-        run: docker tag portfolio-api:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
-
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
-
-      - name: Tag Docker image
-        run: docker tag portfolio-frontend:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
-
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
-
-      - name: Tag Docker image
-        run: docker tag nginx:latest ${{ secrets.DOCKER_USERNAME }}/nginx:latest
-
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/nginx:latest
+      - name: Tag and Push Docker images
+        run: |
+          for service in portfolio-mysql-db portfolio-api portfolio-frontend portfolio-nginx; do
+            docker tag $service:latest ${{ secrets.DOCKER_USERNAME }}/$service:latest
+            docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
+          done
 
   deploy:
     runs-on: ubuntu-latest
@@ -110,12 +93,11 @@ jobs:
           script: |
             echo ${{ secrets.DOCKER_PAT }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
             docker network create portfolio || true
-            docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/nginx:latest
-            docker stop portfolio-mysql-db portfolio-api portfolio-frontend nginx || true
-            docker rm -f portfolio-mysql-db portfolio-api portfolio-frontend nginx || true
+            for service in portfolio-mysql-db portfolio-api portfolio-frontend portfolio-nginx; do
+              docker pull ${{ secrets.DOCKER_USERNAME }}/$service:latest
+            done
+            docker stop portfolio-mysql-db portfolio-api portfolio-frontend portfolio-nginx || true
+            docker rm -f portfolio-mysql-db portfolio-api portfolio-frontend portfolio-nginx || true
             echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> /root/.env
             echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> /root/.env
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /root/.env
@@ -130,4 +112,4 @@ jobs:
             docker run -d --name portfolio-mysql-db --network portfolio --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
             docker run -d --name portfolio-api --network portfolio --env-file /root/.env -p ${{ vars.API_PORT}}:${{ vars.API_PORT}} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
             docker run -d --name portfolio-frontend --network portfolio -p ${{ vars.CLIENT_PORT }}:${{ vars.CLIENT_PORT}} ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
-            docker run -d --name nginx --network portfolio -p 80:80 -v ./nginx.${{ vars.NGINX_ENV }}.conf:/etc/nginx/nginx.conf:ro ${{ secrets.DOCKER_USERNAME }}/nginx:latest
+            docker run -d --name portfolio-nginx --network portfolio -p 80:80 -v ./nginx.${{ vars.NGINX_ENV }}.conf:/etc/nginx/nginx.conf:ro ${{ secrets.DOCKER_USERNAME }}/portfolio-nginx:latest
