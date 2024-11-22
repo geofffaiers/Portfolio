@@ -63,8 +63,11 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
 
-      - name: Run Docker Compose
-        run: docker-compose up -d
+      - name: Archive and Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-compose
+          path: docker-compose.yml
 
   deploy:
     runs-on: ubuntu-latest
@@ -73,6 +76,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-compose
+          path: ./docker-compose.yml
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -100,12 +109,8 @@ jobs:
           port: 22
           script: |
             echo ${{ secrets.DOCKER_PAT }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-            docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
-            docker pull mysql:latest
-            docker stop portfolio-api || true
-            docker rm portfolio-api || true
-            docker stop mysql-db || true
-            docker rm mysql-db || true
+            docker-compose -f /root/docker-compose.yml pull
+            docker-compose -f /root/docker-compose.yml down
             echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> /root/.env
             echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> /root/.env
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /root/.env
@@ -117,9 +122,4 @@ jobs:
             echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> /root/.env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/.env
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/.env
-            docker run -d --name mysql-db -p ${{ vars.MYSQL_PORT }}:${{ vars.MYSQL_PORT }} \
-              --env-file /root/.env \
-              mysql:latest
-            docker run -d --name portfolio-api -p 80:${{ vars.API_PORT }} \
-              --env-file /root/.env \
-              ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
+            docker-compose -f /root/docker-compose.yml up -d
