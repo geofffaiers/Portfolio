@@ -7,6 +7,7 @@ services:
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
     restart: unless-stopped
+    
   api:
     build: ./api
     container_name: portfolio-api
@@ -19,7 +20,10 @@ services:
       - /usr/src/app/node_modules
     ports:
       - ${API_PORT}:${API_PORT}
+    networks:
+      - portfolio
     restart: unless-stopped
+
   frontend:
     build: ./frontend
     container_name: portfolio-frontend
@@ -34,4 +38,19 @@ services:
       - /usr/src/app/node_modules
     ports:
       - ${CLIENT_PORT}:${CLIENT_PORT}
+    networks:
+      - portfolio
     restart: unless-stopped
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    networks:
+      - portfolio
+
+networks:
+  portfolio:
+    driver: bridge
