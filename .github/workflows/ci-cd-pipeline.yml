@@ -55,10 +55,10 @@ jobs:
         run: docker images
 
       - name: Tag Docker image
-        run: docker tag mysql:latest ${{ secrets.DOCKER_USERNAME }}/mysql-db:latest
+        run: docker tag portfolio-mysql-db:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/mysql-db:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
 
       - name: Tag Docker image
         run: docker tag portfolio-api:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest

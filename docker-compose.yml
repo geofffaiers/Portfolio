@@ -1,7 +1,7 @@
 services:
   mysql-db:
-    build: ./database
-    container_name: mysql-db
+    build: ./mysql-db
+    container_name: portfolio-mysql-db
     env_file: 
       - .env
     ports:
