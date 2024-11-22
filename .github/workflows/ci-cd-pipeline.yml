@@ -55,7 +55,7 @@ jobs:
         run: docker images
 
       - name: Tag Docker image
-        run: docker tag mysql-db:latest ${{ secrets.DOCKER_USERNAME }}/mysql-db:latest
+        run: docker tag mysql:latest ${{ secrets.DOCKER_USERNAME }}/mysql-db:latest
 
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/mysql-db:latest
