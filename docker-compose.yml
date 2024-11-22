@@ -24,7 +24,7 @@ services:
     build: ./frontend
     container_name: portfolio-frontend
     env_file:
-      - .env
+      - ./frontend/.env
     depends_on:
       mysql-db:
         condition: service_healthy
