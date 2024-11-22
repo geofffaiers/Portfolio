@@ -115,7 +115,7 @@ jobs:
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
             # cd /root/project
-            # docker-compose up -d
-            docker run -d --name portfolio-api -p 80:3000 \
-              --env-file .env \
-              ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
+            docker-compose -f /root/docker-compose.yml up -d
+            # docker run -d --name portfolio-api -p 80:3000 \
+            #   --env-file .env \
+            #   ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
