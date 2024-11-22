@@ -48,7 +48,7 @@ const sendEmail = async ({ to, subject, text, html }: EmailParams): Promise<void
 const loadEmailTemplate = (): EmailTemplate => {
   if (emailTemplate.main === '') {
     try {
-      const basePath = path.resolve(__dirname, '../emails')
+      const basePath = path.resolve(__dirname, '../../emails')
       emailTemplate.main = fs.readFileSync(path.join(basePath, 'main.html'), 'utf8')
       emailTemplate.header = fs.readFileSync(path.join(basePath, 'header.html'), 'utf8')
       emailTemplate.body = fs.readFileSync(path.join(basePath, 'body.html'), 'utf8')
