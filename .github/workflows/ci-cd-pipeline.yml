@@ -122,4 +122,4 @@ jobs:
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/.env
             docker run -d --name portfolio-mysql-db --network portfolio --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
             docker run -d --name portfolio-api --network portfolio --env-file /root/.env -p ${{ vars.API_PORT}}:${{ vars.API_PORT}} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
-            docker run -d --name portfolio-frontend --network portfolio -p ${{ vars.CLIENT_PORT}}:${{ vars.CLIENT_PORT}} ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
+            docker run -d --name portfolio-frontend --network portfolio -p 80:${{ vars.CLIENT_PORT}} ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
