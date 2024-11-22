@@ -1,3 +1,5 @@
+'use client'
+import 'reflect-metadata'
 import { Box, IconButton, Input, Stack, styled, Typography } from '@mui/joy'
 import { faPaperPlane, faWindowMaximize, faWindowMinimize, faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

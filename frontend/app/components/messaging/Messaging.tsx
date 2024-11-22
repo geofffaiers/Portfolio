@@ -143,7 +143,7 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
 
   useEffect(() => {
     if (loggedInUser) {
-      socketRef.current = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}/api/messaging`)
+      socketRef.current = new WebSocket(`${process.env.NEXT_PUBLIC_API_URL}/api/messaging`)
       socketRef.current.onopen = () => {
         setState(s => ({
           ...s,

@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development node start.js",
+    "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "node start.js",
+    "start": "next start -p 5001",
     "lint": "next lint"
   },
   "dependencies": {
@@ -21,7 +21,6 @@
     "@zxcvbn-ts/language-en": "^3.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "dotenv": "^16.4.5",
     "idb": "^8.0.0",
     "next": "^15.0.3",
     "react": "^18.3.1",

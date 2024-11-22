@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import type { Metadata } from 'next'
 import './globals.css'
 import { Inter } from 'next/font/google'
