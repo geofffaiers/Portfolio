@@ -20,3 +20,18 @@ services:
     ports:
       - ${API_PORT}:${API_PORT}
     restart: unless-stopped
+  frontend:
+    build: ./frontend
+    container_name: portfolio-frontend
+    env_file:
+      - .env
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      api:
+        condition: service_started
+    volumes:
+      - /usr/src/app/node_modules
+    ports:
+      - ${CLIENT_PORT}:${CLIENT_PORT}
+    restart: unless-stopped

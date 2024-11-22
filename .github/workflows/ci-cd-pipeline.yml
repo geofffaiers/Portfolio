@@ -100,8 +100,9 @@ jobs:
             docker network create portfolio || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
             docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
-            docker stop portfolio-mysql-db portfolio-api || true
-            docker rm -f portfolio-mysql-db portfolio-api || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
+            docker stop portfolio-mysql-db portfolio-api portfolio-frontend || true
+            docker rm -f portfolio-mysql-db portfolio-api portfolio-frontend || true
             echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> /root/.env
             echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> /root/.env
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /root/.env
@@ -115,3 +116,4 @@ jobs:
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/.env
             docker run -d --name portfolio-mysql-db --network portfolio --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
             docker run -d --name portfolio-api --network portfolio --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
+            docker run -d --name portfolio-frontend --network portfolio --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
