@@ -114,4 +114,4 @@ jobs:
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/.env
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/.env
             docker run -d --name portfolio-mysql-db --network portfolio --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
-            docker run -d --name portfolio-api --network portfolio --env-file /root/.env -p 80:${{ vars.API_PORT }} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
+            docker run -d --name portfolio-api --network portfolio --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest

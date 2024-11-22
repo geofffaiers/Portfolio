@@ -10,4 +10,6 @@ COPY . .
 
 RUN npm run build
 
+EXPOSE ${API_PORT}
+
 CMD ["node", "build/index.js"]
