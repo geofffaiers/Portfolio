@@ -3,6 +3,7 @@ import { Button, DialogContent, DialogTitle, FormControl, FormHelperText, FormLa
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { DefaultResponse, User } from '@/app/models'
 import { PasswordStrength } from './PasswordStrength'
+import { getApiUrl } from '@/app/helpers'
 
 interface Props {
   readingFromLocalStorage: boolean
@@ -92,7 +93,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
     try {
-      const response = await fetch('/api/users/create', {
+      const response = await fetch(`${getApiUrl()}/users/create`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -119,7 +120,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
     try {
-      const response = await fetch('/api/users/login', {
+      const response = await fetch(`${getApiUrl()}/users/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {

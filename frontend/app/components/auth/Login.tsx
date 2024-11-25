@@ -3,6 +3,7 @@ import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Moda
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { DefaultResponse, User } from '@/app/models'
 import { ForgotPassword } from './ForgotPassword'
+import { getApiUrl } from '@/app/helpers'
 
 interface Props {
   readingFromLocalStorage: boolean
@@ -50,7 +51,7 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser, setError }: Pr
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
     try {
-      const response = await fetch('/api/users/login', {
+      const response = await fetch(`${getApiUrl()}/users/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {

@@ -39,7 +39,7 @@ export class Server {
   #config (): void {
     const corsOptions: CorsOptions = {
       origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        if (allowedOrigins.includes(origin ?? '')) {
+        if (origin == null || allowedOrigins.includes(origin ?? '')) {
           callback(null, true)
         } else {
           callback(new Error('Not allowed by CORS'))

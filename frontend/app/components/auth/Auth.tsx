@@ -6,6 +6,7 @@ import { Register } from './Register'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose } from '@fortawesome/free-solid-svg-icons'
+import { getApiUrl } from '@/app/helpers'
 
 interface State {
   loggedInUser: User | null
@@ -51,7 +52,7 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
   const refreshToken = async (): Promise<string> => {
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
-    const response = await fetch('/api/users/refresh-token', {
+    const response = await fetch(`${getApiUrl()}/users/refresh-token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

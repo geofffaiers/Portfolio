@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ProfileIcon } from '../ProfileIcon'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
+import { getApiUrl } from '@/app/helpers'
 
 interface Props {
   messages: Message[]
@@ -113,7 +114,7 @@ export default function Chat ({ messages, user, expanded, loggedInUser, closeCha
     try {
       abortControllerRef.current = new AbortController()
       const { signal } = abortControllerRef.current
-      const response = await fetch(`/api/messaging/get-messages-for-page?userId=${u.id}&page=${state.page}`, {
+      const response = await fetch(`${getApiUrl()}/messaging/get-messages-for-page?userId=${u.id}&page=${state.page}`, {
         method: 'GET',
         credentials: 'include',
         headers: {

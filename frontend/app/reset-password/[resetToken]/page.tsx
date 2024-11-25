@@ -5,6 +5,7 @@ import { FloatingBubbles } from '../../components'
 import { PasswordStrength } from '@/app/components/auth/PasswordStrength'
 import { useParams } from 'next/navigation'
 import { DefaultResponse, ErrorCheck, User } from '@/app/models'
+import { getApiUrl } from '@/app/helpers'
 
 export default function ResetPasswordPage (): JSX.Element {
   const { resetToken } = useParams()
@@ -23,7 +24,7 @@ export default function ResetPasswordPage (): JSX.Element {
       abortControllerRef.current = new AbortController()
       const { signal } = abortControllerRef.current
       try {
-        const response = await fetch(`/api/users/get-user-for-reset-token?resetToken=${resetToken}`, {
+        const response = await fetch(`${getApiUrl()}/users/get-user-for-reset-token?resetToken=${resetToken}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -105,7 +106,7 @@ export default function ResetPasswordPage (): JSX.Element {
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
     try {
-      const response = await fetch('/api/users/reset-password', {
+      const response = await fetch(`${getApiUrl()}/users/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

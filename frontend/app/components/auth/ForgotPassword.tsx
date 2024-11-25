@@ -1,4 +1,5 @@
 'use client'
+import { getApiUrl } from "@/app/helpers"
 import { DefaultResponse } from "@/app/models"
 import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Link, Modal, ModalClose, ModalDialog, Stack } from "@mui/joy"
 import { FormEvent, useEffect, useRef, useState } from "react"
@@ -56,7 +57,7 @@ export const ForgotPassword = ({ setError }: Props): JSX.Element => {
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
     try {
-      const response = await fetch('/api/users/generate-reset-token', {
+      const response = await fetch(`${getApiUrl()}/users/generate-reset-token`, {
         method: 'POST',
         credentials: 'include',
         headers: {

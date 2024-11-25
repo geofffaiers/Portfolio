@@ -1,3 +1,4 @@
+import { getApiUrl } from "@/app/helpers"
 import { DefaultResponse, User } from "@/app/models"
 import { Button } from "@mui/joy"
 import { useEffect, useRef, useState } from "react"
@@ -25,7 +26,7 @@ export const Logout = ({ setLoggedInUser, setError }: Props): JSX.Element => {
         ...s,
         loggingOut: true
       }))
-      const response = await fetch('/api/users/logout', {
+      const response = await fetch(`${getApiUrl()}/users/logout`, {
         method: 'POST',
         credentials: 'include',
         signal

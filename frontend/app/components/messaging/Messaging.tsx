@@ -7,6 +7,7 @@ import Chats from './Chats'
 import { Box, styled } from '@mui/joy'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
+import { getApiUrl, getWsUrl } from '@/app/helpers'
 
 interface Props {
   children: React.ReactNode
@@ -57,7 +58,7 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
       try {
         abortControllerRef.current = new AbortController()
         const { signal } = abortControllerRef.current
-        const response = await fetch('/api/messaging/get-chat-headers', {
+        const response = await fetch(`${getApiUrl()}/messaging/get-chat-headers`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -143,7 +144,7 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
 
   useEffect(() => {
     if (loggedInUser) {
-      socketRef.current = new WebSocket('/api/ws')
+      socketRef.current = new WebSocket(`${getWsUrl()}`)
       socketRef.current.onopen = () => {
         setState(s => ({
           ...s,
