@@ -111,8 +111,8 @@ jobs:
             docker run -d --name portfolio-api --network portfolio --env-file /root/.env -p ${{ vars.API_PORT }}:${{ vars.API_PORT }} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
             docker run -d --name portfolio-frontend --network portfolio -p ${{ vars.CLIENT_PORT }}:${{ vars.CLIENT_PORT }} ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
             docker run -d --name portfolio-nginx --network portfolio -p 80:80 -p 443:443 ${{ secrets.DOCKER_USERNAME }}/portfolio-nginx:latest
-            docker run -it --rm --name certbot \
+            docker run --rm --name certbot \
               -v "/root/letsencrypt:/etc/letsencrypt" \
               -v "/root/letsencrypt/lib:/var/lib/letsencrypt" \
               -v "/root/letsencrypt/log:/var/log/letsencrypt" \
-              certbot/certbot certonly --webroot --webroot-path=/var/www/certbot -d www.gfaiers.com --email your-email@example.com --agree-tos --non-interactive
+              certbot/certbot certonly --webroot --webroot-path=/var/www/certbot -d www.gfaiers.com --email ${{ vars.EMAIL }} --agree-tos --non-interactive
