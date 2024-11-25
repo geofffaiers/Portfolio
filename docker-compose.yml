@@ -25,11 +25,7 @@ services:
   frontend:
     build: ./frontend
     container_name: portfolio-frontend
-    env_file:
-      - ./frontend/.env
     depends_on:
-      mysql-db:
-        condition: service_healthy
       api:
         condition: service_started
     volumes:
@@ -43,3 +39,8 @@ services:
     container_name: portfolio-nginx
     ports:
       - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api
+      - frontend

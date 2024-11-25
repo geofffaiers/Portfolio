@@ -51,7 +51,7 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
   const refreshToken = async (): Promise<string> => {
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/refresh-token`, {
+    const response = await fetch('/api/users/refresh-token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -23,7 +23,7 @@ export default function ResetPasswordPage (): JSX.Element {
       abortControllerRef.current = new AbortController()
       const { signal } = abortControllerRef.current
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/get-user-for-reset-token?resetToken=${resetToken}`, {
+        const response = await fetch(`/api/users/get-user-for-reset-token?resetToken=${resetToken}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -105,7 +105,7 @@ export default function ResetPasswordPage (): JSX.Element {
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/reset-password`, {
+      const response = await fetch('/api/users/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

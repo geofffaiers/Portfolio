@@ -42,11 +42,11 @@ jobs:
           echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> $GITHUB_WORKSPACE/.env
           echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> $GITHUB_WORKSPACE/.env
           echo "API_PORT=${{ vars.API_PORT }}" >> $GITHUB_WORKSPACE/.env
-          echo "NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}" >> $GITHUB_WORKSPACE/.env
           echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> $GITHUB_WORKSPACE/.env
           echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> $GITHUB_WORKSPACE/.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_WORKSPACE/.env
           echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> $GITHUB_WORKSPACE/.env
+          echo "NGINX_PORT=${{ vars.NGINX_PORT }}" >> $GITHUB_WORKSPACE/.env
 
       - name: Build Docker images
         run: docker-compose build
@@ -104,11 +104,11 @@ jobs:
             echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> /root/.env
             echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> /root/.env
             echo "API_PORT=${{ vars.API_PORT }}" >> /root/.env
-            echo "NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}" >> /root/.env
             echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> /root/.env
             echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> /root/.env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/.env
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/.env
+            echo "NGINX_PORT=${{ vars.NGINX_PORT }}" >> /root/.env
             docker run -d --name portfolio-mysql-db --network portfolio --env-file /root/.env ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
             docker run -d --name portfolio-api --network portfolio --env-file /root/.env -p ${{ vars.API_PORT }}:${{ vars.API_PORT }} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
             docker run -d --name portfolio-frontend --network portfolio -p ${{ vars.CLIENT_PORT }}:${{ vars.CLIENT_PORT }} ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest

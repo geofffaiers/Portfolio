@@ -92,7 +92,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/create`, {
+      const response = await fetch('/api/users/create', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -119,7 +119,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/login`, {
+      const response = await fetch('/api/users/login', {
         method: 'POST',
         credentials: 'include',
         headers: {

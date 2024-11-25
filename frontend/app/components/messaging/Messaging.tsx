@@ -57,7 +57,7 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
       try {
         abortControllerRef.current = new AbortController()
         const { signal } = abortControllerRef.current
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/messaging/get-chat-headers`, {
+        const response = await fetch('/api/messaging/get-chat-headers', {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -143,7 +143,7 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
 
   useEffect(() => {
     if (loggedInUser) {
-      socketRef.current = new WebSocket(`${process.env.NEXT_PUBLIC_API_URL}/api/messaging`)
+      socketRef.current = new WebSocket('/api/ws')
       socketRef.current.onopen = () => {
         setState(s => ({
           ...s,

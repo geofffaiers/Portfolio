@@ -113,9 +113,7 @@ export default function Chat ({ messages, user, expanded, loggedInUser, closeCha
     try {
       abortControllerRef.current = new AbortController()
       const { signal } = abortControllerRef.current
-      const r: string = `${process.env.NEXT_PUBLIC_API_URL}/api/messaging/get-messages-for-page?userId=${u.id}&page=${state.page}`
-      console.log(r)
-      const response = await fetch(r, {
+      const response = await fetch(`/api/messaging/get-messages-for-page?userId=${u.id}&page=${state.page}`, {
         method: 'GET',
         credentials: 'include',
         headers: {

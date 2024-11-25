@@ -25,7 +25,7 @@ export const Logout = ({ setLoggedInUser, setError }: Props): JSX.Element => {
         ...s,
         loggingOut: true
       }))
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/logout`, {
+      const response = await fetch('/api/users/logout', {
         method: 'POST',
         credentials: 'include',
         signal

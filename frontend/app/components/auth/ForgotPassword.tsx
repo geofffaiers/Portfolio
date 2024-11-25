@@ -56,7 +56,7 @@ export const ForgotPassword = ({ setError }: Props): JSX.Element => {
     abortControllerRef.current = new AbortController()
     const { signal } = abortControllerRef.current
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/generate-reset-token`, {
+      const response = await fetch('/api/users/generate-reset-token', {
         method: 'POST',
         credentials: 'include',
         headers: {
