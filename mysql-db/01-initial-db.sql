@@ -41,5 +41,10 @@ CREATE TABLE IF NOT EXISTS `messages` (
   FOREIGN KEY (`receiver_id`) REFERENCES `users`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `users` (`username`, `password`, `email`, `first_name`, `last_name`)
-VALUES ('gfaiers', '', 'geoff@gfaiers.com', 'Geoff', 'Faiers');
+CREATE TABLE IF NOT EXISTS `contact_form` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `message` TEXT NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

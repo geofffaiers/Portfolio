@@ -10,7 +10,7 @@ export default function Home (): JSX.Element {
     <Auth setLoggedInUser={setLoggedInUser}>
       <Messaging loggedInUser={loggedInUser}>
         <FloatingBubbles>
-          <Cv />
+          <Cv loggedInUser={loggedInUser}/>
         </FloatingBubbles>
       </Messaging>
     </Auth>

@@ -150,8 +150,7 @@ export default function ResetPasswordPage (): JSX.Element {
             maxWidth: '400px',
             padding: 3,
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 2,
-            boxShadow: 3
+            borderRadius: 2
           }}
         >
           <Typography level='h4' component='h1' gutterBottom>

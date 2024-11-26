@@ -6,6 +6,7 @@ services:
       - .env
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
+    mem_limit: 256m
     restart: unless-stopped
 
   api:

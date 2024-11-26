@@ -210,7 +210,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
               </FormControl>
               <FormControl>
                 <FormLabel>Username</FormLabel>
-                <Input autoFocus name="username" type="text" required/>
+                <Input name="username" type="text" required/>
               </FormControl>
               <FormControl error={passwordError !== ''}>
                 <FormLabel>Password</FormLabel>

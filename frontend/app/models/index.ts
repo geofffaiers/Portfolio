@@ -1,5 +1,7 @@
 export * from './sockets'
 export * from './ChatHeader'
+export * from './CvHeader'
+export * from './CvItem'
 export * from './DefaultResponse'
 export * from './ErrorCheck'
 export * from './Message'

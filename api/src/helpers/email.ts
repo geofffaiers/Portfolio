@@ -94,3 +94,34 @@ export const sendResetPasswordEmail = async (user: User): Promise<void> => {
     html
   })
 }
+
+export const sendContactEmail = async (name: string, email: string, message: string): Promise<void> => {
+  const template: EmailTemplate = loadEmailTemplate()
+  template.body = template.body
+    .replace(
+      '{{CONTENT}}',
+      `<h3 class="infoBlockTop">
+        Contact Form
+      </h3>
+      <p class="infoBlockMiddle">
+        ${message}
+      </p>`
+    )
+  const html: string = template.main
+    .replace('{{SUMMARY}}', `${name} has filled in the contact form`)
+    .replace('{{HEADER}}', template.header)
+    .replace('{{BODY}}', template.body)
+    .replace('{{FOOTER}}', template.footer)
+  await sendEmail({
+    to: email,
+    subject: 'Geoff Faiers gfaiers.com',
+    text: message,
+    html
+  })
+  await sendEmail({
+    to: 'info@gfaiers.com',
+    subject: `${name}: Contact Form`,
+    text: message,
+    html
+  })
+}
