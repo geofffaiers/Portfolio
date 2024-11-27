@@ -46,7 +46,7 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
     depends_on:
       - api
       - frontend
