@@ -79,7 +79,7 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_KEY }}
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
           source: "docker-compose.prod.yml"
-          target: "/root/Portfolio/docker-compose.prod.yml"
+          target: "/root/Portfolio/"
 
       - name: Create a new .env file on Droplet
         uses: appleboy/ssh-action@v1.2.0
