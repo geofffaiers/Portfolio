@@ -60,7 +60,7 @@ jobs:
       - name: Build Nginx Docker image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/portfolio-nginx:latest ./nginx
-          docker tag portfolio-nginx:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-nginx:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/portfolio-nginx:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-nginx:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-nginx:latest
 
   deploy:
