@@ -7,6 +7,12 @@ services:
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
     restart: unless-stopped
+    volumes:
+      - ./mysql-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -p${MYSQL_ROOT_PASSWORD} -e 'select 1'"]
+      interval: 5s
+      retries: 50
 
   api:
     build: ./api
