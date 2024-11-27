@@ -90,17 +90,17 @@ jobs:
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
           port: 22
           script: |
-            rm -f /root/.env
-            echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> /root/.env
-            echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> /root/.env
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /root/.env
-            echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> /root/.env
-            echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> /root/.env
-            echo "API_PORT=${{ vars.API_PORT }}" >> /root/.env
-            echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> /root/.env
-            echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> /root/.env
-            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/.env
-            echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/.env
+            rm -f /root/Portfolio/.env
+            echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> /root/Portfolio/.env
+            echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> /root/Portfolio/.env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /root/Portfolio/.env
+            echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> /root/Portfolio/.env
+            echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> /root/Portfolio/.env
+            echo "API_PORT=${{ vars.API_PORT }}" >> /root/Portfolio/.env
+            echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> /root/Portfolio/.env
+            echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> /root/Portfolio/.env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/Portfolio/.env
+            echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/Portfolio/.env
 
       - name: Deploy Docker Containers
         uses: appleboy/ssh-action@v1.2.0
@@ -113,9 +113,9 @@ jobs:
           script: |
             echo ${{ secrets.DOCKER_PAT }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
             cd /root/Portfolio
-            docker-compose --env-file /root/.env -f docker-compose.prod.yml down
-            docker-compose --env-file /root/.env -f docker-compose.prod.yml pull
-            docker-compose --env-file /root/.env -f docker-compose.prod.yml up -d
+            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d
   
       - name: Clean Up Docker Volumes
         uses: appleboy/ssh-action@v1.2.0
