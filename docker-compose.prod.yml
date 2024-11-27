@@ -39,12 +39,6 @@ services:
   nginx:
     image: gfaiers/portfolio-nginx:latest
     container_name: portfolio-nginx
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
     depends_on:
       - api
       - frontend
@@ -57,5 +51,5 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/lib/letsencrypt:/var/lib/letsencrypt
       - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    restart: always
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot certonly --webroot -w /var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d gfaiers.com -d www.gfaiers.com; sleep 12h & wait $${!}; done;'"
+    restart: unless-stopped

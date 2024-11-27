@@ -46,6 +46,7 @@ jobs:
           echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> $GITHUB_WORKSPACE/.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_WORKSPACE/.env
           echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> $GITHUB_WORKSPACE/.env
+          echo "EMAIL=${{ vars.EMAIL }}" >> $GITHUB_WORKSPACE/.env
 
       - name: Build Docker images
         run: docker-compose build
@@ -107,6 +108,7 @@ jobs:
             echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> /root/Portfolio/.env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/Portfolio/.env
             echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/Portfolio/.env
+            echo "EMAIL=${{ vars.EMAIL }}" >> /root/Portfolio/.env
 
       - name: Deploy Docker Containers
         uses: appleboy/ssh-action@v1.2.0
