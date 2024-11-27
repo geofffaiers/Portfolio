@@ -37,7 +37,9 @@ class Bubble {
   setAutoPop (): void {
     const popDuration = Math.random() * 8000 + 2000 // 2 to 10 seconds
     setTimeout(() => {
-      this.pop(237, 54, 54)
+      if (!this.popped) {
+        this.pop(237, 54, 54)
+      }
     }, popDuration)
   }
 
