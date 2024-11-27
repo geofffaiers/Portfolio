@@ -15,6 +15,9 @@ class Bubble {
   popped: boolean
   popStartTime: number | null
   appearStartTime: number | null
+  popRed: number
+  popGreen: number
+  popBlue: number
 
   constructor (topPos: number, leftPos: number, top: number, left: number, size: number) {
     this.topPosition = topPos
@@ -25,6 +28,17 @@ class Bubble {
     this.popped = false
     this.popStartTime = null
     this.appearStartTime = null
+    this.popRed = 43
+    this.popGreen = 156
+    this.popBlue = 191
+    this.setAutoPop()
+  }
+
+  setAutoPop (): void {
+    const popDuration = Math.random() * 8000 + 2000 // 2 to 10 seconds
+    setTimeout(() => {
+      this.pop(237, 54, 54)
+    }, popDuration)
   }
 
   update (width: number, height: number): void {
@@ -65,16 +79,24 @@ class Bubble {
       } else {
         return
       }
+      ctx.strokeStyle = `rgba(${this.popRed}, ${this.popGreen}, ${this.popBlue}, ${opacity})`
+      ctx.fillStyle = `rgba(${this.popRed}, ${this.popGreen}, ${this.popBlue}, ${0.25 * opacity})`
+      ctx.lineWidth = 4 * opacity
+      ctx.beginPath()
+      ctx.arc(this.leftPosition, this.topPosition, size, 0, 2 * Math.PI)
+      ctx.closePath()
+      ctx.stroke()
+      ctx.fill()
+    } else {
+      ctx.fillStyle = `rgba(43, 156, 191, ${0.25 * opacity})`
+      ctx.strokeStyle = `rgba(43, 156, 191, ${opacity})`
+      ctx.lineWidth = 4 * opacity
+      ctx.beginPath()
+      ctx.arc(this.leftPosition, this.topPosition, size, 0, 2 * Math.PI)
+      ctx.closePath()
+      ctx.stroke()
+      ctx.fill()
     }
-
-    ctx.fillStyle = `rgba(43, 156, 191, ${0.25 * opacity})`
-    ctx.strokeStyle = `rgba(43, 156, 191, ${opacity})`
-    ctx.lineWidth = 4 * opacity
-    ctx.beginPath()
-    ctx.arc(this.leftPosition, this.topPosition, size, 0, 2 * Math.PI)
-    ctx.closePath()
-    ctx.stroke()
-    ctx.fill()
   }
 
   isCursorOver (x: number, y: number): boolean {
@@ -83,8 +105,11 @@ class Bubble {
     return Math.sqrt(dx * dx + dy * dy) < this.size
   }
 
-  pop (): void {
+  pop (red: number = 25, green: number = 196, blue: number = 68): void {
     this.popped = true
+    this.popRed = red
+    this.popGreen = green
+    this.popBlue = blue
   }
 }
 
@@ -158,8 +183,10 @@ export const FloatingBubbles = ({ children }: Props): JSX.Element => {
     requestAnimationFrame(animate)
     
     const intervalId = setInterval(() => {
-      createBubble()
-    }, 5000)
+      if (bubblesRef.current.length < 20) {
+        createBubble()
+      }
+    }, 500)
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
