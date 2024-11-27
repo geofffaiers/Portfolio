@@ -21,7 +21,7 @@
   ],
   "compounds": [
     {
-      "name": "Debug Next.js, and Express API",
+      "name": "Compound",
       "configurations": ["Debug Express.js server side", "Debug Next.js server side"]
     }
   ]

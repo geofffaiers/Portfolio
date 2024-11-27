@@ -83,26 +83,28 @@ export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
       }
     }
 
-    getConversations()
-      .then((users: ChatHeader[]) => {
-        setState(s => ({
-          ...s,
-          chatHeaders: users
-        }))
-      })
-      .catch((error: Error) => {
-        setState(s => ({
-          ...s,
-          error: error.message
-        }))
-      })
+    if (loggedInUser) {
+      getConversations()
+        .then((users: ChatHeader[]) => {
+          setState(s => ({
+            ...s,
+            chatHeaders: users
+          }))
+        })
+        .catch((error: Error) => {
+          setState(s => ({
+            ...s,
+            error: error.message
+          }))
+        })
+    }
     
     return () => {
       if (abortControllerRef.current != null) {
         abortControllerRef.current.abort()
       }
     }
-  }, [])
+  }, [loggedInUser])
 
   const handleNewMessages = useCallback((oldMessages: Message[], newMessages: Message[]): Message[] => {
     const messageMap = new Map(oldMessages.map(msg => [msg.id, msg]))

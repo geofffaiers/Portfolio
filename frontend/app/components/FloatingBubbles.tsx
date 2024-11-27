@@ -1,5 +1,6 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import styles from './FloatingBubbles.module.css'
 
 interface Props {
   children: React.ReactNode
@@ -11,6 +12,9 @@ class Bubble {
   leftMovement: number
   topMovement: number
   size: number
+  popped: boolean
+  popStartTime: number | null
+  appearStartTime: number | null
 
   constructor (topPos: number, leftPos: number, top: number, left: number, size: number) {
     this.topPosition = topPos
@@ -18,6 +22,9 @@ class Bubble {
     this.leftMovement = left
     this.topMovement = top
     this.size = size
+    this.popped = false
+    this.popStartTime = null
+    this.appearStartTime = null
   }
 
   update (width: number, height: number): void {
@@ -31,21 +38,61 @@ class Bubble {
     this.topPosition += this.topMovement
   }
 
-  draw (ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = 'RGBA(43, 156, 191, 0.25)'
-    ctx.strokeStyle = 'RGBA(43, 156, 191, 1)'
-    ctx.lineWidth = 4
+  draw (ctx: CanvasRenderingContext2D, currentTime: number): void {
+    if (this.appearStartTime === null) {
+      this.appearStartTime = currentTime
+    }
+    const appearElapsed = currentTime - this.appearStartTime
+    const appearDuration = 500
+    let size = this.size
+    let opacity = 1
+    if (appearElapsed < appearDuration) {
+      const appearProgress = appearElapsed / appearDuration
+      size = this.size * appearProgress
+      opacity = appearProgress
+    }
+
+    if (this.popped) {
+      if (this.popStartTime === null) {
+        this.popStartTime = currentTime
+      }
+      const popElapsed = currentTime - this.popStartTime
+      const popDuration = 300
+      if (popElapsed < popDuration) {
+        const popProgress = popElapsed / popDuration
+        size = this.size * (1 + popProgress * 0.5)
+        opacity = 1 - popProgress
+      } else {
+        return
+      }
+    }
+
+    ctx.fillStyle = `rgba(43, 156, 191, ${0.25 * opacity})`
+    ctx.strokeStyle = `rgba(43, 156, 191, ${opacity})`
+    ctx.lineWidth = 4 * opacity
     ctx.beginPath()
-    ctx.arc(this.leftPosition, this.topPosition, this.size, 0, 2 * Math.PI)
+    ctx.arc(this.leftPosition, this.topPosition, size, 0, 2 * Math.PI)
     ctx.closePath()
     ctx.stroke()
     ctx.fill()
+  }
+
+  isCursorOver (x: number, y: number): boolean {
+    const dx = this.leftPosition - x
+    const dy = this.topPosition - y
+    return Math.sqrt(dx * dx + dy * dy) < this.size
+  }
+
+  pop (): void {
+    this.popped = true
   }
 }
 
 export const FloatingBubbles = ({ children }: Props): JSX.Element => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const bubblesRef = useRef<Bubble[]>([])
+  const [score, setScore] = useState(0)
+  const [animateScore, setAnimateScore] = useState(false)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -59,46 +106,88 @@ export const FloatingBubbles = ({ children }: Props): JSX.Element => {
       canvas.height = window.innerHeight
     }
 
-    const createBubbles = (amount: number): void => {
-      const bubbles: Bubble[] = []
-      for (let x = 0; x < amount; x++) {
-        const topPos = Math.random() * canvas.height
-        const leftPos = Math.random() * canvas.width
-        const size = Math.random() * 35 + 5
-        const left = Math.random() - 0.5
-        const top = Math.random() - 0.5
-        bubbles.push(new Bubble(topPos, leftPos, top, left, size))
-      }
-      bubblesRef.current = bubbles
+    const createBubble = (): void => {
+      const size = Math.random() * 20 + 10
+      const topPosition = Math.random() * canvas.height
+      const leftPosition = Math.random() * canvas.width
+      const topMovement = (Math.random() - 0.5) * 2
+      const leftMovement = (Math.random() - 0.5) * 2
+      bubblesRef.current.push(new Bubble(topPosition, leftPosition, topMovement, leftMovement, size))
     }
 
-    const animate = (): void => {
+    const createBubbles = (amount: number): void => {
+      for (let i = 0; i < amount; i++) {
+        createBubble()
+      }
+    }
+
+    const handleMouseMove = (event: MouseEvent): void => {
+      const { clientX, clientY } = event
+      for (let i = 0; i < bubblesRef.current.length; i++) {
+        const bubble = bubblesRef.current[i]
+        if (!bubble.popped && bubble.isCursorOver(clientX, clientY)) {
+          bubble.pop()
+          setScore(prevScore => prevScore + 1)
+          setAnimateScore(true)
+          setTimeout(() => setAnimateScore(false), 300)
+          const size = Math.random() * 20 + 10
+          const topPosition = Math.random() * canvas.height
+          const leftPosition = Math.random() * canvas.width
+          const topMovement = (Math.random() - 0.5) * 2
+          const leftMovement = (Math.random() - 0.5) * 2
+          bubblesRef.current.push(new Bubble(topPosition, leftPosition, topMovement, leftMovement, size))
+          break
+        }
+      }
+    }
+
+    const animate = (currentTime: number): void => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      bubblesRef.current.forEach(bubble => {
+      bubblesRef.current = bubblesRef.current.filter(bubble => {
         bubble.update(canvas.width, canvas.height)
-        bubble.draw(ctx)
+        bubble.draw(ctx, currentTime)
+        return !bubble.popped || (bubble.popStartTime !== null && currentTime - bubble.popStartTime < 300)
       })
       requestAnimationFrame(animate)
     }
 
-    resizeCanvas()
-    createBubbles(Math.floor(Math.random() * (50 - 10) + 10))
-    animate()
     window.addEventListener('resize', resizeCanvas)
+    window.addEventListener('mousemove', handleMouseMove)
+    resizeCanvas()
+    createBubbles(10)
+    requestAnimationFrame(animate)
+    
+    const intervalId = setInterval(() => {
+      createBubble()
+    }, 5000)
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
+      window.removeEventListener('mousemove', handleMouseMove)
+      clearInterval(intervalId)
     }
   }, [])
 
   return (
-    <div style={{ position: 'relative' }}>
-      <canvas
-        ref={canvasRef}
-        style={{ position: 'fixed', zIndex: 1, width: '100vw', height: '100vh' }}
-      />
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        {children}
+    <div className={styles.container}>
+      <canvas className={styles.canvas} ref={canvasRef}/>
+      <div className={styles.content}>
+        <div className={styles.pointerReset}>
+          {score > 0 && (
+            <div className={styles.scoreContainer}>
+              Score:
+              <div className={`${styles.score} ${animateScore ? styles.animate : ''}`}>
+                {score}
+              </div>
+            </div>
+          )}
+          {score === 0 && (
+            <div className={styles.instructions}>
+              Pop the bubbles!
+            </div>
+          )}
+          {children}
+        </div>
       </div>
     </div>
   )

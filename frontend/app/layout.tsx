@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   description: 'The personal portfolio of Geoff Faiers',
 }
 
-
 zxcvbnOptions.setOptions({
   dictionary: {
     ...zxcvbnCommonPackage.dictionary,

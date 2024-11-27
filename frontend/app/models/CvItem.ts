@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer'
-import { IsOptional, IsString } from 'class-validator'
+import { IsDate, IsOptional, IsString } from 'class-validator'
 
 export class CvItem {
   @IsOptional()
@@ -16,6 +16,16 @@ export class CvItem {
   @IsString()
   @Expose({ name: 'duration' })
   duration?: string
+
+  @IsOptional()
+  @IsDate()
+  @Expose({ name: 'startDate' })
+  startDate?: Date
+  
+  @IsOptional()
+  @IsDate()
+  @Expose({ name: 'endDate' })
+  endDate?: Date | null
 
   @IsOptional()
   @IsString()

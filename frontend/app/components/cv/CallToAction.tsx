@@ -1,3 +1,4 @@
+'use client'
 import { getApiUrl } from '@/app/helpers'
 import { User } from '@/app/models'
 import { faClose, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
@@ -16,6 +17,7 @@ interface State {
 
 export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
   const [openDialog, setOpenDialog] = useState<boolean>(false)
+  const [nameError, setNameError] = useState<string>('')
   const [emailError, setEmailError] = useState<string>('')
   const [messageError, setMessageError] = useState<string>('')
   const [state, setState] = useState<State>({
@@ -25,8 +27,17 @@ export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
   const abortControllerRef = useRef<AbortController | null>(null)
   const isLoggedIn: boolean = !!loggedInUser
 
-  const validateForm = useCallback((email: string, message: string): boolean => {
+  const validateForm = useCallback((name: string, email: string, message: string): boolean => {
     let formValid: boolean = true
+    if (name.length < 3) {
+      setNameError('Name is invalid')
+      formValid = false
+    } else if (name.indexOf(' ') === -1) {
+      setNameError('Please enter your full name')
+      formValid = false
+    } else {
+      setNameError('')
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setEmailError('Email is invalid')
       formValid = false
@@ -46,9 +57,10 @@ export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
     evt.preventDefault()
     const formData: FormData = new FormData(evt.currentTarget)
     const formJson: { [k: string]: FormDataEntryValue } = Object.fromEntries(formData.entries())
-    const email: string = formJson.email as string
-    const message: string = formJson.message as string
-    const formValid = validateForm(email, message)
+    const name: string = (formJson.name as string).trim()
+    const email: string = (formJson.email as string).trim()
+    const message: string = (formJson.message as string).trim()
+    const formValid = validateForm(name, email, message)
     if (!formValid) {
       return
     }
@@ -61,7 +73,7 @@ export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, message }),
+        body: JSON.stringify({ name, email, message }),
         signal
       })
       if (!response.ok) {
@@ -129,9 +141,14 @@ export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
           {}
           <form onSubmit={handleSubmitForm}>
             <Stack spacing={2}>
-            <FormControl error={emailError !== ''}>
+              <FormControl error={nameError !== ''}>
+                <FormLabel>Full Name</FormLabel>
+                <Input autoFocus name='name' type='text' required/>
+                <FormHelperText>{nameError}</FormHelperText>
+              </FormControl>
+              <FormControl error={emailError !== ''}>
                 <FormLabel>Email</FormLabel>
-                <Input autoFocus name='email' type='text' required/>
+                <Input name='email' type='text' required/>
                 <FormHelperText>{emailError}</FormHelperText>
               </FormControl>
               <FormControl error={messageError !== ''}>
