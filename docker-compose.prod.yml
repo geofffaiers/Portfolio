@@ -9,7 +9,7 @@ services:
     restart: always
 
   api:
-    image: ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
+    image: $${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
     container_name: portfolio-api
     env_file:
       - .env
@@ -21,7 +21,7 @@ services:
     restart: always
 
   frontend:
-    image: ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
+    image: $${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
     container_name: portfolio-frontend
     depends_on:
       api:
