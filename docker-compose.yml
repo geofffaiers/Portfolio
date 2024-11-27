@@ -1,12 +1,11 @@
 services:
   mysql-db:
-    build: ./mysql-db
+    image: mysql:latest
     container_name: portfolio-mysql-db
     env_file: 
       - .env
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
-    mem_limit: 256m
     restart: unless-stopped
 
   api:
@@ -36,7 +35,7 @@ services:
     restart: unless-stopped
 
   nginx:
-    build: ./nginx
+    image: nginx:latest
     container_name: portfolio-nginx
     ports:
       - 80:80
@@ -45,3 +44,4 @@ services:
     depends_on:
       - api
       - frontend
+    restart: unless-stopped

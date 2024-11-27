@@ -71,6 +71,16 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
+      - name: Copy docker-compose.yml to Droplet
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          source: "docker-compose.prod.yml"
+          target: "/root/Portfolio/docker-compose.prod.yml"
+
       - name: Create a new .env file on Droplet
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -102,16 +112,10 @@ jobs:
           port: 22
           script: |
             echo ${{ secrets.DOCKER_PAT }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-            docker network create portfolio || true
-            for service in portfolio-mysql-db portfolio-api portfolio-frontend portfolio-nginx; do
-              docker pull ${{ secrets.DOCKER_USERNAME }}/$service:latest
-            done
-            docker stop portfolio-mysql-db portfolio-api portfolio-frontend portfolio-nginx || true
-            docker rm -f portfolio-mysql-db portfolio-api portfolio-frontend portfolio-nginx || true
-            docker run -d --name portfolio-mysql-db --network portfolio --env-file /root/.env --restart unless-stopped --memory="256m" ${{ secrets.DOCKER_USERNAME }}/portfolio-mysql-db:latest
-            docker run -d --name portfolio-api --network portfolio --env-file /root/.env -p ${{ vars.API_PORT }}:${{ vars.API_PORT }} --restart unless-stopped ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
-            docker run -d --name portfolio-frontend --network portfolio -p ${{ vars.CLIENT_PORT }}:${{ vars.CLIENT_PORT }} --restart unless-stopped ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
-            docker run -d --name portfolio-nginx --network portfolio -p 80:80 -p 443:443 --restart unless-stopped --memory="256m" ${{ secrets.DOCKER_USERNAME }}/portfolio-nginx:latest
+            cd /root/Portfolio
+            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d
   
       - name: Clean Up Docker Volumes
         uses: appleboy/ssh-action@v1.2.0
