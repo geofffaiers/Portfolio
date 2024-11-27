@@ -41,22 +41,22 @@ services:
     container_name: portfolio-nginx
     ports:
       - 80:80
-      - 443:443
+      # - 443:443
     volumes:
-      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+      # - /etc/letsencrypt:/etc/letsencrypt
+      # - /var/lib/letsencrypt:/var/lib/letsencrypt
     depends_on:
       - api
       - frontend
     restart: always
       
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
-      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    restart: always
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes:
+  #     - /etc/letsencrypt:/etc/letsencrypt
+  #     - /var/lib/letsencrypt:/var/lib/letsencrypt
+  #     - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf
+  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  #   restart: always
