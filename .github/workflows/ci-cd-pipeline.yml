@@ -50,9 +50,13 @@ jobs:
       - name: Build Docker images
         run: docker-compose build
 
+      - name: Build Nginx Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/portfolio-nginx:latest ./nginx
+
       - name: Tag and Push Docker images
         run: |
-          for service in portfolio-api portfolio-frontend; do
+          for service in portfolio-api portfolio-frontend portfolio-nginx; do
             docker tag $service:latest ${{ secrets.DOCKER_USERNAME }}/$service:latest
             docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
           done
