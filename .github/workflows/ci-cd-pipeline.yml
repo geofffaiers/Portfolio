@@ -113,9 +113,9 @@ jobs:
           script: |
             echo ${{ secrets.DOCKER_PAT }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
             cd /root/Portfolio
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml pull
-            docker-compose -f docker-compose.prod.yml up -d
+            docker-compose --env-file /root/.env -f docker-compose.prod.yml down
+            docker-compose --env-file /root/.env -f docker-compose.prod.yml pull
+            docker-compose --env-file /root/.env -f docker-compose.prod.yml up -d
   
       - name: Clean Up Docker Volumes
         uses: appleboy/ssh-action@v1.2.0
