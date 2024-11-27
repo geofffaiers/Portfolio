@@ -52,7 +52,7 @@ jobs:
 
       - name: Tag and Push Docker images
         run: |
-          for service in portfolio-mysql-db portfolio-api portfolio-frontend portfolio-nginx; do
+          for service in portfolio-api portfolio-frontend; do
             docker tag $service:latest ${{ secrets.DOCKER_USERNAME }}/$service:latest
             docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
           done
