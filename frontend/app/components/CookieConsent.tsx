@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Box, Button, DialogContent, DialogTitle, Modal, ModalClose, ModalDialog, Typography } from '@mui/joy'
+import { Box, Button, DialogContent, DialogTitle, Modal, ModalDialog, Typography } from '@mui/joy'
 
 export const CookieConsent = (): JSX.Element => {
   const [open, setOpen] = useState<boolean>(false)
