@@ -52,7 +52,6 @@ services:
       - api
       - frontend
     restart: always
-    command: /bin/sh -c "if [ ! -f /etc/letsencrypt/live/gfaiers.com/fullchain.pem ]; then mkdir -p /etc/nginx/ssl && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/privkey.pem -out /etc/nginx/ssl/fullchain.pem -subj '/CN=localhost'; fi && nginx -g 'daemon off;'"
       
   certbot:
     image: certbot/certbot
