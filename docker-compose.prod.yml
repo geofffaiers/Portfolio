@@ -47,20 +47,20 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/lib/letsencrypt:/var/lib/letsencrypt
       - ./self-signed:/etc/nginx/ssl
-      - /var/www/certbot:/var/www/certbot
+      # - /var/www/certbot:/var/www/certbot
     depends_on:
       - api
       - frontend
     restart: always
-    command: /bin/sh -c "if [ ! -f /etc/letsencrypt/live/gfaiers.com/fullchain.pem ]; then mkdir -p /etc/nginx/ssl && openssl req -x509 -nodes -days 1 -newkey rsa:2048 -keyout /etc/nginx/ssl/privkey.pem -out /etc/nginx/ssl/fullchain.pem -subj '/CN=localhost'; fi && nginx -g 'daemon off;'"
+    command: /bin/sh -c "if [ ! -f /etc/letsencrypt/live/gfaiers.com/fullchain.pem ]; then mkdir -p /etc/nginx/ssl && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/privkey.pem -out /etc/nginx/ssl/fullchain.pem -subj '/CN=localhost'; fi && nginx -g 'daemon off;'"
       
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
-      - ./nginx.prod.conf:/etc/nginx/nginx.conf
-      - /var/www/certbot:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot certonly --webroot -w /var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d gfaiers.com -d www.gfaiers.com --deploy-hook \"docker exec portfolio-nginx nginx -s reload\"; sleep 12h & wait $${!}; done;'"
-    restart: unless-stopped
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes:
+  #     - /etc/letsencrypt:/etc/letsencrypt
+  #     - /var/lib/letsencrypt:/var/lib/letsencrypt
+  #     - ./nginx.prod.conf:/etc/nginx/nginx.conf
+  #     - /var/www/certbot:/var/www/certbot
+  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot certonly --webroot -w /var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d gfaiers.com -d www.gfaiers.com --deploy-hook \"docker exec portfolio-nginx nginx -s reload\"; sleep 12h & wait $${!}; done;'"
+  #   restart: unless-stopped
