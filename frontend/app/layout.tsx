@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import { zxcvbnOptions } from '@zxcvbn-ts/core'
 import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common'
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en'
+import { CookieConsent } from './components/'
 
 const roboto = Inter({
   weight: ['400', '500', '700'],
@@ -35,6 +36,7 @@ export default function RootLayout({
     <html lang='en' className={roboto.className}>
       <body className={`antialiased`}>
         {children}
+        <CookieConsent />
       </body>
     </html>
   )

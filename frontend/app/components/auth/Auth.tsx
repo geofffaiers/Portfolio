@@ -1,4 +1,5 @@
-import {  Box, IconButton, Snackbar, styled } from '@mui/joy'
+'use client'
+import { Box, IconButton, Snackbar, styled } from '@mui/joy'
 import { User } from '../../models'
 import { Login } from './Login'
 import { Logout } from './Logout'
@@ -39,6 +40,7 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
   })
   const abortControllerRef = useRef<AbortController | null>(null)
   const { loggedInUser, readingFromLocalStorage } = state
+  const [cookiesAllowed, setCookiesAllowed] = useState<boolean>(false)
 
   const handleSetLoggedInUser = useCallback((user: User | null) => {
     setLoggedInUser(user)
@@ -110,9 +112,16 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
     }
   }, [loggedInUser])
 
+  useEffect(() => {
+    const consent = localStorage.getItem('cookieConsent')
+    if (consent) {
+      setCookiesAllowed(true)
+    }
+  }, [])
+
   return (
     <>
-      {loggedInUser == null && <StyledBox>
+      {cookiesAllowed && loggedInUser == null && <StyledBox>
         <Register readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
         <Login readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
       </StyledBox>}
