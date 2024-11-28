@@ -43,10 +43,10 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/lib/letsencrypt:/var/lib/letsencrypt
-      - ./nginx/self-signed:/etc/nginx/ssl
+      - ./self-signed:/etc/nginx/ssl
       - /var/www/certbot:/var/www/certbot
     depends_on:
       - api
