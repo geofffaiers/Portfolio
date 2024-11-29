@@ -21,7 +21,7 @@ export const CookieConsent = ({ setConsent }: Props): JSX.Element => {
         setConsent(true)
       }
     }
-  }, [])
+  }, [setConsent])
 
   const handleAccept = (): void => {
     const expiryDate = new Date()

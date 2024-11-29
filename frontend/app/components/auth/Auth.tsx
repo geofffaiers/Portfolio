@@ -44,7 +44,6 @@ export const Auth = ({ children, consent, setLoggedInUser }: Props): JSX.Element
   })
   const abortControllerRef = useRef<AbortController | null>(null)
   const { loggedInUser, readingFromLocalStorage } = state
-  const [cookiesAllowed, setCookiesAllowed] = useState<boolean>(false)
 
   const handleSetLoggedInUser = useCallback((user: User | null) => {
     setLoggedInUser(user)
