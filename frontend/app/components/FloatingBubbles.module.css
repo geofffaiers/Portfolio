@@ -33,7 +33,7 @@
       right: 0;
       width: auto;
       height: auto;
-      display: flex;
+      display: none;
       justify-content: center;
       align-items: center;
       font-size: 2em;
@@ -42,6 +42,10 @@
       text-shadow: 0 0 10px #000;
       z-index: 2;
 
+      @media screen and (min-width: 600px) {
+        display: flex;
+      }
+      
       .score {
         display: inline-block;
         padding: 0.5em 1em;

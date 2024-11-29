@@ -17,12 +17,13 @@ interface State {
 
 interface Props {
   children: React.ReactNode
+  consent: boolean
   setLoggedInUser: (user: User | null) => void
 }
 
 const StyledBox = styled(Box)`
   position: fixed;
-  display: flex;
+  display: none;
   gap: 1rem;
   flex-wrap: wrap;
   align-items: center';
@@ -30,9 +31,12 @@ const StyledBox = styled(Box)`
   top: 20px;
   right: 20px;
   z-index: 3;
+  @media (min-width: 600px) {
+    display: flex;
+  }
 `
 
-export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
+export const Auth = ({ children, consent, setLoggedInUser }: Props): JSX.Element => {
   const [state, setState] = useState<State>({
     loggedInUser: null,
     readingFromLocalStorage: true,
@@ -112,16 +116,9 @@ export const Auth = ({ children, setLoggedInUser }: Props): JSX.Element => {
     }
   }, [loggedInUser])
 
-  useEffect(() => {
-    const consent = localStorage.getItem('cookieConsent')
-    if (consent) {
-      setCookiesAllowed(true)
-    }
-  }, [])
-
   return (
     <>
-      {cookiesAllowed && loggedInUser == null && <StyledBox>
+      {consent && loggedInUser == null && <StyledBox>
         <Register readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
         <Login readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
       </StyledBox>}

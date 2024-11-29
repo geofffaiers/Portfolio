@@ -2,20 +2,32 @@
 import { useState, useEffect } from 'react'
 import { Box, Button, DialogContent, DialogTitle, Modal, ModalDialog, Typography } from '@mui/joy'
 
-export const CookieConsent = (): JSX.Element => {
+interface Props {
+  setConsent: (consent: boolean) => void
+}
+
+export const CookieConsent = ({ setConsent }: Props): JSX.Element => {
   const [open, setOpen] = useState<boolean>(false)
 
   useEffect(() => {
-    const consent = localStorage.getItem('cookieConsent')
-    if (!consent) {
+    const consent: string | null = localStorage.getItem('cookieConsent')
+    if (consent == null) {
       setOpen(true)
+    } else {
+      if (new Date(consent) < new Date()) {
+        localStorage.removeItem('cookieConsent')
+        setOpen(true)
+      } else {
+        setConsent(true)
+      }
     }
   }, [])
 
   const handleAccept = (): void => {
     const expiryDate = new Date()
     expiryDate.setDate(expiryDate.getDate() + 7)
-    localStorage.setItem('cookieConsent', expiryDate.toISOString())
+    localStorage.setItem('cookieConsent', expiryDate.toLocaleString('en-US'))
+    setConsent(true)
     setOpen(false)
   }
 

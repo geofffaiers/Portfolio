@@ -93,11 +93,22 @@ interface Props {
   loggedInUser: User | null
 }
 
+const StyledContainer = styled(Container)`
+  height: 100vh;
+  padding-top: 0;
+  @media (min-width: 600px) {
+    padding-top: 100px;
+  }
+`
+
 const OuterBox = styled(Box)`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: calc(100% - 100px);
+  height: 100%;
+  @media (min-width: 600px) {
+    height: calc(100% - 100px);
+  }
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 0.25rem;
 `
@@ -115,7 +126,7 @@ const InnerBox = styled(Box)`
 
 export const Cv = ({ loggedInUser }: Props): JSX.Element => {
   return (
-    <Container style={{ height: '100vh', paddingTop: '100px' }}>
+    <StyledContainer>
       <OuterBox>
         <Details loggedInUser={loggedInUser}/>
         <InnerBox>
@@ -125,6 +136,6 @@ export const Cv = ({ loggedInUser }: Props): JSX.Element => {
         </InnerBox>
         <CallToAction loggedInUser={loggedInUser}/>
       </OuterBox>
-    </Container>
+    </StyledContainer>
   )
 }

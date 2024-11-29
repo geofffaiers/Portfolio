@@ -17,7 +17,7 @@ export const Details = ({ loggedInUser }: Props): JSX.Element => {
         <Typography level='h1' component='h1' gutterBottom display='inline' marginRight='auto'>
           Geoff Faiers
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+        <Box sx={{ gap: 2, flexWrap: 'wrap', alignItems: 'center', display: { xs: 'none', sm: 'flex' } }}>
           <IconButton href='https://www.linkedin.com/in/gfaiers/' component='a' target='_blank' aria-label='LinkedIn' size='lg' variant='plain'>
             <FontAwesomeIcon icon={faLinkedin}/>
           </IconButton>
@@ -32,7 +32,7 @@ export const Details = ({ loggedInUser }: Props): JSX.Element => {
       <Typography level='h4' component='h4' style={{ fontWeight: 500 }} gutterBottom>
         {isLoggedIn
           ? '8 Segrave Walk, York, YO26 4UD / 07795102820 / geoff@gfaiers.com'
-          : 'York, United Kingdom / 07795102820 / info@gfaiers.com'}
+          : 'York, United Kingdom / info@gfaiers.com'}
       </Typography>
     </Grid>
   )

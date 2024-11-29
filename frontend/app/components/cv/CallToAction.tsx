@@ -105,7 +105,7 @@ export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
         <Typography level='h4' component='h4' style={{ fontWeight: 500, textAlign: 'center' }} gutterBottom>
           I am available for hire, let&#39;s work together!
         </Typography>
-        <Box style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+        <Box style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <Button
             component='a'
             variant='solid'
@@ -113,6 +113,7 @@ export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
             size='lg'
             href='/Geoffrey_Faiers.pdf'
             download
+            sx={{ whiteSpace: 'pre', display: { xs: 'none', sm: 'inline-flex' } }}
           >
             Download CV
           </Button>
@@ -122,6 +123,7 @@ export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
               color='primary'
               size='lg'
               onClick={() => setOpenDialog(true)}
+              sx={{ whiteSpace: 'pre' }}
             >
               Contact Me
             </Button>
@@ -156,7 +158,7 @@ export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
                 <Textarea sx={{ maxHeight: '200px' }} name='message' minRows={5} required/>
                 <FormHelperText>{messageError}</FormHelperText>
               </FormControl>
-              <Button endDecorator={<FontAwesomeIcon icon={faPaperPlane}/>} type='submit'>Send</Button>
+              <Button endDecorator={<FontAwesomeIcon icon={faPaperPlane}/>} type='submit' sx={{ whiteSpace: 'pre' }}>Send</Button>
             </Stack>
           </form>
         </ModalDialog>
