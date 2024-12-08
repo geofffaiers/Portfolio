@@ -26,7 +26,7 @@ const StyledBox = styled(Box)`
   display: none;
   gap: 1rem;
   flex-wrap: wrap;
-  align-items: center';
+  align-items: center;
   position: fixed;
   top: 20px;
   right: 20px;
@@ -117,13 +117,15 @@ export const Auth = ({ children, consent, setLoggedInUser }: Props): JSX.Element
 
   return (
     <>
-      {consent && loggedInUser == null && <StyledBox>
-        <Register readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
-        <Login readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
-      </StyledBox>}
-      {loggedInUser != null && <StyledBox>
-        <Logout setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
-      </StyledBox>}
+      {consent && (<StyledBox>
+        {loggedInUser && (<Logout setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>)}
+        {!loggedInUser && (
+          <>
+            <Register readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
+            <Login readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
+          </>
+        )}
+      </StyledBox>)}
       {children}
       <Snackbar
         open={state.error !== ''}
