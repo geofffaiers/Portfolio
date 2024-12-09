@@ -36,7 +36,7 @@ const StyledBox = styled(Box)`
   }
 `
 
-export const Auth = ({ children, consent, setLoggedInUser }: Props): JSX.Element => {
+export default function Auth({ children, consent, setLoggedInUser }: Props): JSX.Element {
   const [state, setState] = useState<State>({
     loggedInUser: null,
     readingFromLocalStorage: true,
