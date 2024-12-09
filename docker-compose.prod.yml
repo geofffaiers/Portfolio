@@ -42,6 +42,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 443:443/udp
     volumes:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt
