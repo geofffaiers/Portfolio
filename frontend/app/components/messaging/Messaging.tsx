@@ -41,7 +41,7 @@ const StyledBox = styled(Box)`
   gap: 0.5rem;
 `
 
-export const Messaging = ({ children, loggedInUser }: Props): JSX.Element => {
+export default function Messaging ({ children, loggedInUser }: Props): JSX.Element {
   const [state, setState] = useState<State>({
     socketState: SocketState.DISCONNECTED,
     expanded: true,
