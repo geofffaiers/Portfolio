@@ -19,7 +19,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `reset_token` VARCHAR(255),
   `reset_token_expires` TIMESTAMP NULL DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_email` (`email`),
+  INDEX `idx_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `previous_passwords` (
@@ -27,7 +29,8 @@ CREATE TABLE IF NOT EXISTS `previous_passwords` (
   `user_id` INT(11) NOT NULL,
   `password` CHAR(60) NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
+  INDEX `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `messages` (
@@ -38,7 +41,9 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `read_at` TIMESTAMP NULL DEFAULT NULL,
   FOREIGN KEY (`sender_id`) REFERENCES `users`(`id`),
-  FOREIGN KEY (`receiver_id`) REFERENCES `users`(`id`)
+  FOREIGN KEY (`receiver_id`) REFERENCES `users`(`id`),
+  INDEX `idx_sender_id` (`sender_id`),
+  INDEX `idx_receiver_id` (`receiver_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `contact_form` (
@@ -47,4 +52,14 @@ CREATE TABLE IF NOT EXISTS `contact_form` (
   `email` VARCHAR(255) NOT NULL,
   `message` TEXT NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `scores` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT(11) NOT NULL,
+  `score` INT(11) NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
+  INDEX `idx_user_id` (`user_id`),
+  INDEX `idx_score` (`score`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
