@@ -49,7 +49,7 @@ export const ScoreDisplay = ({ counter, score, animateScore, timeLeft, newGame }
           {loggedInUser && (<Scores title='Your Scores' scores={userScores ?? []} thisScore={thisScore} displayThisScore loading={loading} error={error}/>)}
           {!loggedInUser && !currentGameSaved && (
             <Typography level='body-lg' sx={{ color: 'var(--foreground)' }}>
-              To save your score, please register!
+              To save your score, please register or login!
             </Typography>
           )}
           <Button className={styles.resetButton} onClick={newGame} sx={{ marginTop: '1rem' }}>New Game</Button>

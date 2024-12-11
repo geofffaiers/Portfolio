@@ -20,7 +20,7 @@ export const Scores = ({ title, scores, thisScore, displayThisScore, loading, er
     return <Typography level='h3' sx={{ color: 'var(--foreground)', textAlign: 'center', marginBottom: '1rem' }}>{error}</Typography>
   }
   if (scores.length === 0) {
-    return <Typography level='h2' sx={{ color: 'var(--foreground)', textAlign: 'center', marginBottom: '1rem' }}>No scores found</Typography>
+    return <Typography level='h2' sx={{ color: 'var(--foreground)', textAlign: 'center', marginBottom: '1rem' }}>No high scores are saved!</Typography>
   }
   return (
     <>
