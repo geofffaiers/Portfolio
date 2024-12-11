@@ -152,10 +152,6 @@ export const useGame = ({ canvasRef }: Props) => {
     }
   }, [playing, timeLeft, createBubble])
 
-  useEffect(() => {
-    console.log('c', counter)
-  }, [counter])
-
   return {
     counter,
     score,

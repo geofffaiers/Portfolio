@@ -1,5 +1,5 @@
 import { Score } from "@/app/models"
-import { Typography } from "@mui/joy"
+import { CircularProgress, Typography } from "@mui/joy"
 import { useState } from "react"
 
 interface Props {
@@ -13,15 +13,14 @@ interface Props {
 
 export const Scores = ({ title, scores, thisScore, displayThisScore, loading, error }: Props): JSX.Element => {
   const [scoreDisplayed, setScoreDisplayed] = useState<boolean>(false)
-
   if (loading) {
-    return <div>Loading...</div>
+    return <CircularProgress />
   }
   if (error) {
-    return <div>{error}</div>
+    return <Typography level='h3' sx={{ color: 'var(--foreground)', textAlign: 'center', marginBottom: '1rem' }}>{error}</Typography>
   }
   if (scores.length === 0) {
-    return <div>No scores found</div>
+    return <Typography level='h2' sx={{ color: 'var(--foreground)', textAlign: 'center', marginBottom: '1rem' }}>No high scores are saved!</Typography>
   }
   return (
     <>
