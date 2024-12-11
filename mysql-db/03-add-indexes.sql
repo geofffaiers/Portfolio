@@ -1,17 +1,13 @@
 
 USE portfolio;
 
-ALTER TABLE `users`
-  ADD INDEX `idx_email` (`email`),
-  ADD INDEX `idx_username` (`username`);
+CREATE INDEX IF NOT EXISTS `idx_email` ON `users` (`email`);
+CREATE INDEX IF NOT EXISTS `idx_username` ON `users` (`username`);
 
-ALTER TABLE `previous_passwords`
-  ADD INDEX `idx_user_id` (`user_id`);
+CREATE INDEX IF NOT EXISTS `idx_user_id` ON `previous_passwords` (`user_id`);
 
-ALTER TABLE `messages`
-  ADD INDEX `idx_sender_id` (`sender_id`),
-  ADD INDEX `idx_receiver_id` (`receiver_id`);
+CREATE INDEX IF NOT EXISTS `idx_sender_id` ON `messages` (`sender_id`);
+CREATE INDEX IF NOT EXISTS `idx_receiver_id` ON `messages` (`receiver_id`);
 
-ALTER TABLE `scores`
-  ADD INDEX `idx_user_id` (`user_id`),
-  ADD INDEX `idx_score` (`score`);
+CREATE INDEX IF NOT EXISTS `idx_score_desc` ON `scores` (`score` DESC);
+CREATE INDEX IF NOT EXISTS `idx_user_id_score_desc_id_created_at` ON `scores` (`user_id`, `score` DESC, `id`, `created_at`);

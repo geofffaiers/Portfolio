@@ -60,6 +60,6 @@ CREATE TABLE IF NOT EXISTS `scores` (
   `score` INT(11) NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
-  INDEX `idx_user_id` (`user_id`),
-  INDEX `idx_score` (`score`)
+  INDEX `idx_score_desc` (`score` DESC),
+  INDEX `idx_user_id_score_desc_id_created_at` (`user_id`, `score` DESC, `id`, `created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
