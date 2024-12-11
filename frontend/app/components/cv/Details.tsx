@@ -1,14 +1,11 @@
-import { User } from '@/app/models'
+import { usePageContext } from '@/app/context'
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Box, Grid, IconButton, Typography } from '@mui/joy'
 
-interface Props {
-  loggedInUser: User | null
-}
-
-export const Details = ({ loggedInUser }: Props): JSX.Element => {
+export const Details = (): JSX.Element => {
+  const { loggedInUser } = usePageContext()
   const isLoggedIn: boolean = !!loggedInUser
 
   return (

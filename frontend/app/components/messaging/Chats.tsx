@@ -6,7 +6,6 @@ import Chat from './Chat'
 interface Props {
   messages: Message[]
   openChats: User[]
-  loggedInUser: User
   handleCloseChat: (user: User) => void
   handleSendSocketMessage: (message: SocketMessage) => void
   addMessages: (messages: Message[]) => void
@@ -22,7 +21,7 @@ interface OpenChat {
   msgs: Message[]
 }
 
-export default function Chats ({ messages, openChats, loggedInUser, handleCloseChat, handleSendSocketMessage, addMessages }: Props): JSX.Element {
+export default function Chats ({ messages, openChats, handleCloseChat, handleSendSocketMessage, addMessages }: Props): JSX.Element {
   const [state, setState] = useState<State>({
     openChats: []
   })
@@ -49,7 +48,6 @@ export default function Chats ({ messages, openChats, loggedInUser, handleCloseC
           messages={msgs}
           user={user}
           expanded={expanded}
-          loggedInUser={loggedInUser}
           closeChat={handleCloseChat}
           handleSendSocketMessage={handleSendSocketMessage}
           addMessages={addMessages}

@@ -8,10 +8,10 @@ import { Box, styled } from '@mui/joy'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
 import { getApiUrl, getWsUrl } from '@/app/helpers'
+import { usePageContext } from '@/app/context'
 
 interface Props {
   children: React.ReactNode
-  loggedInUser: User | null
 }
 
 enum SocketState {
@@ -41,7 +41,8 @@ const StyledBox = styled(Box)`
   gap: 0.5rem;
 `
 
-export default function Messaging ({ children, loggedInUser }: Props): JSX.Element {
+export default function Messaging ({ children }: Props): JSX.Element {
+  const { loggedInUser } = usePageContext()
   const [state, setState] = useState<State>({
     socketState: SocketState.DISCONNECTED,
     expanded: true,
@@ -225,14 +226,12 @@ export default function Messaging ({ children, loggedInUser }: Props): JSX.Eleme
       {loggedInUser && (
         <StyledBox paddingInline={1}>
           <Conversations
-            loggedInUser={loggedInUser}
             chatHeaders={state.chatHeaders}
             handleOpenChat={handleOpenChat}
           />
           <Chats
             messages={state.messages}
             openChats={state.openChats}
-            loggedInUser={loggedInUser}
             handleCloseChat={handleCloseChat}
             handleSendSocketMessage={handleSendSocketMessage}
             addMessages={addMessages}

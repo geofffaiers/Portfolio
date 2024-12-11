@@ -10,12 +10,12 @@ import { ProfileIcon } from '../ProfileIcon'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
 import { getApiUrl } from '@/app/helpers'
+import { usePageContext } from '@/app/context'
 
 interface Props {
   messages: Message[]
   user: User
   expanded: boolean
-  loggedInUser: User
   closeChat: (user: User) => void
   handleSendSocketMessage: (message: SocketMessage) => void
   addMessages: (messages: Message[]) => void
@@ -59,7 +59,8 @@ const StyledBox = styled(Box)`
   }
 `
 
-export default function Chat ({ messages, user, expanded, loggedInUser, closeChat, handleSendSocketMessage, addMessages }: Props): JSX.Element {
+export default function Chat ({ messages, user, expanded, closeChat, handleSendSocketMessage, addMessages }: Props): JSX.Element {
+  const { loggedInUser } = usePageContext()
   const [state, setState] = useState<State>({
     page: 0,
     expanded,
@@ -92,7 +93,7 @@ export default function Chat ({ messages, user, expanded, loggedInUser, closeCha
     }
     const message: Message = new Message()
     message.content = state.newMessage.trim()
-    message.senderId = loggedInUser.id
+    message.senderId = loggedInUser?.id ?? -1
     message.receiverId = user.id
     setState(s => ({ ...s, newMessage: '', scrollDown: true }))
     const socketMessage: NewMessage = new NewMessage(message)
@@ -206,7 +207,6 @@ export default function Chat ({ messages, user, expanded, loggedInUser, closeCha
       <Messages
         className='messages'
         user={user}
-        loggedInUser={loggedInUser}
         expanded={state.expanded}
         messages={messages}
         handleLoadMore={handleLoadMore}

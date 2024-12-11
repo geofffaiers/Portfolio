@@ -3,9 +3,9 @@ import { ProfileIcon } from '../ProfileIcon'
 import { ChatHeader, User } from '@/app/models'
 import { styled } from '@mui/joy/styles'
 import { useMemo } from 'react'
+import { usePageContext } from '@/app/context'
 
 interface Props {
-  loggedInUser: User
   chatHeader: ChatHeader
   handleOpenChat: (user: User) => void
 }
@@ -32,7 +32,8 @@ const StyledStack = styled(Stack)`
   }
 `
 
-export default function Conversation ({ loggedInUser, chatHeader, handleOpenChat }: Props): JSX.Element {
+export default function Conversation ({ chatHeader, handleOpenChat }: Props): JSX.Element {
+  const { loggedInUser } = usePageContext()
   const { user, lastMessage, lastReceivedMessage } = chatHeader
   const userName: string = useMemo((): string => {
     if (user.firstName != null && user.lastName != null) {

@@ -1,21 +1,18 @@
 'use client'
+import { usePageContext } from '@/app/context'
 import { getApiUrl } from '@/app/helpers'
-import { User } from '@/app/models'
 import { faClose, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Box, Button, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalClose, ModalDialog, Snackbar, Stack, Textarea, Typography } from '@mui/joy'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
-
-interface Props {
-  loggedInUser: User | null
-}
 
 interface State {
   message: string
   type: 'danger' | 'success' | 'warning' | 'neutral'
 }
 
-export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
+export const CallToAction = (): JSX.Element => {
+  const { loggedInUser, setPlay } = usePageContext()
   const [openDialog, setOpenDialog] = useState<boolean>(false)
   const [nameError, setNameError] = useState<string>('')
   const [emailError, setEmailError] = useState<string>('')
@@ -106,6 +103,15 @@ export const CallToAction = ({ loggedInUser }: Props): JSX.Element => {
           I am available for hire, let&#39;s work together!
         </Typography>
         <Box style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <Button
+            variant='solid'
+            color='neutral'
+            size='lg'
+            onClick={() => setPlay(true)}
+            sx={{ whiteSpace: 'pre' }}
+          >
+            Play The Game (Ctrl + \)
+          </Button>
           <Button
             component='a'
             variant='solid'

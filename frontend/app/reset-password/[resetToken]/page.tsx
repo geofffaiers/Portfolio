@@ -1,11 +1,12 @@
 'use client'
 import { useState, FormEvent, useCallback, useEffect, useRef } from 'react'
 import { Container, Box, Input, Button, Typography, Stack, FormControl, FormLabel, FormHelperText, CircularProgress } from '@mui/joy'
-import { FloatingBubbles } from '../../components'
+import { Game } from '../../components'
 import { PasswordStrength } from '@/app/components/auth/PasswordStrength'
 import { useParams } from 'next/navigation'
 import { DefaultResponse, ErrorCheck, User } from '@/app/models'
 import { getApiUrl } from '@/app/helpers'
+import { PageProvider } from '@/app/context'
 
 export default function ResetPasswordPage (): JSX.Element {
   const { resetToken } = useParams()
@@ -130,54 +131,56 @@ export default function ResetPasswordPage (): JSX.Element {
   }
 
   return (
-    <FloatingBubbles>
-      <Container
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh'
-        }}
-      >
-        <Box
-          component='form'
-          onSubmit={handleResetPassword}
+    <PageProvider>
+      <Game>
+        <Container
           sx={{
             display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            width: '100%',
-            maxWidth: '400px',
-            padding: 3,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 2
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh'
           }}
         >
-          <Typography level='h4' component='h1' gutterBottom>
-            Reset Password
-          </Typography>
-          {loading && (<CircularProgress />)}
-          {!loading && error && <Typography component='p'>{error}</Typography>}
-          {!loading && error && user && <Typography component='p'>Please try again.</Typography>}
-          {!loading && outcome && <Typography component='p'>{outcome}</Typography>}
-          {!loading && user && !outcome && (
-            <Stack spacing={2}>
-              <FormControl error={passwordError !== ''}>
-                <FormLabel>Password</FormLabel>
-                <Input name="password" type="password" required onChange={handleChangePassword}/>
-                <FormHelperText>{passwordError}</FormHelperText>
-              </FormControl>
-              <FormControl error={confirmPasswordError !== ''}>
-                <FormLabel>Confirm Password</FormLabel>
-                <Input name="confirmPassword" type="password" required onChange={() => setConfirmPasswordError('')}/>
-                <FormHelperText>{confirmPasswordError}</FormHelperText>
-              </FormControl>
-              <PasswordStrength password={password} setPasswordScore={setPasswordScore}/>
-              <Button type="submit">Reset Password</Button>
-            </Stack>
-          )}
-        </Box>
-      </Container>
-    </FloatingBubbles>
+          <Box
+            component='form'
+            onSubmit={handleResetPassword}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+              width: '100%',
+              maxWidth: '400px',
+              padding: 3,
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              borderRadius: 2
+            }}
+          >
+            <Typography level='h4' component='h1' gutterBottom>
+              Reset Password
+            </Typography>
+            {loading && (<CircularProgress />)}
+            {!loading && error && <Typography component='p'>{error}</Typography>}
+            {!loading && error && user && <Typography component='p'>Please try again.</Typography>}
+            {!loading && outcome && <Typography component='p'>{outcome}</Typography>}
+            {!loading && user && !outcome && (
+              <Stack spacing={2}>
+                <FormControl error={passwordError !== ''}>
+                  <FormLabel>Password</FormLabel>
+                  <Input name="password" type="password" required onChange={handleChangePassword}/>
+                  <FormHelperText>{passwordError}</FormHelperText>
+                </FormControl>
+                <FormControl error={confirmPasswordError !== ''}>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <Input name="confirmPassword" type="password" required onChange={() => setConfirmPasswordError('')}/>
+                  <FormHelperText>{confirmPasswordError}</FormHelperText>
+                </FormControl>
+                <PasswordStrength password={password} setPasswordScore={setPasswordScore}/>
+                <Button type="submit">Reset Password</Button>
+              </Stack>
+            )}
+          </Box>
+        </Container>
+      </Game>
+    </PageProvider>
   )
 }

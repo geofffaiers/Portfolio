@@ -8,17 +8,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { getApiUrl } from '@/app/helpers'
+import { usePageContext } from '@/app/context'
 
 interface State {
-  loggedInUser: User | null
   readingFromLocalStorage: boolean
   error: string
 }
 
 interface Props {
   children: React.ReactNode
-  consent: boolean
-  setLoggedInUser: (user: User | null) => void
 }
 
 const StyledBox = styled(Box)`
@@ -36,20 +34,19 @@ const StyledBox = styled(Box)`
   }
 `
 
-export default function Auth({ children, consent, setLoggedInUser }: Props): JSX.Element {
+export default function Auth({ children }: Props): JSX.Element {
+  const { loggedInUser, setLoggedInUser } = usePageContext()
   const [state, setState] = useState<State>({
-    loggedInUser: null,
     readingFromLocalStorage: true,
     error: ''
   })
   const abortControllerRef = useRef<AbortController | null>(null)
-  const { loggedInUser, readingFromLocalStorage } = state
+  const { readingFromLocalStorage, error } = state
 
   const handleSetLoggedInUser = useCallback((user: User | null) => {
     setLoggedInUser(user)
     setState({
       readingFromLocalStorage: false,
-      loggedInUser: user,
       error: ''
     })
   }, [setLoggedInUser])
@@ -87,15 +84,15 @@ export default function Auth({ children, consent, setLoggedInUser }: Props): JSX
         if (refreshError === '') {
           handleSetLoggedInUser(JSON.parse(savedUser))
         } else {
+          setLoggedInUser(null)
           setState({
-            loggedInUser: null,
             readingFromLocalStorage: false,
             error: refreshError
           })
         }
       } else {
+        setLoggedInUser(null)
         setState({
-          loggedInUser: null,
           readingFromLocalStorage: false,
           error: ''
         })
@@ -117,7 +114,7 @@ export default function Auth({ children, consent, setLoggedInUser }: Props): JSX
 
   return (
     <>
-      {consent && (<StyledBox>
+      <StyledBox>
         {loggedInUser && (<Logout setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>)}
         {!loggedInUser && (
           <>
@@ -125,10 +122,10 @@ export default function Auth({ children, consent, setLoggedInUser }: Props): JSX
             <Login readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
           </>
         )}
-      </StyledBox>)}
+      </StyledBox>
       {children}
       <Snackbar
-        open={state.error !== ''}
+        open={error !== ''}
         autoHideDuration={6000}
         onClose={() => handleSetError('')}
         variant='soft'
@@ -144,7 +141,7 @@ export default function Auth({ children, consent, setLoggedInUser }: Props): JSX
           </IconButton>
         }
       >
-        {state.error}
+        {error}
       </Snackbar>
     </>
   )

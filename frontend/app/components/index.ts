@@ -1,5 +1,5 @@
 export * from './CookieConsent'
-export * from './FloatingBubbles'
+export * from './game/Game'
 export * from './cv/Cv'
 export * from './auth/Auth'
 export * from './messaging/Messaging'
