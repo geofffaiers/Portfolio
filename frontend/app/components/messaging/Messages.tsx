@@ -5,7 +5,6 @@ import { SingleMessage } from './SingleMessage'
 interface Props {
   className: string
   user: User
-  loggedInUser: User
   moreToLoad: boolean
   expanded: boolean
   messages: Message[]
@@ -14,7 +13,7 @@ interface Props {
   handleSendSocketMessage: (message: SocketMessage) => void
 }
 
-export const Messages = ({ className, user, loggedInUser, moreToLoad, expanded, messages, handleLoadMore, messagesEndRef, handleSendSocketMessage }: Props): JSX.Element => {
+export const Messages = ({ className, user, moreToLoad, expanded, messages, handleLoadMore, messagesEndRef, handleSendSocketMessage }: Props): JSX.Element => {
   let lastMessageDate: string | null = null
 
   return (
@@ -26,7 +25,7 @@ export const Messages = ({ className, user, loggedInUser, moreToLoad, expanded, 
         const showDate = messageDate !== lastMessageDate
         lastMessageDate = messageDate
         return (
-          <SingleMessage key={message.id} user={user} loggedInUser={loggedInUser} message={message} handleSendSocketMessage={handleSendSocketMessage} createdAt={createdAt} showDate={showDate} />
+          <SingleMessage key={message.id} user={user} message={message} handleSendSocketMessage={handleSendSocketMessage} createdAt={createdAt} showDate={showDate} />
         )
       })}
       <div ref={messagesEndRef}></div>

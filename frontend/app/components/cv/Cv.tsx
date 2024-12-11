@@ -1,9 +1,11 @@
 'use client'
 import { Container, Box, styled } from '@mui/joy'
-import { CvHeader, User } from '../../models'
+import { CvHeader } from '../../models'
 import { Section } from './Section'
 import { Details } from './Details'
 import { CallToAction } from './CallToAction'
+import { usePageContext } from '@/app/context'
+import { useEffect } from 'react'
 
 const data: CvHeader[] = [
   {
@@ -89,9 +91,6 @@ const data: CvHeader[] = [
   }
 ]
 
-interface Props {
-  loggedInUser: User | null
-}
 
 const StyledContainer = styled(Container)`
   height: 100vh;
@@ -124,17 +123,35 @@ const InnerBox = styled(Box)`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `
 
-export const Cv = ({ loggedInUser }: Props): JSX.Element => {
+export const Cv = (): JSX.Element => {
+  const { play, setPlay } = usePageContext()
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === '\\') {
+        setPlay(!play)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [play, setPlay])
+
+  if (play) {
+    return <></>
+  }
   return (
     <StyledContainer>
       <OuterBox>
-        <Details loggedInUser={loggedInUser}/>
+        <Details/>
         <InnerBox>
           {data.map((section, index) => (
             <Section section={section} key={index}/>
           ))}
         </InnerBox>
-        <CallToAction loggedInUser={loggedInUser}/>
+        <CallToAction/>
       </OuterBox>
     </StyledContainer>
   )

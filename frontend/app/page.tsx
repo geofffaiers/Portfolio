@@ -1,39 +1,36 @@
 'use client'
-import { useState, lazy, Suspense, useMemo } from 'react'
-import { Cv, FloatingBubbles, CookieConsent } from './components'
-import { User } from './models'
-
-const Auth = lazy(() => import('./components/auth/Auth'))
-const Messaging = lazy(() => import('./components/messaging/Messaging'))
+import { useState, useMemo } from 'react'
+import { Cv, CookieConsent, Game } from './components'
+import { PageProvider } from './context'
+import Auth from './components/auth/Auth'
+import Messaging from './components/messaging/Messaging'
 
 export default function Home (): JSX.Element {
   const [consent, setConsent] = useState<boolean>(false)
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null)
-
-  const memoizedPage = useMemo(() => <Page loggedInUser={loggedInUser} />, [loggedInUser])
+  const memoizedPage = useMemo(() => <Page/>, [])
 
   return (
     <>
-      <CookieConsent setConsent={setConsent} />
-      {consent ? (
-        <Suspense fallback={memoizedPage}>
-          <Auth consent={consent} setLoggedInUser={setLoggedInUser}>
-            <Messaging loggedInUser={loggedInUser}>
+      <PageProvider>
+        <CookieConsent setConsent={setConsent} />
+        {consent ? (
+          <Auth>
+            <Messaging>
               {memoizedPage}
             </Messaging>
           </Auth>
-        </Suspense>
-      ) : (
-        memoizedPage
-      )}
+        ) : (
+          memoizedPage
+        )}
+      </PageProvider>
     </>
   )
 }
 
-const Page = ({ loggedInUser }: { loggedInUser: User | null }): JSX.Element => {
+const Page = (): JSX.Element => {
   return (
-    <FloatingBubbles>
-      <Cv loggedInUser={loggedInUser}/>
-    </FloatingBubbles>
+    <Game>
+      <Cv/>
+    </Game>
   )
 }

@@ -4,6 +4,7 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { DefaultResponse, User } from '@/app/models'
 import { PasswordStrength } from './PasswordStrength'
 import { getApiUrl } from '@/app/helpers'
+import { usePageContext } from '@/app/context'
 
 interface Props {
   readingFromLocalStorage: boolean
@@ -11,16 +12,9 @@ interface Props {
   setError: (error: string) => void
 }
 
-interface State {
-  openDialog: boolean
-  waiting: boolean
-}
-
 export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }: Props): JSX.Element => {
-  const [state, setState] = useState<State>({
-    openDialog: false,
-    waiting: false
-  })
+  const { openRegisterDialog, setOpenRegisterDialog } = usePageContext()
+  const [waiting, setWaiting] = useState<boolean>(false)
   const [emailError, setEmailError] = useState<string>('')
   const [passwordError, setPasswordError] = useState<string>('')
   const [confirmPasswordError, setConfirmPasswordError] = useState<string>('')
@@ -63,11 +57,8 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
     if (!formValid) {
       return
     }
-    setState(s => ({
-      ...s,
-      waiting: true,
-      openDialog: false
-    }))
+    setOpenRegisterDialog(false)
+    setWaiting(true)
     setPassword('')
     setEmailError('')
     setPasswordError('')
@@ -76,17 +67,10 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
     if (registerError === '') {
       const loginError: string = await requestLogin(username, password)
       setError(loginError)
-      setState(s => ({
-        ...s,
-        waiting: false
-      }))
     } else {
       setError(registerError)
-      setState(s => ({
-        ...s,
-        waiting: false
-      }))
     }
+    setWaiting(false)
   }
 
   const requestRegister = async (email: string, username: string, password: string): Promise<string> => {
@@ -146,10 +130,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
 
 
   const handleOpenDialog = (): void => {
-    setState(s => ({
-      ...s,
-      openDialog: true
-    }))
+    setOpenRegisterDialog(true)
   }
 
   const handleCloseDialog = (): void => {
@@ -157,12 +138,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
     setEmailError('')
     setPasswordError('')
     setConfirmPasswordError('')
-    setState(s => ({
-      ...s,
-      openDialog: false,
-      loggingIn: false,
-      validationFailed: ''
-    }))
+    setOpenRegisterDialog(false)
     if (abortControllerRef.current != null) {
       abortControllerRef.current.abort()
     }
@@ -184,7 +160,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
   return (
     <>
       <Button
-        loading={state.waiting || readingFromLocalStorage}
+        loading={waiting || readingFromLocalStorage}
         variant='solid'
         color='neutral'
         onClick={handleOpenDialog}
@@ -192,7 +168,7 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
         Register
       </Button>
       <Modal
-        open={state.openDialog}
+        open={openRegisterDialog}
         onClose={handleCloseDialog}
       >
         <ModalDialog>

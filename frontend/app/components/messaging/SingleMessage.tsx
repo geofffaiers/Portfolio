@@ -2,17 +2,18 @@ import { Message, MessageType, ReadMessage, SocketMessage, User } from '@/app/mo
 import { Box, Typography } from '@mui/joy'
 import { useEffect, useMemo, useRef } from 'react'
 import { ProfileIcon } from '../ProfileIcon'
+import { usePageContext } from '@/app/context'
 
 interface Props {
   user: User
-  loggedInUser: User
   message: Message
   createdAt: Date
   showDate: boolean
   handleSendSocketMessage: (message: SocketMessage) => void
 }
 
-export const SingleMessage = ({ user, loggedInUser, message, createdAt, showDate, handleSendSocketMessage }: Props): JSX.Element => {
+export const SingleMessage = ({ user, message, createdAt, showDate, handleSendSocketMessage }: Props): JSX.Element => {
+  const { loggedInUser } = usePageContext()
   const messageRef = useRef<IntersectionObserver | null>(null)
 
   const userName = useMemo((): string => {
@@ -36,7 +37,7 @@ export const SingleMessage = ({ user, loggedInUser, message, createdAt, showDate
   }, [message.readAt])
 
   useEffect(() => {
-    if (message.receiverId === loggedInUser.id && message.readAt == null) {
+    if (message.receiverId === loggedInUser?.id && message.readAt == null) {
       console.log('update observer', message.id)
       messageRef.current = new IntersectionObserver(
         (entries) => {
@@ -57,11 +58,11 @@ export const SingleMessage = ({ user, loggedInUser, message, createdAt, showDate
         messageRef.current.disconnect()
       }
     }
-  }, [message, handleSendSocketMessage, loggedInUser.id])
+  }, [message, handleSendSocketMessage, loggedInUser?.id])
 
 
   const setObserver = (element: HTMLElement | null): void => {
-    if (messageRef.current != null && element != null && message.receiverId === loggedInUser.id && message.readAt == null) {
+    if (messageRef.current != null && element != null && message.receiverId === loggedInUser?.id && message.readAt == null) {
       messageRef.current.observe(element)
     } else if (messageRef.current != null) {
       console.log('disconnect observer 3', message.id)
@@ -85,10 +86,10 @@ export const SingleMessage = ({ user, loggedInUser, message, createdAt, showDate
           padding: '0.25rem',
         }}
       >
-        <ProfileIcon size='sm' user={message.senderId === loggedInUser.id ? loggedInUser : user} />
+        <ProfileIcon size='sm' user={message.senderId === loggedInUser?.id ? loggedInUser : user} />
         <Box sx={{ marginLeft: 1, flex: 1 }}>
           <Typography level='body-sm' sx={{ fontWeight: 'normal' }} title={readAtTitle}>
-            {message.senderId === loggedInUser.id ? 'You' : userName} - {createdAt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+            {message.senderId === loggedInUser?.id ? 'You' : userName} - {createdAt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
           </Typography>
           <Typography level='body-md' textColor={'var(--foreground)'} sx={{ marginTop: '8px' }}>
             {message.content}
