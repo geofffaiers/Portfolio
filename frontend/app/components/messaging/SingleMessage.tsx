@@ -38,7 +38,6 @@ export const SingleMessage = ({ user, message, createdAt, showDate, handleSendSo
 
   useEffect(() => {
     if (message.receiverId === loggedInUser?.id && message.readAt == null) {
-      console.log('update observer', message.id)
       messageRef.current = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -54,7 +53,6 @@ export const SingleMessage = ({ user, message, createdAt, showDate, handleSendSo
 
     return () => {
       if (messageRef.current) {
-        console.log('disconnect observer 2', message.id)
         messageRef.current.disconnect()
       }
     }
@@ -65,7 +63,6 @@ export const SingleMessage = ({ user, message, createdAt, showDate, handleSendSo
     if (messageRef.current != null && element != null && message.receiverId === loggedInUser?.id && message.readAt == null) {
       messageRef.current.observe(element)
     } else if (messageRef.current != null) {
-      console.log('disconnect observer 3', message.id)
       messageRef.current.disconnect()
     }
   }

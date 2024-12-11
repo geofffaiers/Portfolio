@@ -46,10 +46,10 @@ export const ScoreDisplay = ({ counter, score, animateScore, timeLeft, newGame }
       {timeLeft === 0 && (
         <div className={styles.endGameContainer}>
           <Scores title='Top Scores' scores={globalScores ?? []} thisScore={thisScore} loading={loading} error={error}/>
-          <Scores title='Your Scores' scores={userScores ?? []} thisScore={thisScore} displayThisScore loading={loading} error={error}/>
+          {loggedInUser && (<Scores title='Your Scores' scores={userScores ?? []} thisScore={thisScore} displayThisScore loading={loading} error={error}/>)}
           {!loggedInUser && !currentGameSaved && (
             <Typography level='body-lg' sx={{ color: 'var(--foreground)' }}>
-              To save your scores, please register! Saved: {currentGameSaved ? 'true' : 'false'} Requested: {currentGameRequested ? 'true' : 'false'} Counter: {counter}
+              To save your score, please register!
             </Typography>
           )}
           <Button className={styles.resetButton} onClick={newGame} sx={{ marginTop: '1rem' }}>New Game</Button>
