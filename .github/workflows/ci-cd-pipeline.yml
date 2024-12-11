@@ -29,10 +29,7 @@ jobs:
           username: ${{ secrets.DROPLET_USERNAME }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-          source: |
-            docker-compose.prod.yml
-            nginx.prod.conf
-            mysql-db/**
+          source: "docker-compose.prod.yml,nginx.prod.conf,mysql-db/**"
           target: "/root/Portfolio/"
 
       - name: Create a new .env file on Droplet
