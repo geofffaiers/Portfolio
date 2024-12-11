@@ -2,7 +2,7 @@ import { Request } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
 import { RowDataPacket } from 'mysql2'
-import { pool, sendResetPasswordEmail } from '../../helpers'
+import { pool } from '../../helpers'
 import { DefaultResponse, User } from '../../models'
 import { delay } from './methods'
 
