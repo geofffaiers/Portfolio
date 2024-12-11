@@ -102,7 +102,7 @@ export default function Auth({ children }: Props): JSX.Element {
     if (readingFromLocalStorage) {
       loadFromStorage()
     }
-  }, [readingFromLocalStorage, handleSetLoggedInUser])
+  }, [readingFromLocalStorage, handleSetLoggedInUser, setLoggedInUser])
 
   useEffect(() => {
     if (loggedInUser) {

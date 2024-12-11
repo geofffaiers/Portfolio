@@ -27,7 +27,7 @@ export const ScoreDisplay = ({ counter, score, animateScore, timeLeft, newGame }
     } else if (timeLeft > 0 && globalScores != null) {
       clearScores()
     }
-  }, [globalScores, score, loggedInUser, timeLeft])
+  }, [globalScores, score, loggedInUser, timeLeft, clearScores, currentGameRequested, currentGameSaved, getScores, saveScore])
 
   return (
     <>

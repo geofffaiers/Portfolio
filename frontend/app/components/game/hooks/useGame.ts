@@ -26,7 +26,7 @@ export const useGame = ({ canvasRef }: Props) => {
     const topMovement = (Math.random() - 0.5) * 2
     const leftMovement = (Math.random() - 0.5) * 2
     bubblesRef.current.push(new Bubble(topPosition, leftPosition, topMovement, leftMovement, size))
-  }, [canvasRef.current])
+  }, [canvasRef])
 
   const createBubbles = useCallback((amount: number): void => {
     for (let i = 0; i < amount; i++) {
@@ -65,7 +65,7 @@ export const useGame = ({ canvasRef }: Props) => {
         break
       }
     }
-  }, [playing, setPlaying, setScore, setAnimateScore, canvasRef.current])
+  }, [playing, setPlaying, setScore, setAnimateScore, canvasRef])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -102,7 +102,7 @@ export const useGame = ({ canvasRef }: Props) => {
       window.removeEventListener('resize', resizeCanvas)
       cancelAnimationFrame(animationFrameId)
     }
-  }, [canvasRef.current, createBubbles])
+  }, [canvasRef, createBubbles])
 
   useEffect(() => {
     if (!playing) return
@@ -126,7 +126,7 @@ export const useGame = ({ canvasRef }: Props) => {
     }
 
     return () => clearInterval(timerId)
-  }, [playing, play])
+  }, [playing, play, newGame])
 
   useEffect(() => {
     if (play) {
@@ -150,7 +150,7 @@ export const useGame = ({ canvasRef }: Props) => {
     return () => {
       clearInterval(intervalId)
     }
-  }, [timeLeft, createBubble])
+  }, [playing, timeLeft, createBubble])
 
   useEffect(() => {
     console.log('c', counter)
