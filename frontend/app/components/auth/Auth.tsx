@@ -2,7 +2,7 @@
 import { Box, IconButton, Snackbar, styled } from '@mui/joy'
 import { User } from '../../models'
 import { Login } from './Login'
-import { Logout } from './Logout'
+import { ProfileMenu } from './ProfileMenu'
 import { Register } from './Register'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -115,7 +115,7 @@ export default function Auth({ children }: Props): JSX.Element {
   return (
     <>
       <StyledBox>
-        {loggedInUser && (<Logout setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>)}
+        {loggedInUser && (<ProfileMenu setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>)}
         {!loggedInUser && (
           <>
             <Register readingFromLocalStorage={readingFromLocalStorage} setLoggedInUser={handleSetLoggedInUser} setError={handleSetError}/>
