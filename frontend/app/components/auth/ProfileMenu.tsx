@@ -1,7 +1,17 @@
 import { getApiUrl } from "@/app/helpers"
 import { DefaultResponse, User } from "@/app/models"
-import { Button } from "@mui/joy"
+import { Button, Dropdown, Menu, MenuButton, MenuItem } from "@mui/joy"
 import { useEffect, useRef, useState } from "react"
+import { ProfileIcon } from "../ProfileIcon"
+import { usePageContext } from "@/app/context"
+import styled from "@emotion/styled"
+import { useRouter } from "next/navigation"
+
+const CustomMenuButton = styled(MenuButton)`
+  padding: 0;
+  background-color: transparent!important;
+  border: none;
+`
 
 interface Props {
   setLoggedInUser: (user: User | null) => void
@@ -12,7 +22,9 @@ interface State {
   loggingOut: boolean
 }
 
-export const Logout = ({ setLoggedInUser, setError }: Props): JSX.Element => {
+export const ProfileMenu = ({ setLoggedInUser, setError }: Props): JSX.Element => {
+  const router = useRouter()
+  const { loggedInUser } = usePageContext()
   const abortControllerRef = useRef<AbortController | null>(null)
   const [state, setState] = useState<State>({
     loggingOut: false
@@ -64,14 +76,36 @@ export const Logout = ({ setLoggedInUser, setError }: Props): JSX.Element => {
     }
   }, [])
 
+  const handleProfileClick = () => {
+    router.push('/profile')
+  }
+
   return (
-    <Button
-      loading={state.loggingOut}
-      variant='solid'
-      color='neutral'
-      onClick={handleLogout}
-    >
-      Logout
-    </Button>
+    <Dropdown>
+      <CustomMenuButton>
+        <ProfileIcon user={loggedInUser} />
+      </CustomMenuButton>
+      <Menu>
+        <MenuItem>
+          <Button
+            variant='plain'
+            color='neutral'
+            onClick={handleProfileClick}
+          >
+            Profile
+          </Button>
+        </MenuItem>
+        <MenuItem>
+          <Button
+            loading={state.loggingOut}
+            variant='plain'
+            color='neutral'
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </MenuItem>
+      </Menu>
+    </Dropdown>
   )
 }
