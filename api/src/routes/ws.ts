@@ -19,7 +19,6 @@ export const handleWebSocketConnection = (wss: WebSocketServer): void => {
         .then((userId: number) => {
           client.userId = userId
           clients.set(clientId, client)
-          console.log(`New WebSocket connection: ${clientId}`, userId)
           setUserActive(userId, true)
             .catch((err: any) => {
               console.error('Error setting user active:', err)
@@ -45,7 +44,6 @@ export const handleWebSocketConnection = (wss: WebSocketServer): void => {
         }
       })
       ws.on('close', () => {
-        console.log('WebSocket connection closed')
         clients.delete(clientId)
         setUserActive(client.userId, false)
           .catch((err: any) => {
