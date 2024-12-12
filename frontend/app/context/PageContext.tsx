@@ -22,13 +22,14 @@ export const PageProvider: React.FC<PageProviderProps> = ({ children }) => {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null)
   const [play, setPlay] = useState<boolean>(false)
   const [openRegisterDialog, setOpenRegisterDialog] = useState<boolean>(false)
-  const [isMobileDisplay, setIsMobileDisplay] = useState<boolean>(window.innerWidth < 600)
+  const [isMobileDisplay, setIsMobileDisplay] = useState<boolean>(false)
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobileDisplay(window.innerWidth < 600)
     }
     window.addEventListener('resize', handleResize)
+    handleResize()
     return () => {
       window.removeEventListener('resize', handleResize)
     }
