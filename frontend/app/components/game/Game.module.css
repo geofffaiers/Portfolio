@@ -41,7 +41,8 @@
       color: #fff;
       text-shadow: 0 0 10px #000;
       z-index: 2;
-
+      white-space: pre;
+      
       @media screen and (min-width: 600px) {
         display: flex;
       }

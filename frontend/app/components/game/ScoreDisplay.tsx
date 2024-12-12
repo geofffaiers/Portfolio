@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const ScoreDisplay = ({ counter, score, animateScore, timeLeft, newGame }: Props): JSX.Element => {
-  const { loggedInUser } = usePageContext()
+  const { loggedInUser, isMobileDisplay } = usePageContext()
   const { globalScores, userScores, thisScore, loading, error, currentGameSaved, currentGameRequested, saveScore, getScores, clearScores } = useScoresDisplay({ counter })
 
   useEffect(() => {
@@ -52,9 +52,9 @@ export const ScoreDisplay = ({ counter, score, animateScore, timeLeft, newGame }
               <Typography level='h3' sx={{ color: 'var(--foreground)', marginTop: '1rem' }}>
                 Score: {score}
               </Typography>
-              <Typography level='body-lg' sx={{ color: 'var(--foreground)' }}>
+              {!isMobileDisplay && (<Typography level='body-lg' sx={{ color: 'var(--foreground)' }}>
                 To save your score, please register or login!
-              </Typography>
+              </Typography>)}
             </>
           )}
           <Button className={styles.resetButton} onClick={newGame} sx={{ marginTop: '1rem' }}>New Game</Button>

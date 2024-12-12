@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import { zxcvbnOptions } from '@zxcvbn-ts/core'
 import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common'
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en'
+import App from './app'
 
 const roboto = Inter({
   weight: ['400', '500', '700'],
@@ -33,8 +34,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' className={roboto.className}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className={`antialiased`}>
-        {children}
+        <App>
+          {children}
+        </App>
       </body>
     </html>
   )

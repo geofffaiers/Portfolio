@@ -19,10 +19,10 @@ export const useGame = ({ canvasRef }: Props) => {
   const [density, setDensity] = useState<number>(0)
   const bubblesRef = useRef<Bubble[]>([])
   const [counter, setCounter] = useState<number>(0)
-  const [timeLeft, setTimeLeft] = useState<number>(DEFAULT_TIME)
   const [score, setScore] = useState<number>(0)
   const [animateScore, setAnimateScore] = useState<boolean>(false)
   const [playing, setPlaying] = useState<boolean>(false)
+  const timeLeftRef = useRef<number>(DEFAULT_TIME)
 
   const createBubble = useCallback((): void => {
     const size = Math.random() * 20 + 10
@@ -41,7 +41,7 @@ export const useGame = ({ canvasRef }: Props) => {
 
   const newGame = useCallback(() => {
     setScore(0)
-    setTimeLeft(DEFAULT_TIME)
+    timeLeftRef.current = DEFAULT_TIME
     bubblesRef.current = []
     createBubbles()
   }, [createBubbles])
@@ -87,11 +87,10 @@ export const useGame = ({ canvasRef }: Props) => {
     const resizeCanvas = (): void => {
       const width = window.innerWidth
       const height = window.innerHeight
-      const devicePixelRatio = window.devicePixelRatio || 1
-      canvas.width = width * devicePixelRatio
-      canvas.height = height * devicePixelRatio
+      canvas.width = width
+      canvas.height = height
       setDimensions({ width, height })
-      setDensity(Math.floor((width * height) / (50000 * devicePixelRatio)))
+      setDensity(Math.floor((width * height) / 50000))
       newGame()
     }
 
@@ -124,15 +123,12 @@ export const useGame = ({ canvasRef }: Props) => {
     if (!playing) return
 
     const timerId = setInterval(() => {
-      setTimeLeft(prevTime => {
-        if (prevTime <= 1) {
-          setPlaying(false)
-          bubblesRef.current = []
-          clearInterval(timerId)
-          return 0
-        }
-        return prevTime - 1
-      })
+      if (timeLeftRef.current <= 1) {
+        setPlaying(false)
+        bubblesRef.current = []
+        clearInterval(timerId)
+      }
+      timeLeftRef.current -= 1
     }, 1000)
 
     if (!play) {
@@ -161,20 +157,20 @@ export const useGame = ({ canvasRef }: Props) => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (bubblesRef.current.length < density && (playing || timeLeft === DEFAULT_TIME)) {
+      if (bubblesRef.current.length < density && (playing || timeLeftRef.current === DEFAULT_TIME)) {
         createBubble()
       }
-    }, 9000 / density)
+    }, Math.min(9000 / density, 1000))
 
     return () => {
       clearInterval(intervalId)
     }
-  }, [playing, timeLeft, density, createBubble])
+  }, [playing, density, createBubble])
 
   return {
     counter,
     score,
-    timeLeft,
+    timeLeft: timeLeftRef.current,
     animateScore,
     newGame
   }

@@ -3,7 +3,7 @@ import { User } from "../models"
 
 interface Props {
   user: User | null
-  size: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export const ProfileIcon = ({ user, size = 'md' }: Props): JSX.Element => {

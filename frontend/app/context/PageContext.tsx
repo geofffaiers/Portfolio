@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, ReactNode } from 'react'
+import React, { createContext, useState, ReactNode, useEffect } from 'react'
 import { User } from '../models'
 
 interface PageContextType {
@@ -9,6 +9,7 @@ interface PageContextType {
   setPlay: (play: boolean) => void
   openRegisterDialog: boolean
   setOpenRegisterDialog: (open: boolean) => void
+  isMobileDisplay: boolean
 }
 
 const PageContext = createContext<PageContextType | null>(null)
@@ -21,9 +22,20 @@ export const PageProvider: React.FC<PageProviderProps> = ({ children }) => {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null)
   const [play, setPlay] = useState<boolean>(false)
   const [openRegisterDialog, setOpenRegisterDialog] = useState<boolean>(false)
-  
+  const [isMobileDisplay, setIsMobileDisplay] = useState<boolean>(window.innerWidth < 600)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileDisplay(window.innerWidth < 600)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   return (
-    <PageContext.Provider value={{ loggedInUser, setLoggedInUser, play, setPlay, openRegisterDialog, setOpenRegisterDialog }}>
+    <PageContext.Provider value={{ loggedInUser, setLoggedInUser, play, setPlay, openRegisterDialog, setOpenRegisterDialog, isMobileDisplay }}>
       {children}
     </PageContext.Provider>
   )
