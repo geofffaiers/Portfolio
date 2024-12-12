@@ -36,13 +36,12 @@ export class Server {
 
   #config (): void {
     const allowedOrigins: string[] = ['http://gfaiers.com', 'https://gfaiers.com', 'http://www.gfaiers.com', 'https://www.gfaiers.com']
-    if (process.env.CLIENT_URL != null) {
+    if (process.env.CLIENT_URL != null && !allowedOrigins.includes(process.env.CLIENT_URL)) {
       allowedOrigins.push(process.env.CLIENT_URL)
     }
 
     const corsOptions: CorsOptions = {
       origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        console.log(origin, allowedOrigins)
         if (process.env.NODE_ENV === 'development') {
           callback(null, true)
         } else if (!origin || allowedOrigins.includes(origin)) {
