@@ -48,9 +48,14 @@ export const ScoreDisplay = ({ counter, score, animateScore, timeLeft, newGame }
           <Scores title='Top Scores' scores={globalScores ?? []} thisScore={thisScore} loading={loading} error={error}/>
           {loggedInUser && (<Scores title='Your Scores' scores={userScores ?? []} thisScore={thisScore} displayThisScore loading={loading} error={error}/>)}
           {!loggedInUser && !currentGameSaved && (
-            <Typography level='body-lg' sx={{ color: 'var(--foreground)' }}>
-              To save your score, please register or login!
-            </Typography>
+            <>
+              <Typography level='h3' sx={{ color: 'var(--foreground)', marginTop: '1rem' }}>
+                Score: {score}
+              </Typography>
+              <Typography level='body-lg' sx={{ color: 'var(--foreground)' }}>
+                To save your score, please register or login!
+              </Typography>
+            </>
           )}
           <Button className={styles.resetButton} onClick={newGame} sx={{ marginTop: '1rem' }}>New Game</Button>
         </div>
