@@ -35,7 +35,7 @@ export class Server {
   }
 
   #config (): void {
-    const allowedOrigins: string[] = []
+    const allowedOrigins: string[] = ['http://gfaiers.com', 'https://gfaiers.com', 'http://www.gfaiers.com', 'https://www.gfaiers.com']
     if (process.env.CLIENT_URL != null) {
       allowedOrigins.push(process.env.CLIENT_URL)
     }
