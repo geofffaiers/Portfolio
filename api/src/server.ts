@@ -19,8 +19,6 @@ declare module 'express-serve-static-core' {
   }
 }
 
-const allowedOrigins = [process.env.CLIENT_URL ?? '']
-
 export class Server {
   #app: Application
   #serverInstance: HttpServer | undefined
@@ -37,9 +35,17 @@ export class Server {
   }
 
   #config (): void {
+    const allowedOrigins: string[] = []
+    if (process.env.CLIENT_URL != null) {
+      allowedOrigins.push(process.env.CLIENT_URL)
+    }
+
     const corsOptions: CorsOptions = {
       origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        if (origin == null || allowedOrigins.includes(origin ?? '')) {
+        console.log(origin, allowedOrigins)
+        if (process.env.NODE_ENV === 'development') {
+          callback(null, true)
+        } else if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true)
         } else {
           callback(new Error('Not allowed by CORS'))
