@@ -1,6 +1,6 @@
 import { Score } from "@/app/models"
 import { CircularProgress, Typography } from "@mui/joy"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 
 interface Props {
   title: string
@@ -11,8 +11,25 @@ interface Props {
   error: string | null
 }
 
+interface HighlightedScores extends Score {
+  isThisScore: boolean
+}
+
 export const Scores = ({ title, scores, thisScore, displayThisScore, loading, error }: Props): JSX.Element => {
   const [scoreDisplayed, setScoreDisplayed] = useState<boolean>(false)
+  const highlightedScores: HighlightedScores[] = useMemo(() => {
+    return scores.map((score): HighlightedScores => {
+      const isThisScore: boolean = thisScore != null && score.id === thisScore.id
+      if (isThisScore && displayThisScore) {
+        setScoreDisplayed(true)
+      }
+      return {
+        ...score,
+        isThisScore
+      }
+    })
+  }, [scores, thisScore])
+
   if (loading) {
     return <CircularProgress />
   }
@@ -22,6 +39,7 @@ export const Scores = ({ title, scores, thisScore, displayThisScore, loading, er
   if (scores.length === 0) {
     return <Typography level='h2' sx={{ color: 'var(--foreground)', textAlign: 'center', marginBottom: '1rem' }}>No high scores are saved!</Typography>
   }
+
   return (
     <>
       <div style={{ marginTop: '1rem' }}>
@@ -35,16 +53,13 @@ export const Scores = ({ title, scores, thisScore, displayThisScore, loading, er
             </tr>
           </thead>
           <tbody>
-            {scores.map((score, index) => {
-              const isThisScore = thisScore && score.id === thisScore.id
-              if (isThisScore && displayThisScore) {
-                setScoreDisplayed(true)
-              }
+            {highlightedScores.map((row, index) => {
+              const { ranking, name, score, isThisScore } = row
               return (
                 <tr key={index} style={{ borderBlock: isThisScore ? '1px solid var(--foreground)' : 'none' }}>
-                  <td>{score.ranking}</td>
-                  <td>{score.name}</td>
-                  <td style={{ textAlign: 'right' }}>{score.score}</td>
+                  <td>{ranking}</td>
+                  <td>{name}</td>
+                  <td style={{ textAlign: 'right' }}>{score}</td>
                 </tr>
               )
             })}
