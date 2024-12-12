@@ -6,10 +6,17 @@ interface Props {
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>
 }
 
+interface Dimensions {
+  width: number
+  height: number
+}
+
 export const DEFAULT_TIME: number = 15
 
 export const useGame = ({ canvasRef }: Props) => {
   const { play } = usePageContext()
+  const [dimensions, setDimensions] = useState<Dimensions>({ width: 0, height: 0 })
+  const [density, setDensity] = useState<number>(0)
   const bubblesRef = useRef<Bubble[]>([])
   const [counter, setCounter] = useState<number>(0)
   const [timeLeft, setTimeLeft] = useState<number>(DEFAULT_TIME)
@@ -18,32 +25,28 @@ export const useGame = ({ canvasRef }: Props) => {
   const [playing, setPlaying] = useState<boolean>(false)
 
   const createBubble = useCallback((): void => {
-    const canvas = canvasRef.current
-    if (canvas == null) return
     const size = Math.random() * 20 + 10
-    const topPosition = Math.random() * canvas.height
-    const leftPosition = Math.random() * canvas.width
+    const topPosition = Math.random() * dimensions.height
+    const leftPosition = Math.random() * dimensions.width
     const topMovement = (Math.random() - 0.5) * 2
     const leftMovement = (Math.random() - 0.5) * 2
     bubblesRef.current.push(new Bubble(topPosition, leftPosition, topMovement, leftMovement, size))
-  }, [canvasRef])
+  }, [dimensions])
 
-  const createBubbles = useCallback((amount: number): void => {
-    for (let i = 0; i < amount; i++) {
+  const createBubbles = useCallback((): void => {
+    for (let i = 0; i < density; i++) {
       createBubble()
     }
-  }, [createBubble])
+  }, [createBubble, density])
 
   const newGame = useCallback(() => {
     setScore(0)
     setTimeLeft(DEFAULT_TIME)
     bubblesRef.current = []
-    createBubbles(10)
+    createBubbles()
   }, [createBubbles])
 
   const handleMouseMove = useCallback((event: MouseEvent): void => {
-    const canvas = canvasRef.current
-    if (canvas == null) return
     const { clientX, clientY } = event
     for (let i = 0; i < bubblesRef.current.length; i++) {
       const bubble = bubblesRef.current[i]
@@ -56,16 +59,21 @@ export const useGame = ({ canvasRef }: Props) => {
         setScore(prevScore => prevScore + 1)
         setAnimateScore(true)
         setTimeout(() => setAnimateScore(false), 300)
-        const size = Math.random() * 20 + 10
-        const topPosition = Math.random() * canvas.height
-        const leftPosition = Math.random() * canvas.width
-        const topMovement = (Math.random() - 0.5) * 2
-        const leftMovement = (Math.random() - 0.5) * 2
-        bubblesRef.current.push(new Bubble(topPosition, leftPosition, topMovement, leftMovement, size))
+        createBubble()
         break
       }
     }
-  }, [playing, setPlaying, setScore, setAnimateScore, canvasRef])
+  }, [playing, setPlaying, setScore, setAnimateScore, createBubble])
+
+  const handleTouchMove = useCallback((event: TouchEvent): void => {
+    const touch = event.touches[0]
+    if (touch) {
+      handleMouseMove({
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      } as MouseEvent)
+    }
+  }, [handleMouseMove])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -77,14 +85,20 @@ export const useGame = ({ canvasRef }: Props) => {
     let animationFrameId: number
 
     const resizeCanvas = (): void => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
+      const width = window.innerWidth
+      const height = window.innerHeight
+      const devicePixelRatio = window.devicePixelRatio || 1
+      canvas.width = width * devicePixelRatio
+      canvas.height = height * devicePixelRatio
+      setDimensions({ width, height })
+      setDensity(Math.floor((width * height) / (50000 * devicePixelRatio)))
+      newGame()
     }
 
     const animate = (currentTime: number): void => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, dimensions.width, dimensions.height)
       bubblesRef.current = bubblesRef.current.filter(bubble => {
-        bubble.update(canvas.width, canvas.height)
+        bubble.update(dimensions.width, dimensions.height)
         bubble.draw(ctx, currentTime)
         return !bubble.popped || (bubble.popStartTime !== null && currentTime - bubble.popStartTime < 300)
       })
@@ -92,9 +106,11 @@ export const useGame = ({ canvasRef }: Props) => {
     }
 
     window.addEventListener('resize', resizeCanvas)
-    resizeCanvas()
+    if (dimensions.width === 0 || dimensions.height === 0) {
+      resizeCanvas()
+    }
     if (bubblesRef.current.length === 0) {
-      createBubbles(10)
+      createBubbles()
     }
     animationFrameId = requestAnimationFrame(animate)
 
@@ -102,7 +118,7 @@ export const useGame = ({ canvasRef }: Props) => {
       window.removeEventListener('resize', resizeCanvas)
       cancelAnimationFrame(animationFrameId)
     }
-  }, [canvasRef, createBubbles])
+  }, [dimensions, canvasRef, createBubbles, newGame])
 
   useEffect(() => {
     if (!playing) return
@@ -131,26 +147,29 @@ export const useGame = ({ canvasRef }: Props) => {
   useEffect(() => {
     if (play) {
       window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('touchmove', handleTouchMove)
     } else {
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('touchmove', handleTouchMove)
     }
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('touchmove', handleTouchMove)
     }
-  }, [play, handleMouseMove, newGame])
+  }, [play, handleMouseMove, handleTouchMove, newGame])
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (bubblesRef.current.length < 20 && (playing || timeLeft === DEFAULT_TIME)) {
+      if (bubblesRef.current.length < density && (playing || timeLeft === DEFAULT_TIME)) {
         createBubble()
       }
-    }, 250)
+    }, 9000 / density)
 
     return () => {
       clearInterval(intervalId)
     }
-  }, [playing, timeLeft, createBubble])
+  }, [playing, timeLeft, density, createBubble])
 
   return {
     counter,

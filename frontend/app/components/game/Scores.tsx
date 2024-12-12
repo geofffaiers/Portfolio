@@ -28,7 +28,7 @@ export const Scores = ({ title, scores, thisScore, displayThisScore, loading, er
         isThisScore
       }
     })
-  }, [scores, thisScore])
+  }, [scores, displayThisScore, thisScore])
 
   if (loading) {
     return <CircularProgress />
