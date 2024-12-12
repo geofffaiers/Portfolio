@@ -9,6 +9,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./mysql-db:/docker-entrypoint-initdb.d
+      - mysql-data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysql -p${MYSQL_ROOT_PASSWORD} -e 'select 1'"]
       interval: 5s
@@ -51,3 +52,6 @@ services:
       - api
       - frontend
     restart: unless-stopped
+
+volumes:
+  mysql-data:
