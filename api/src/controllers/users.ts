@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { create, generateResetToken, getUserForResetToken, login, logout, refreshToken, resetPassword, update } from '../service/users'
+import { create, del, generateResetToken, getUserForResetToken, login, logout, refreshToken, resetPassword, update } from '../service/users'
 
 export default class UsersController {
   async create (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -61,6 +61,14 @@ export default class UsersController {
   async update (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       res.status(200).json(await update(req))
+    } catch (err: any) {
+      next(err)
+    }
+  }
+
+  async del (req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      res.status(200).json(await del(req))
     } catch (err: any) {
       next(err)
     }

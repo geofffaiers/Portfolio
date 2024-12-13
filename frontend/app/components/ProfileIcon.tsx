@@ -11,7 +11,7 @@ export const ProfileIcon = ({ user, size = 'md' }: Props): JSX.Element => {
     return <Box />
   }
   const name: string = `${user.firstName ?? '?'} ${user.lastName ?? '?'}`
-  const initials: string = name.split(' ').map((n: string) => n[0]).join('')
+  const initials: string = name.split(' ').map((n: string) => n[0]).join('').slice(0, 3)
   
   return (
     <Box>

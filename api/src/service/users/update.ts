@@ -12,7 +12,7 @@ export const update = async (req: Request): Promise<DefaultResponse<User>> => {
   try {
     const user: User = plainToInstance(User, req.body, { excludeExtraneousValues: true })
     await validateOrReject(user)
-    if (await isPasswordChanged(user)) {
+    if (user.password.length > 0 && await isPasswordChanged(user)) {
       if (await isPasswordNew(user)) {
         const passwordStrength: ZxcvbnResult = zxcvbn(user.password)
         if (passwordStrength.score < 3) {
