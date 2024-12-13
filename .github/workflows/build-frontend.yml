@@ -7,10 +7,13 @@ on:
       - main
     paths:
       - 'frontend/**'
+      - '.github/workflows/build-frontend.yml'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ github.run_id }}
 
     steps:
       - name: Checkout code
@@ -46,9 +49,11 @@ jobs:
           echo "EMAIL=${{ vars.EMAIL }}" >> $GITHUB_WORKSPACE/.env
 
       - name: Build Docker images
-        run: docker build -t portfolio-frontend:latest ./frontend
+        run: docker build -t portfolio-frontend:${IMAGE_TAG} -t portfolio-frontend:latest ./frontend
 
       - name: Tag and Push Docker images
         run: |
+          docker tag portfolio-frontend:${IMAGE_TAG} ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:${IMAGE_TAG}
           docker tag portfolio-frontend:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:${IMAGE_TAG}
           docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
