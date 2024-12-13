@@ -65,4 +65,8 @@ export class User {
   @Type(() => Date)
   @Expose({ name: 'updatedAt' })
   updatedAt?: Date = new Date()
+
+  @IsBoolean()
+  @Expose({ name: 'isEmailVerified' })
+  isEmailVerified: boolean = false
 }
