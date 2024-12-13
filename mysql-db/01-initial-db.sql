@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `profile_picture` VARCHAR(255),
   `reset_token` VARCHAR(255),
   `reset_token_expires` TIMESTAMP NULL DEFAULT NULL,
+  `verified_email` BOOLEAN DEFAULT FALSE,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX `idx_email` (`email`),
