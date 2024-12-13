@@ -5,8 +5,9 @@ import { validateOrReject } from 'class-validator'
 import { ResultSetHeader, RowDataPacket } from 'mysql2'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
-import { addToPreviousPasswords } from './methods'
+import { addToPreviousPasswords, newToken } from './methods'
 import { zxcvbn, ZxcvbnResult } from '@zxcvbn-ts/core'
+import { sendValidateEmail } from '../../helpers'
 
 export const create = async (req: Request): Promise<DefaultResponse<User>> => {
   try {
@@ -45,22 +46,25 @@ export const create = async (req: Request): Promise<DefaultResponse<User>> => {
     }
     user.password = await bcrypt.hash(user.password, 10)
     await validateOrReject(user)
+    user.validateToken = newToken()
+    user.validateTokenExpires = new Date(Date.now() + (5 * 1000 * 60))
     const [result] = await pool.query<ResultSetHeader>(
       `INSERT INTO users
-        (username, password, email, first_name, last_name)
+        (username, password, email, first_name, last_name, validate_token, validate_token_expires)
       VALUES
-        (?, ?, ?, ?, ?)`,
-      [user.username, user.password, user.email, user.firstName, user.lastName]
+        (?, ?, ?, ?, ?, ?, ?)`,
+      [user.username, user.password, user.email, user.firstName, user.lastName, user.validateToken, user.validateTokenExpires]
     )
     user.id = result.insertId
     await addToPreviousPasswords(user)
     await addInitialMessage(user)
+    await sendValidateEmail(user)
     return {
       success: true,
       data: user
     }
   } catch (err: any) {
-    throw new Error(err)
+    throw err
   }
 }
 

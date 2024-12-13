@@ -61,6 +61,39 @@ const loadEmailTemplate = (): EmailTemplate => {
   return structuredClone(emailTemplate)
 }
 
+export const sendValidateEmail = async (user: User): Promise<void> => {
+  const template: EmailTemplate = loadEmailTemplate()
+  const validateButton: string = structuredClone(template.button)
+    .replaceAll('{{TEXT}}', 'Validate Email')
+    .replaceAll('{{URL}}', `${process.env.CLIENT_URL ?? ''}/validate/${user.validateToken ?? ''}`)
+    .replace('{{SIZE}}', 'm')
+  template.body = template.body
+    .replace(
+      '{{CONTENT}}',
+      `<h3 class="infoBlockTop">
+        Validate Email
+      </h3>
+      <p class="infoBlockMiddle">
+        Thank you for registering at gfaiers.com. Please click the button below to validate your email address.
+      </p>
+      <p class="infoBlockMiddle">
+        This link is valid for 5 minutes, until ${user.validateTokenExpires?.toLocaleString('en-GB') ?? 'expiry time not set'}.
+      </p>
+      ${validateButton}`
+    )
+  const html: string = template.main
+    .replace('{{SUMMARY}}', `Validate Email for ${user.username}`)
+    .replace('{{HEADER}}', template.header)
+    .replace('{{BODY}}', template.body)
+    .replace('{{FOOTER}}', template.footer)
+  await sendEmail({
+    to: user.email,
+    subject: 'Validate Email',
+    text: 'Click the link to validate your email',
+    html
+  })
+}
+
 export const sendResetPasswordEmail = async (user: User): Promise<void> => {
   const template: EmailTemplate = loadEmailTemplate()
   const resetButton: string = structuredClone(template.button)

@@ -74,4 +74,22 @@ export class User {
   @Transform(({ value, obj }) => value ?? obj.updated_at, { toClassOnly: true })
   @Expose({ name: 'updatedAt' })
   updatedAt?: Date = new Date()
+
+  @IsBoolean()
+  @Transform(({ value, obj }) => value === 1 || value === true || obj.verified_email === 1 || obj.verified_email === true, { toClassOnly: true })
+  @Expose({ name: 'verifiedEmail' })
+  verifiedEmail: boolean = false
+
+  @IsOptional()
+  @IsString()
+  @Transform(({ value, obj }) => value ?? obj.validate_token, { toClassOnly: true })
+  @Expose({ name: 'validateToken' })
+  validateToken?: string
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  @Transform(({ value, obj }) => value ?? obj.validate_token_expires, { toClassOnly: true })
+  @Expose({ name: 'validateTokenExpires' })
+  validateTokenExpires?: Date = new Date()
 }

@@ -5,12 +5,12 @@ import { useEffect, useRef, useState } from "react"
 import { ProfileIcon } from "../ProfileIcon"
 import { usePageContext } from "@/app/context"
 import styled from "@emotion/styled"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 const CustomMenuButton = styled(MenuButton)`
   padding: 0;
   background-color: transparent!important;
-  border: none;
+  border: none
 `
 
 interface Props {
@@ -24,11 +24,12 @@ interface State {
 
 export const ProfileMenu = ({ setLoggedInUser, setError }: Props): JSX.Element => {
   const router = useRouter()
-  const { loggedInUser } = usePageContext()
+  const { loggedInUser, play, setPlay } = usePageContext()
   const abortControllerRef = useRef<AbortController | null>(null)
   const [state, setState] = useState<State>({
     loggingOut: false
   })
+  const pathname = usePathname()
   
   const handleLogout = async (): Promise<void> => {
     abortControllerRef.current = new AbortController()
@@ -86,7 +87,18 @@ export const ProfileMenu = ({ setLoggedInUser, setError }: Props): JSX.Element =
         <ProfileIcon user={loggedInUser} />
       </CustomMenuButton>
       <Menu>
-        <MenuItem>
+        {pathname === '/' && (
+          <MenuItem>
+            <Button
+              variant='plain'
+              color='neutral'
+              onClick={() => setPlay(!play)}
+            >
+              {play ? 'Close' : 'Play'} the game
+            </Button>
+          </MenuItem>
+        )}
+        {!play && (<MenuItem>
           <Button
             variant='plain'
             color='neutral'
@@ -94,7 +106,7 @@ export const ProfileMenu = ({ setLoggedInUser, setError }: Props): JSX.Element =
           >
             Profile
           </Button>
-        </MenuItem>
+        </MenuItem>)}
         <MenuItem>
           <Button
             loading={state.loggingOut}

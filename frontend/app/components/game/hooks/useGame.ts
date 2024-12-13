@@ -120,7 +120,13 @@ export const useGame = ({ canvasRef }: Props) => {
   }, [dimensions, canvasRef, createBubbles, newGame])
 
   useEffect(() => {
-    if (!playing) return
+    if (!playing) {
+      if (!play) {
+        setPlaying(false)
+        newGame()
+      }
+      return
+    }
 
     const timerId = setInterval(() => {
       if (timeLeftRef.current <= 1) {

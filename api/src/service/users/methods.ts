@@ -24,3 +24,13 @@ export const addToPreviousPasswords = async (user: User): Promise<void> => {
     [user.id, user.password]
   )
 }
+
+export const newToken = (): string => {
+  const chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let token: string = ''
+  for (let i = 0; i < 16; i++) {
+    const randomIndex: number = Math.floor(Math.random() * chars.length)
+    token += chars[randomIndex]
+  }
+  return token
+}

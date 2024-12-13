@@ -49,11 +49,11 @@ jobs:
           echo "EMAIL=${{ vars.EMAIL }}" >> $GITHUB_WORKSPACE/.env
 
       - name: Build Docker images
-        run: docker build -t portfolio-api:${IMAGE_TAG} -t portfolio-api:latest ./api
+        run: docker build -t portfolio-api:${IMAGE_TAG} ./api
 
       - name: Tag and Push Docker images
         run: |
           docker tag portfolio-api:${IMAGE_TAG} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:${IMAGE_TAG}
-          docker tag portfolio-api:latest ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
+          docker tag portfolio-api:${IMAGE_TAG} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-api:${IMAGE_TAG}
           docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
