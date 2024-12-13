@@ -1,4 +1,5 @@
 export * from './create'
+export * from './del'
 export * from './generateResetToken'
 export * from './getUserForResetToken'
 export * from './login'
