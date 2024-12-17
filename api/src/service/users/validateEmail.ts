@@ -27,7 +27,7 @@ export const validateEmail = async (req: Request): Promise<DefaultResponse<undef
     const user: User = plainToInstance(User, result[0], { excludeExtraneousValues: true })
     await validateOrReject(user)
     await pool.query(
-      'UPDATE users SET validate_email = true, validate_token = NULL, validate_token_expires = NULL WHERE id = ?',
+      'UPDATE users SET verified_email = true, validate_token = NULL, validate_token_expires = NULL WHERE id = ?',
       [userId]
     )
     return {

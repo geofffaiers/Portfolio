@@ -70,6 +70,7 @@ const isPasswordNew = async (user: User): Promise<boolean> => {
   return result.every((row) => !bcrypt.compareSync(user.password, row.password))
 }
 
+// TODO: This needs to update the verificationEmail field if the email address has changed, if it has, then the user needs to be re-verified
 const updateAll = async (user: User): Promise<void> => {
   await pool.query(
     `UPDATE users
