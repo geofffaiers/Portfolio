@@ -10,6 +10,7 @@ services:
     volumes:
       - ./mysql-db:/docker-entrypoint-initdb.d
       - mysql-data:/var/lib/mysql
+    entrypoint: /docker-entrypoint-initdb.d/run.sh
     healthcheck:
       test: ["CMD-SHELL", "mysql -p${MYSQL_ROOT_PASSWORD} -e 'select 1'"]
       interval: 5s
