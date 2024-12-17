@@ -7,7 +7,7 @@ import { useProfile } from "../hooks/useProfile"
 
 export const ProfileForm = (): JSX.Element => {
   const { validate, usernameError, emailError, firstNameError, lastNameError } = useUserValidations()
-  const { tempUser, handleChangeValue, handleSaveChanges, showDeleteAccount, setShowDeleteAccount, handleDeleteAccount, error, setError, userChanged, emailMatched } = useProfile({ validate })
+  const { tempUser, handleChangeValue, handleSaveChanges, showDeleteAccount, setShowDeleteAccount, handleDeleteAccount, error, setError, userChanged, emailMatched, handleResendVerificationEmail, timeLeftTillResendEnabled } = useProfile({ validate })
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -45,7 +45,7 @@ export const ProfileForm = (): JSX.Element => {
           <div className='relative'>
             <Input name='email' type='email' required value={tempUser.email} className='pr-10' onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeValue('email', e.target.value)}/>
             <span className='absolute inset-y-0 right-0 flex items-center pr-3'>
-              {tempUser.isEmailVerified ? (
+              {tempUser.verifiedEmail ? (
                 <FontAwesomeIcon icon={faCheckCircle} className='text-green-500' title='Verified'/>
               ) : (
                 <FontAwesomeIcon icon={faTimesCircle} className='text-red-500' title='Not verified'/>
@@ -54,11 +54,11 @@ export const ProfileForm = (): JSX.Element => {
           </div>
           <FormHelperText>{emailError}</FormHelperText>
         </FormControl>
-        {/* {!tempUser.isEmailVerified && (
-          <Button type='submit' color='neutral'>
-            Resend Verification Email
+        {!tempUser.verifiedEmail && (
+          <Button type='button' color='neutral' onClick={handleResendVerificationEmail} disabled={timeLeftTillResendEnabled > 0}>
+            Resend Verification Email{timeLeftTillResendEnabled > 0 && ` (${timeLeftTillResendEnabled})`}
           </Button>
-        )} */}
+        )}
         <FormControl error={firstNameError !== ''}>
           <FormLabel>First Name</FormLabel>
           <Input name='firstName' type='text' required value={tempUser.firstName} onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeValue('firstName', e.target.value)}/>

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { create, del, generateResetToken, getUserForResetToken, login, logout, refreshToken, resetPassword, update, validateEmail } from '../service/users'
+import { create, del, generateResetToken, getUserForResetToken, getUserForValidateToken, login, logout, refreshToken, resendVerification, resetPassword, update, validateEmail } from '../service/users'
 
 export default class UsersController {
   async create (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -21,6 +21,14 @@ export default class UsersController {
   async getUserForResetToken (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       res.status(200).json(await getUserForResetToken(req))
+    } catch (err: any) {
+      next(err)
+    }
+  }
+
+  async getUserForValidateToken (req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      res.status(200).json(await getUserForValidateToken(req))
     } catch (err: any) {
       next(err)
     }
@@ -77,6 +85,14 @@ export default class UsersController {
   async validateEmail (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       res.status(200).json(await validateEmail(req))
+    } catch (err: any) {
+      next(err)
+    }
+  }
+
+  async resendVerification (req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      res.status(200).json(await resendVerification(req))
     } catch (err: any) {
       next(err)
     }

@@ -31,9 +31,9 @@ export default function ResetPasswordPage (): JSX.Element {
           signal
         })
         if (!response.ok) {
-          return ['Register failed', null]
+          return ['Reset token failed', null]
         }
-        const json: DefaultResponse = await response.json()
+        const json: DefaultResponse<User> = await response.json()
         if (json.success) {
           return [null, json.data as User]
         } else {
