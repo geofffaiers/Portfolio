@@ -1,7 +1,7 @@
 'use client'
 import 'reflect-metadata'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ChatHeader, ErrorMessage, Message, MessageType, NewMessage, SocketMessage, User } from '../../models'
+import { ChatHeader, ErrorMessage, Message, MessageType, NewMessage, SocketMessage, UpdatedProfile, User } from '../../models'
 import Conversations from './Conversations'
 import Chats from './Chats'
 import { Box, styled } from '@mui/joy'
@@ -42,7 +42,7 @@ const StyledBox = styled(Box)`
 `
 
 export default function Messaging ({ children }: Props): JSX.Element {
-  const { loggedInUser } = usePageContext()
+  const { loggedInUser, setLoggedInUser } = usePageContext()
   const [state, setState] = useState<State>({
     socketState: SocketState.DISCONNECTED,
     expanded: true,
@@ -53,6 +53,7 @@ export default function Messaging ({ children }: Props): JSX.Element {
   })
   const abortControllerRef = useRef<AbortController | null>(null)
   const socketRef = useRef<WebSocket | null>(null)
+  const prevUserIdRef = useRef<number | null>(null)
 
   useEffect(() => {
     const getConversations = async (): Promise<ChatHeader[]> => {
@@ -146,7 +147,11 @@ export default function Messaging ({ children }: Props): JSX.Element {
   }, [])
 
   useEffect(() => {
-    if (loggedInUser) {
+    if (loggedInUser && loggedInUser.id !== prevUserIdRef.current) {
+      prevUserIdRef.current = loggedInUser.id
+      if (socketRef.current != null) {
+        socketRef.current.close()
+      }
       socketRef.current = new WebSocket(`${getWsUrl()}`)
       socketRef.current.onopen = () => {
         setState(s => ({
@@ -185,6 +190,13 @@ export default function Messaging ({ children }: Props): JSX.Element {
             addMessages([updatedMessageRequest.message])
             updateChatHeaders(updatedMessageRequest.message)
             break
+          case MessageType.UPDATED_PROFILE:
+            const profileUpdatedRequest: UpdatedProfile = plainToInstance(UpdatedProfile, message, { excludeExtraneousValues: true })
+            setLoggedInUser(profileUpdatedRequest.user)
+            break
+          case MessageType.DELETE_PROFILE:
+            setLoggedInUser(null)
+            break
           default:
             console.error('No route found for message:', message)
         }
@@ -195,7 +207,7 @@ export default function Messaging ({ children }: Props): JSX.Element {
         socketRef.current.close()
       }
     }
-  }, [addMessages, updateChatHeaders, loggedInUser])
+  }, [addMessages, updateChatHeaders, setLoggedInUser, loggedInUser])
 
   const handleSendSocketMessage = (message: SocketMessage): void => {
     if (socketRef.current != null) {

@@ -1,8 +1,8 @@
 'use client'
-import { getApiUrl } from "@/app/helpers"
-import { DefaultResponse } from "@/app/models"
-import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Link, Modal, ModalClose, ModalDialog, Stack } from "@mui/joy"
-import { FormEvent, useEffect, useRef, useState } from "react"
+import { getApiUrl } from '@/app/helpers'
+import { DefaultResponse } from '@/app/models'
+import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Link, Modal, ModalClose, ModalDialog, Stack } from '@mui/joy'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 
 interface Props {
   setError: (error: string) => void

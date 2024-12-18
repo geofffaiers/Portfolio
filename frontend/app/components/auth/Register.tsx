@@ -2,9 +2,9 @@
 import { Button, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, Input, Modal, ModalClose, ModalDialog, Stack } from '@mui/joy'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { DefaultResponse, User } from '@/app/models'
-import { PasswordStrength } from './PasswordStrength'
 import { getApiUrl } from '@/app/helpers'
 import { usePageContext } from '@/app/context'
+import { SetPassword } from '../SetPassword'
 
 interface Props {
   readingFromLocalStorage: boolean
@@ -181,25 +181,22 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
             <Stack spacing={2}>
               <FormControl error={emailError !== ''}>
                 <FormLabel>Email</FormLabel>
-                <Input autoFocus name="email" type="email" required onChange={() => setEmailError('')}/>
+                <Input autoFocus name='email' type='email' required onChange={() => setEmailError('')}/>
                 <FormHelperText>{emailError}</FormHelperText>
               </FormControl>
               <FormControl>
                 <FormLabel>Username</FormLabel>
-                <Input name="username" type="text" required/>
+                <Input name='username' type='text' required/>
               </FormControl>
-              <FormControl error={passwordError !== ''}>
-                <FormLabel>Password</FormLabel>
-                <Input name="password" type="password" required onChange={handleChangePassword}/>
-                <FormHelperText>{passwordError}</FormHelperText>
-              </FormControl>
-              <FormControl error={confirmPasswordError !== ''}>
-                <FormLabel>Confirm Password</FormLabel>
-                <Input name="confirmPassword" type="password" required onChange={() => setConfirmPasswordError('')}/>
-                <FormHelperText>{confirmPasswordError}</FormHelperText>
-              </FormControl>
-              <PasswordStrength password={password} setPasswordScore={setPasswordScore}/>
-              <Button type="submit">Register & Login</Button>
+              <SetPassword
+                password={password}
+                passwordError={passwordError}
+                confirmPasswordError={confirmPasswordError}
+                handleChangePassword={handleChangePassword}
+                setConfirmPasswordError={setConfirmPasswordError}
+                setPasswordScore={setPasswordScore}
+              />
+              <Button type='submit'>Register & Login</Button>
             </Stack>
           </form>
         </ModalDialog>

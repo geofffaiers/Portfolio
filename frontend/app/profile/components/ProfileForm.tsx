@@ -1,13 +1,15 @@
-import { useUserValidations } from "@/app/hooks/useUserValidations"
-import { faCheckCircle, faClose, faTimesCircle } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Button, CircularProgress, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, IconButton, Input, Modal, ModalClose, ModalDialog, Snackbar, Stack } from "@mui/joy"
-import { ChangeEvent, useEffect } from "react"
-import { useProfile } from "../hooks/useProfile"
+import { useUserValidations } from '@/app/hooks/useUserValidations'
+import { faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, CircularProgress, DialogContent, DialogTitle, FormControl, FormHelperText, FormLabel, Input, Modal, ModalClose, ModalDialog, Stack } from '@mui/joy'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { useProfile } from '../hooks/useProfile'
+import { ChangePassword } from './ChangePassword'
 
 export const ProfileForm = (): JSX.Element => {
   const { validate, usernameError, emailError, firstNameError, lastNameError } = useUserValidations()
-  const { tempUser, handleChangeValue, handleSaveChanges, showDeleteAccount, setShowDeleteAccount, handleDeleteAccount, error, setError, userChanged, emailMatched, handleResendVerificationEmail, timeLeftTillResendEnabled } = useProfile({ validate })
+  const { tempUser, handleChangeValue, handleSaveChanges, showDeleteAccount, setShowDeleteAccount, handleDeleteAccount, userChanged, emailMatched, handleResendVerificationEmail, timeLeftTillResendEnabled } = useProfile({ validate })
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false)
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -72,10 +74,14 @@ export const ProfileForm = (): JSX.Element => {
         <Button type='submit' color='primary' disabled={!userChanged}>
           Save Changes
         </Button>
-        <Button type='submit' color='danger' onClick={() => setShowDeleteAccount(true)}>
+        <Button type='button' color='neutral' onClick={() => setShowChangePassword(true)}>
+          Change Password
+        </Button>
+        <Button type='button' color='danger' onClick={() => setShowDeleteAccount(true)}>
           Delete My Account
         </Button>
       </form>
+      <ChangePassword open={showChangePassword} onClose={() => setShowChangePassword(false)}/>
       <Modal
         open={showDeleteAccount}
         onClose={() => setShowDeleteAccount(false)}
@@ -98,25 +104,6 @@ export const ProfileForm = (): JSX.Element => {
           </form>
         </ModalDialog>
       </Modal>
-      <Snackbar
-        open={error !== ''}
-        autoHideDuration={6000}
-        onClose={() => setError('')}
-        variant='soft'
-        color='danger'
-        size='md'
-        endDecorator={
-          <IconButton
-            variant='soft'
-            color='danger'
-            onClick={() => setError('')}
-          >
-            <FontAwesomeIcon icon={faClose}/>
-          </IconButton>
-        }
-      >
-        {error}
-      </Snackbar>
     </>
   )
 }
