@@ -154,43 +154,6 @@ export const useProfile = ({ validate }: Props): HookResponse => {
     }
   }, [timeLeftTillResendEnabled])
 
-  const handleResendVerificationEmail = useCallback(async (): Promise<void> => {
-    if (!loggedInUser) return
-    try {
-      const response = await fetch(`${getApiUrl()}/users/resend-verification`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email: loggedInUser.email })
-      })
-      if (!response.ok) {
-        setError('Network response was not ok')
-        return
-      }
-      const json: DefaultResponse<undefined> = await response.json()
-      if (json.success) {
-        setTimeLeftTillResendEnabled(60)
-      } else {
-        setError(`Failed to resend verification email: ${json.message}`)
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(`Failed to resend verification email: ${error.message}`)
-      }
-    }
-  }, [loggedInUser])
-
-  useEffect(() => {
-    if (timeLeftTillResendEnabled > 0) {
-      const interval = setInterval(() => {
-        setTimeLeftTillResendEnabled(prevTime => prevTime - 1)
-      }, 1000)
-      return () => clearInterval(interval)
-    }
-  }, [timeLeftTillResendEnabled])
-
   return {
     tempUser,
     handleChangeValue,
