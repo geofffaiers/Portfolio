@@ -30,4 +30,3 @@ export const resendVerification = async (req: Request): Promise<DefaultResponse<
     throw err
   }
 }
-
