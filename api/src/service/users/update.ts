@@ -4,16 +4,19 @@ import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
 import { RowDataPacket } from 'mysql2'
 import { pool } from '../../helpers/db'
-import { DefaultResponse, User } from '../../models'
-import { addToPreviousPasswords } from './methods'
+import { DefaultResponse, MessageType, UpdatedProfile, User } from '../../models'
+import { addToPreviousPasswords, getUser, newToken } from './methods'
 import { zxcvbn, ZxcvbnResult } from '@zxcvbn-ts/core'
+import { sendMessageToClient } from '../sockets/methods'
+import { sendValidateEmail } from '../../helpers'
 
 export const update = async (req: Request): Promise<DefaultResponse<User>> => {
   try {
     const user: User = plainToInstance(User, req.body, { excludeExtraneousValues: true })
     await validateOrReject(user)
-    if (user.password.length > 0 && await isPasswordChanged(user)) {
-      if (await isPasswordNew(user)) {
+    const existingUser: User = await getUser(user.id)
+    if (user.password.length > 0) {
+      if (await isCurrentPasswordCorrect(user.id, req.body.currentPassword) && await isPasswordNew(user)) {
         const passwordStrength: ZxcvbnResult = zxcvbn(user.password)
         if (passwordStrength.score < 3) {
           let message: string = passwordStrength.feedback.warning ?? ''
@@ -26,7 +29,7 @@ export const update = async (req: Request): Promise<DefaultResponse<User>> => {
           }
         }
         user.password = await bcrypt.hash(user.password, 10)
-        await updateAll(user)
+        await updateAll(user, existingUser)
       } else {
         return {
           success: false,
@@ -34,9 +37,14 @@ export const update = async (req: Request): Promise<DefaultResponse<User>> => {
         }
       }
     } else {
-      await updateExceptPassword(user)
+      await updateExceptPassword(user, existingUser)
     }
     user.password = ''
+    const response: UpdatedProfile = {
+      type: MessageType.UPDATED_PROFILE,
+      user
+    }
+    sendMessageToClient(response, user.id)
     return {
       success: true,
       data: user
@@ -46,17 +54,12 @@ export const update = async (req: Request): Promise<DefaultResponse<User>> => {
   }
 }
 
-const isPasswordChanged = async (user: User): Promise<boolean> => {
-  const [result] = await pool.query<User[] & RowDataPacket[]>(
-    `SELECT password
-    FROM users
-    WHERE id = ?`,
-    [user.id]
+const isCurrentPasswordCorrect = async (userId: number, currentPassword: string): Promise<boolean> => {
+  const [result] = await pool.query<Partial<User> & RowDataPacket[]>(
+    'SELECT password FROM users WHERE id = ?',
+    [userId]
   )
-  if (result.length === 0) {
-    throw new Error('User not found')
-  }
-  return !await bcrypt.compare(user.password, result[0].password)
+  return bcrypt.compareSync(currentPassword, result[0].password)
 }
 
 const isPasswordNew = async (user: User): Promise<boolean> => {
@@ -70,22 +73,39 @@ const isPasswordNew = async (user: User): Promise<boolean> => {
   return result.every((row) => !bcrypt.compareSync(user.password, row.password))
 }
 
-// TODO: This needs to update the verificationEmail field if the email address has changed, if it has, then the user needs to be re-verified
-const updateAll = async (user: User): Promise<void> => {
+const updateAll = async (user: User, existingUser: User): Promise<void> => {
   await pool.query(
     `UPDATE users
     SET email = ?, first_name = ?, last_name = ?, profile_picture = ?, password = ?
     WHERE id = ?`,
     [user.email, user.firstName, user.lastName, user.profilePicture, user.password, user.id]
   )
+  await actionEmailChange(user, existingUser)
   await addToPreviousPasswords(user)
 }
 
-const updateExceptPassword = async (user: User): Promise<void> => {
+const updateExceptPassword = async (user: User, existingUser: User): Promise<void> => {
   await pool.query(
     `UPDATE users
     SET email = ?, first_name = ?, last_name = ?, profile_picture = ?
     WHERE id = ?`,
     [user.email, user.firstName, user.lastName, user.profilePicture, user.id]
   )
+  await actionEmailChange(user, existingUser)
+}
+
+const actionEmailChange = async (user: User, existingUser: User): Promise<void> => {
+  const emailChanged: boolean = user.email !== existingUser.email
+  if (emailChanged) {
+    user.validateToken = newToken()
+    user.validateTokenExpires = new Date(Date.now() + (5 * 1000 * 60))
+    user.verifiedEmail = false
+    await pool.query(
+      `UPDATE users
+      SET verified_email = FALSE, validate_token = ?, validate_token_expires = ?
+      WHERE id = ?`,
+      [user.validateToken, user.validateTokenExpires, user.id]
+    )
+    sendValidateEmail(user)
+  }
 }

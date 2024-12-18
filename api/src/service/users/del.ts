@@ -1,6 +1,7 @@
 import { Request } from 'express'
 import { pool } from '../../helpers/db'
-import { DefaultResponse } from '../../models'
+import { DefaultResponse, DeleteProfile, MessageType } from '../../models'
+import { sendMessageToClient } from '../sockets/methods'
 
 export const del = async (req: Request): Promise<DefaultResponse<undefined>> => {
   const connection = await pool.getConnection()
@@ -18,6 +19,10 @@ export const del = async (req: Request): Promise<DefaultResponse<undefined>> => 
     await connection.query('DELETE FROM scores WHERE user_id = ?', [userId])
     await connection.query('DELETE FROM users WHERE id = ?', [userId])
     await connection.commit()
+    const response: DeleteProfile = {
+      type: MessageType.DELETE_PROFILE
+    }
+    sendMessageToClient(response, userId)
     return {
       success: true
     }
