@@ -1,5 +1,5 @@
-import { Avatar, Box } from "@mui/joy"
-import { User } from "../models"
+import { Avatar, Box } from '@mui/joy'
+import { User } from '../models'
 
 interface Props {
   user: User | null

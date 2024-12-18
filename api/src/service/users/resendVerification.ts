@@ -1,9 +1,8 @@
 import { Request } from 'express'
-import { plainToInstance } from 'class-transformer'
-import { ResultSetHeader, RowDataPacket } from 'mysql2'
+import { ResultSetHeader } from 'mysql2'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
-import { newToken } from './methods'
+import { getUser, newToken } from './methods'
 import { sendValidateEmail } from '../../helpers'
 
 export const resendVerification = async (req: Request): Promise<DefaultResponse<undefined>> => {
@@ -30,17 +29,4 @@ export const resendVerification = async (req: Request): Promise<DefaultResponse<
   } catch (err: any) {
     throw err
   }
-}
-
-const getUser = async (userId: number): Promise<User> => {
-  const [result] = await pool.query<User[] & RowDataPacket[]>(
-    `SELECT *
-    FROM users
-    WHERE id = ?`,
-    [userId]
-  )
-  if (result.length === 0) {
-    throw new Error('User not found')
-  }
-  return plainToInstance(User, result[0], { excludeExtraneousValues: true })
 }

@@ -1,6 +1,6 @@
-import { CvHeader } from "@/app/models"
-import { Grid, Typography } from "@mui/joy"
-import { useMemo } from "react"
+import { CvHeader } from '@/app/models'
+import { Grid, Typography } from '@mui/joy'
+import { useMemo } from 'react'
 
 interface Props {
   section: CvHeader

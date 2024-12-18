@@ -1,11 +1,11 @@
-import { getApiUrl } from "@/app/helpers"
-import { DefaultResponse, User } from "@/app/models"
-import { Button, Dropdown, Menu, MenuButton, MenuItem } from "@mui/joy"
-import { useEffect, useRef, useState } from "react"
-import { ProfileIcon } from "../ProfileIcon"
-import { usePageContext } from "@/app/context"
-import styled from "@emotion/styled"
-import { useRouter, usePathname } from "next/navigation"
+import { getApiUrl } from '@/app/helpers'
+import { DefaultResponse, User } from '@/app/models'
+import { Button, Dropdown, Menu, MenuButton, MenuItem } from '@mui/joy'
+import { useEffect, useRef, useState } from 'react'
+import { ProfileIcon } from '../ProfileIcon'
+import { usePageContext } from '@/app/context'
+import styled from '@emotion/styled'
+import { useRouter, usePathname } from 'next/navigation'
 
 const CustomMenuButton = styled(MenuButton)`
   padding: 0;

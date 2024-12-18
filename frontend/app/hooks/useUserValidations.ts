@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react"
-import { User } from "../models"
+import { useCallback, useState } from 'react'
+import { User } from '../models'
 
 interface HookResponse {
   setPasswordScore: (score: number) => void

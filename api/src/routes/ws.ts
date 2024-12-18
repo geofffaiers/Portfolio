@@ -2,11 +2,14 @@ import { WebSocket, Server as WebSocketServer } from 'ws'
 import { Request } from 'express'
 import { v4 as uuid } from 'uuid'
 import { Client } from '../models/sockets/Client'
-import { SocketMessage, MessageType } from '../models/sockets'
+import { SocketMessage, MessageType, UpdatedProfile } from '../models/sockets'
 import { newMessageHandler, readMessageHandler } from '../service/sockets/messaging'
 import { authenticateTokenForSocket } from '../middlewares'
 import { pool } from '../helpers'
 import { ResultSetHeader } from 'mysql2'
+import { getUser } from '../service/users/methods'
+import { sendMessageToClient } from '../service/sockets/methods'
+import { User } from '../models'
 
 export const clients: Map<string, Client> = new Map()
 
@@ -16,13 +19,16 @@ export const handleWebSocketConnection = (wss: WebSocketServer): void => {
     const client: Client = { clientId, ws, userId: -1 }
     try {
       authenticateTokenForSocket(ws, req)
-        .then((userId: number) => {
+        .then(async (userId: number) => {
           client.userId = userId
           clients.set(clientId, client)
-          setUserActive(userId, true)
-            .catch((err: any) => {
-              console.error('Error setting user active:', err)
-            })
+          await setUserActive(userId, true)
+          const user: User = await getUser(userId)
+          const message: UpdatedProfile = {
+            type: MessageType.UPDATED_PROFILE,
+            user
+          }
+          sendMessageToClient(message, userId)
         })
         .catch((err: any) => {
           ws.close(1008, err.message)

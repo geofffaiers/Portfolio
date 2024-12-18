@@ -1,6 +1,9 @@
 
 import React, { createContext, useState, ReactNode, useEffect } from 'react'
 import { User } from '../models'
+import { IconButton, Snackbar } from '@mui/joy'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faClose } from '@fortawesome/free-solid-svg-icons'
 
 interface PageContextType {
   loggedInUser: User | null
@@ -10,6 +13,8 @@ interface PageContextType {
   openRegisterDialog: boolean
   setOpenRegisterDialog: (open: boolean) => void
   isMobileDisplay: boolean
+  error: string
+  setError: (error: string) => void
 }
 
 const PageContext = createContext<PageContextType | null>(null)
@@ -23,6 +28,7 @@ export const PageProvider: React.FC<PageProviderProps> = ({ children }) => {
   const [play, setPlay] = useState<boolean>(false)
   const [openRegisterDialog, setOpenRegisterDialog] = useState<boolean>(false)
   const [isMobileDisplay, setIsMobileDisplay] = useState<boolean>(false)
+  const [error, setError] = useState<string>('')
 
   useEffect(() => {
     const handleResize = () => {
@@ -36,8 +42,27 @@ export const PageProvider: React.FC<PageProviderProps> = ({ children }) => {
   }, [])
 
   return (
-    <PageContext.Provider value={{ loggedInUser, setLoggedInUser, play, setPlay, openRegisterDialog, setOpenRegisterDialog, isMobileDisplay }}>
+    <PageContext.Provider value={{ loggedInUser, setLoggedInUser, play, setPlay, openRegisterDialog, setOpenRegisterDialog, isMobileDisplay, error, setError }}>
       {children}
+      <Snackbar
+        open={error !== ''}
+        autoHideDuration={null}
+        onClose={() => setError('')}
+        variant='soft'
+        color='danger'
+        size='md'
+        endDecorator={
+          <IconButton
+            variant='soft'
+            color='danger'
+            onClick={() => setError('')}
+          >
+            <FontAwesomeIcon icon={faClose}/>
+          </IconButton>
+        }
+      >
+        {error}
+      </Snackbar>
     </PageContext.Provider>
   )
 }

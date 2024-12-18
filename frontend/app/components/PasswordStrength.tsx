@@ -1,6 +1,6 @@
 'use client'
-import { zxcvbnAsync, ZxcvbnResult } from "@zxcvbn-ts/core"
-import { useCallback, useEffect, useState } from "react"
+import { zxcvbnAsync, ZxcvbnResult } from '@zxcvbn-ts/core'
+import { useCallback, useEffect, useState } from 'react'
 
 interface Props {
   password: string

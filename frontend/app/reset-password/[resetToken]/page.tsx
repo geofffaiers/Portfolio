@@ -1,7 +1,7 @@
 'use client'
 import { useState, FormEvent, useCallback, useEffect, useRef } from 'react'
-import { Container, Box, Input, Button, Typography, Stack, FormControl, FormLabel, FormHelperText, CircularProgress } from '@mui/joy'
-import { PasswordStrength } from '@/app/components/auth/PasswordStrength'
+import { Container, Box, Button, Typography, Stack, CircularProgress } from '@mui/joy'
+import { SetPassword } from '@/app/components'
 import { useParams } from 'next/navigation'
 import { DefaultResponse, ErrorCheck, User } from '@/app/models'
 import { getApiUrl } from '@/app/helpers'
@@ -160,18 +160,15 @@ export default function ResetPasswordPage (): JSX.Element {
         {!loading && outcome && <Typography component='p'>{outcome}</Typography>}
         {!loading && user && !outcome && (
           <Stack spacing={2}>
-            <FormControl error={passwordError !== ''}>
-              <FormLabel>Password</FormLabel>
-              <Input name="password" type="password" required onChange={handleChangePassword}/>
-              <FormHelperText>{passwordError}</FormHelperText>
-            </FormControl>
-            <FormControl error={confirmPasswordError !== ''}>
-              <FormLabel>Confirm Password</FormLabel>
-              <Input name="confirmPassword" type="password" required onChange={() => setConfirmPasswordError('')}/>
-              <FormHelperText>{confirmPasswordError}</FormHelperText>
-            </FormControl>
-            <PasswordStrength password={password} setPasswordScore={setPasswordScore}/>
-            <Button type="submit">Reset Password</Button>
+            <SetPassword
+              password={password}
+              passwordError={passwordError}
+              confirmPasswordError={confirmPasswordError}
+              handleChangePassword={handleChangePassword}
+              setConfirmPasswordError={setConfirmPasswordError}
+              setPasswordScore={setPasswordScore}
+            />
+            <Button type='submit'>Reset Password</Button>
           </Stack>
         )}
       </Box>

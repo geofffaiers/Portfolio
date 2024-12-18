@@ -1,7 +1,7 @@
 import { CookieOptions, Request, Response } from 'express'
 import { jwtVerify } from 'jose'
-import { DefaultResponse, ErrorCheck } from '../../models'
-import { generateJwt } from './methods'
+import { DefaultResponse, ErrorCheck, User } from '../../models'
+import { generateJwt, getUser } from './methods'
 
 
 export const refreshToken = async (req: Request, res: Response): Promise<DefaultResponse<undefined>> => {
@@ -13,6 +13,7 @@ export const refreshToken = async (req: Request, res: Response): Promise<Default
         message: error
       }
     }
+    await getUser(userId)
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

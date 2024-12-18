@@ -1,6 +1,6 @@
-import { Score } from "@/app/models"
-import { CircularProgress, Typography } from "@mui/joy"
-import { useMemo, useState } from "react"
+import { Score } from '@/app/models'
+import { CircularProgress, Typography } from '@mui/joy'
+import { useMemo, useState } from 'react'
 
 interface Props {
   title: string

@@ -1,7 +1,7 @@
-import { getApiUrl } from "@/app/helpers"
-import { DefaultResponse, User } from "@/app/models"
-import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { getApiUrl } from '@/app/helpers'
+import { DefaultResponse, User } from '@/app/models'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface UseValidateEmail {
   error: string
@@ -46,7 +46,7 @@ export const useValidateEmail = ({ validateToken }: Props): UseValidateEmail => 
         setError('An unknown error occurred')
       }
     }
-  }, [])
+  }, [validateToken])
 
   const validateEmail = useCallback(async (): Promise<void> => {
     abortControllerRef.current = new AbortController()
@@ -78,7 +78,7 @@ export const useValidateEmail = ({ validateToken }: Props): UseValidateEmail => 
         setError('An unknown error occurred')
       }
     }
-  }, [user])
+  }, [user, router, validateToken])
 
   useEffect(() => {
     try {
@@ -95,7 +95,7 @@ export const useValidateEmail = ({ validateToken }: Props): UseValidateEmail => 
         setError('An unknown error occurred')
       }
     }
-  }, [user])
+  }, [user, getUserForResetToken, validateEmail])
 
   return {
     error

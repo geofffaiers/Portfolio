@@ -14,8 +14,6 @@ interface HookResponse {
   showDeleteAccount: boolean
   setShowDeleteAccount: (show: boolean) => void
   handleDeleteAccount: (evt: FormEvent<HTMLFormElement>) => Promise<void>
-  error: string
-  setError: (error: string) => void
   userChanged: boolean
   emailMatched: boolean | null
   handleResendVerificationEmail: () => void
@@ -23,10 +21,9 @@ interface HookResponse {
 }
 
 export const useProfile = ({ validate }: Props): HookResponse => {
-  const { loggedInUser, setLoggedInUser } = usePageContext()
+  const { loggedInUser, setLoggedInUser, setError } = usePageContext()
   const [tempUser, setTempUser] = useState<User | null>(loggedInUser)
   const [showDeleteAccount, setShowDeleteAccount] = useState<boolean>(false)
-  const [error, setError] = useState<string>('')
   const [userChanged, setUserChanged] = useState<boolean>(false)
   const [emailMatched, setEmailMatched] = useState<boolean | null>(null)
   const [timeLeftTillResendEnabled, setTimeLeftTillResendEnabled] = useState<number>(0)
@@ -76,7 +73,7 @@ export const useProfile = ({ validate }: Props): HookResponse => {
         setError(`Failed to update user: ${error.message}`)
       }
     }
-  }, [tempUser, setLoggedInUser, validate])
+  }, [tempUser, setLoggedInUser, validate, setError])
 
   const handleSetShowDeleteAccount = useCallback((show: boolean): void => {
     setEmailMatched(null)
@@ -84,7 +81,7 @@ export const useProfile = ({ validate }: Props): HookResponse => {
   }, [])
 
   const handleDeleteAccount = useCallback(async (evt: FormEvent<HTMLFormElement>): Promise<void> => {
-    evt?.preventDefault()
+    evt.preventDefault()
     if (!loggedInUser) return
     const formData: FormData = new FormData(evt.currentTarget)
     const formJson: { [k: string]: FormDataEntryValue } = Object.fromEntries(formData.entries())
@@ -118,7 +115,44 @@ export const useProfile = ({ validate }: Props): HookResponse => {
         setError(`Failed to delete user: ${error.message}`)
       }
     }
-  }, [loggedInUser, setLoggedInUser])
+  }, [loggedInUser, setLoggedInUser, setError])
+
+  const handleResendVerificationEmail = useCallback(async (): Promise<void> => {
+    if (!loggedInUser) return
+    try {
+      const response = await fetch(`${getApiUrl()}/users/resend-verification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email: loggedInUser.email })
+      })
+      if (!response.ok) {
+        setError('Network response was not ok')
+        return
+      }
+      const json: DefaultResponse<undefined> = await response.json()
+      if (json.success) {
+        setTimeLeftTillResendEnabled(60)
+      } else {
+        setError(`Failed to resend verification email: ${json.message}`)
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(`Failed to resend verification email: ${error.message}`)
+      }
+    }
+  }, [loggedInUser, setError])
+
+  useEffect(() => {
+    if (timeLeftTillResendEnabled > 0) {
+      const interval = setInterval(() => {
+        setTimeLeftTillResendEnabled(prevTime => prevTime - 1)
+      }, 1000)
+      return () => clearInterval(interval)
+    }
+  }, [timeLeftTillResendEnabled])
 
   const handleResendVerificationEmail = useCallback(async (): Promise<void> => {
     if (!loggedInUser) return
@@ -164,8 +198,6 @@ export const useProfile = ({ validate }: Props): HookResponse => {
     showDeleteAccount,
     setShowDeleteAccount: handleSetShowDeleteAccount,
     handleDeleteAccount,
-    error,
-    setError,
     userChanged,
     emailMatched,
     handleResendVerificationEmail,
