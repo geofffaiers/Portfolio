@@ -11,6 +11,7 @@ import { router } from './routes'
 import { zxcvbnOptions } from '@zxcvbn-ts/core'
 import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common'
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en'
+import { setupSwagger } from './spec'
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -31,6 +32,7 @@ export class Server {
     this.#app = app
     this.#config()
     router(app)
+    setupSwagger(app)
     this.#errorHandler()
   }
 
