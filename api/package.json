@@ -5,7 +5,7 @@
   "scripts": {
     "test": "NODE_ENV=tests jest",
     "build": "tsc",
-    "dev": "NODE_ENV=development nodemon --watch ./src --watch ./src/spec/openapi.yml ./src/index.ts",
+    "dev": "NODE_ENV=development nodemon --watch ./src --watch openapi.yml ./src/index.ts",
     "start": "node ./build/index.js"
   },
   "author": "geoff.faiers",
