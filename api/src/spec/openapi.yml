@@ -1,0 +1,398 @@
+openapi: 3.1.0
+info:
+  title: Portfolio API
+  version: 1.0.0
+  contact:
+    email: info@gfaiers.com
+servers:
+  - url: http://localhost:3000
+    description: Local server on port 3000
+  - url: http://localhost:4000
+    description: Local server on port 4000
+  - url: https://gfaiers.com
+    description: Production server
+paths:
+  # Users section
+  /api/users/create:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/generate-reset-token:
+    post:
+      tags:
+        - Users
+      summary: Generate a reset token for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Reset token generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/get-user-for-reset-token:
+    get:
+      tags:
+        - Users
+      summary: Get user for reset token
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/get-user-for-validate-token:
+    get:
+      tags:
+        - Users
+      summary: Get user for validate token
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/login:
+    post:
+      tags:
+        - Users
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/reset-password:
+    post:
+      tags:
+        - Users
+      summary: Reset user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/refresh-token:
+    post:
+      tags:
+        - Users
+      summary: Refresh user token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/logout:
+    post:
+      tags:
+        - Users
+      summary: Logout a user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/update:
+    post:
+      tags:
+        - Users
+      summary: Update user details
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/delete:
+    delete:
+      tags:
+        - Users
+      summary: Delete a user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/validate-email:
+    post:
+      tags:
+        - Users
+      summary: Validate user email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Email validated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/users/resend-verification:
+    post:
+      tags:
+        - Users
+      summary: Resend email verification
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Verification email resent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+
+  # Scores section
+  /api/scores:
+    post:
+      tags:
+        - Scores
+      summary: Save user scores
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                score:
+                  type: number
+      responses:
+        '200':
+          description: Scores saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+    get:
+      tags:
+        - Scores
+      summary: Get global scores
+      responses:
+        '200':
+          description: Scores retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+
+  # Messaging section
+  /api/messaging/contact:
+    post:
+      tags:
+        - Messaging
+      summary: Contact form submission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                message:
+                  type: string
+      responses:
+        '200':
+          description: Contact form submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/messaging/get-chat-headers:
+    get:
+      tags:
+        - Messaging
+      summary: Get chat headers
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Chat headers retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+  /api/messaging/get-messages-for-page:
+    get:
+      tags:
+        - Messaging
+      summary: Get messages for a page
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: number
+          required: true
+      responses:
+        '200':
+          description: Messages retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+        '400':
+          description: Bad request
+components:
+  schemas:
+    DefaultResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        code:
+          type: number
+        message:
+          type: string
+        stack:
+          type: string
+        data:
+          type: object

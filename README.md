@@ -31,6 +31,11 @@ This portfolio website is a comprehensive showcase of my skills, projects, and e
 
 - **Deployment**: The application is hosted on a [DigitalOcean Droplet](https://www.digitalocean.com/products/droplets/) in a Docker container. This setup provides a scalable and isolated environment for running the application, ensuring high availability and performance.
 
+- **API Documentation**: The API for this portfolio is documented using the OpenAPI specification. You can find the API documentation at the following URLs:
+  - Local server on port 3000: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+  - Local server on port 4000: [http://localhost:4000/api-docs](http://localhost:4000/api-docs)
+  - Production server: [https://gfaiers.com/api-docs](https://gfaiers.com/api-docs)
+
 This project demonstrates my ability to build full-stack applications using modern web technologies and best practices. It showcases my skills in frontend and backend development, real-time communication, authentication, CI/CD, and deployment.
 
 Feel free to explore the codebase and reach out if you have any questions or feedback!
