@@ -11,7 +11,7 @@ import { router } from './routes'
 import { zxcvbnOptions } from '@zxcvbn-ts/core'
 import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common'
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en'
-import { setupSwagger } from './spec'
+import { setupSwagger } from './helpers/spec'
 
 declare module 'express-serve-static-core' {
   interface Request {
