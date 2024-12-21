@@ -1,12 +1,13 @@
 import { Request } from 'express'
-import { pool, sendContactEmail } from '../../helpers'
+import { handleError, pool, sendContactEmail } from '../../helpers'
 import { DefaultResponse } from '../../models'
 
-export const contact = async (req: Request): Promise<DefaultResponse<undefined>> => {
+export const contact = async (req: Request): Promise<DefaultResponse> => {
   try {
     const { name, email, message } = req.body
     if (name == null || email == null || message == null) {
       return {
+        code: 400,
         success: false,
         message: 'Missing required fields.'
       }
@@ -17,9 +18,10 @@ export const contact = async (req: Request): Promise<DefaultResponse<undefined>>
     )
     await sendContactEmail(name, email, message)
     return {
+      code: 200,
       success: true
     }
-  } catch (err: any) {
-    throw new Error(err)
+  } catch (err: unknown) {
+    return handleError(err)
   }
 }

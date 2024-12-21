@@ -48,10 +48,10 @@ export default class UsersController {
     }
   }
 
-  // TODO: Tidying handlers
   async logout (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await logout(req, res))
+      const response: DefaultResponse = await logout(req, res)
+      res.status(200).json(response.code)
     } catch (err: any) {
       next(err)
     }
@@ -59,7 +59,8 @@ export default class UsersController {
 
   async refreshToken (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await refreshToken(req, res))
+      const response: DefaultResponse = await refreshToken(req, res)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }
@@ -67,7 +68,8 @@ export default class UsersController {
 
   async resetPassword (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await resetPassword(req))
+      const response: DefaultResponse = await resetPassword(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }
@@ -75,7 +77,8 @@ export default class UsersController {
 
   async update (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await update(req))
+      const response: DefaultResponse<User> = await update(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }
@@ -83,7 +86,8 @@ export default class UsersController {
 
   async del (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await del(req))
+      const response: DefaultResponse = await del(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }
@@ -91,7 +95,8 @@ export default class UsersController {
 
   async validateEmail (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await validateEmail(req))
+      const response: DefaultResponse = await validateEmail(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }
@@ -99,7 +104,8 @@ export default class UsersController {
 
   async resendVerification (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await resendVerification(req))
+      const response: DefaultResponse = await resendVerification(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }

@@ -3,12 +3,13 @@ import { ResultSetHeader } from 'mysql2'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
 import { getUser, newToken } from './methods'
-import { sendValidateEmail } from '../../helpers'
+import { handleError, sendValidateEmail } from '../../helpers'
 
-export const resendVerification = async (req: Request): Promise<DefaultResponse<undefined>> => {
+export const resendVerification = async (req: Request): Promise<DefaultResponse> => {
   try {
     if (req.userId == null) {
       return {
+        code: 400,
         success: false,
         message: 'Unauthorized'
       }
@@ -24,9 +25,10 @@ export const resendVerification = async (req: Request): Promise<DefaultResponse<
     )
     await sendValidateEmail(user)
     return {
+      code: 200,
       success: true
     }
-  } catch (err: any) {
-    throw err
+  } catch (err: unknown) {
+    return handleError(err)
   }
 }

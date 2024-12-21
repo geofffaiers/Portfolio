@@ -5,11 +5,12 @@ import { DefaultResponse, MessageType, UpdatedProfile, User } from '../../models
 import { sendMessageToClient } from '../sockets/methods'
 import { getUser } from './methods'
 
-export const validateEmail = async (req: Request): Promise<DefaultResponse<undefined>> => {
+export const validateEmail = async (req: Request): Promise<DefaultResponse> => {
   try {
     const { userId, validateToken }: { userId: number; validateToken: string } = req.body
     if (userId == null || validateToken == null) {
       return {
+        code: 400,
         success: false,
         message: 'Missing required fields'
       }
@@ -20,6 +21,7 @@ export const validateEmail = async (req: Request): Promise<DefaultResponse<undef
     )
     if (result.length === 0) {
       return {
+        code: 400,
         success: false,
         message: 'Invalid validate token'
       }
@@ -35,6 +37,7 @@ export const validateEmail = async (req: Request): Promise<DefaultResponse<undef
     }
     sendMessageToClient(response, user.id)
     return {
+      code: 200,
       success: true
     }
   } catch (err: any) {

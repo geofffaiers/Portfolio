@@ -6,6 +6,7 @@ import { RowDataPacket } from 'mysql2'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
 import { delay, generateJwt } from './methods'
+import { handleError } from '../../helpers'
 
 export const login = async (req: Request, res: Response): Promise<DefaultResponse<User>> => {
   try {
@@ -46,6 +47,6 @@ export const login = async (req: Request, res: Response): Promise<DefaultRespons
       data: user
     }
   } catch (err: any) {
-    throw new Error(err)
+    return handleError<User>(err)
   }
 }

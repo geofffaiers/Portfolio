@@ -1,21 +1,19 @@
 import { Request } from 'express'
-import { DefaultResponse, Score } from '../../models'
-import { getGlobalScores, getUserScores } from './methods'
+import { DefaultResponse, Score, GetScores } from '../../models'
+import { getGlobalScores } from './methods'
+import { handleError } from '../../helpers'
 
-interface Response {
-  globalScores: Score[]
-}
-
-export const getScores = async (req: Request): Promise<DefaultResponse<Response>> => {
+export const getScores = async (req: Request): Promise<DefaultResponse<GetScores>> => {
   try {
     const globalScores: Score[] = await getGlobalScores()
     return {
+      code: 200,
       success: true,
       data: {
         globalScores
       }
     }
-  } catch (err: any) {
-    throw new Error(err)
+  } catch (err: unknown) {
+    return handleError<GetScores>(err)
   }
 }

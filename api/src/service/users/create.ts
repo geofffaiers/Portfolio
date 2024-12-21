@@ -7,7 +7,7 @@ import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
 import { addToPreviousPasswords, newToken } from './methods'
 import { zxcvbn, ZxcvbnResult } from '@zxcvbn-ts/core'
-import { sendValidateEmail } from '../../helpers'
+import { handleError, sendValidateEmail } from '../../helpers'
 
 export const create = async (req: Request): Promise<DefaultResponse<User>> => {
   try {
@@ -69,7 +69,7 @@ export const create = async (req: Request): Promise<DefaultResponse<User>> => {
       data: user
     }
   } catch (err: any) {
-    throw err
+    return handleError<User>(err)
   }
 }
 

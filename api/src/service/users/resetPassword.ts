@@ -7,12 +7,14 @@ import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
 import { addToPreviousPasswords } from './methods'
 import { zxcvbn, ZxcvbnResult } from '@zxcvbn-ts/core'
+import { handleError } from '../../helpers'
 
-export const resetPassword = async (req: Request): Promise<DefaultResponse<undefined>> => {
+export const resetPassword = async (req: Request): Promise<DefaultResponse> => {
   try {
     const { userId, newPassword, resetToken } = req.body
     if (userId == null || newPassword == null || resetToken == null) {
       return {
+        code: 400,
         success: false,
         message: 'Missing required fields'
       }
@@ -23,6 +25,7 @@ export const resetPassword = async (req: Request): Promise<DefaultResponse<undef
     )
     if (result.length === 0) {
       return {
+        code: 400,
         success: false,
         message: 'Invalid reset token'
       }
@@ -36,6 +39,7 @@ export const resetPassword = async (req: Request): Promise<DefaultResponse<undef
         message += ` ${passwordStrength.feedback.suggestions.join(' ')}`
       }
       return {
+        code: 400,
         success: false,
         message
       }
@@ -47,9 +51,10 @@ export const resetPassword = async (req: Request): Promise<DefaultResponse<undef
     )
     await addToPreviousPasswords(user)
     return {
+      code: 200,
       success: true
     }
-  } catch (err: any) {
-    throw new Error(err)
+  } catch (err: unknown) {
+      return handleError(err)
   }
 }

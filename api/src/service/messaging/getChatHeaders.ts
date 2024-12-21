@@ -2,7 +2,7 @@ import { Request } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
 import { RowDataPacket } from 'mysql2'
-import { pool } from '../../helpers'
+import { handleError, pool } from '../../helpers'
 import { ChatHeader, DefaultResponse, Message, User } from '../../models'
 
 export const getChatHeaders = async (req: Request): Promise<DefaultResponse<ChatHeader[]>> => {
@@ -10,6 +10,7 @@ export const getChatHeaders = async (req: Request): Promise<DefaultResponse<Chat
     const users: User[] = await getUsers(req.userId)
     if (users.length === 0) {
       return {
+        code: 400,
         success: false,
         message: 'User has no conversations'
       }
@@ -25,11 +26,12 @@ export const getChatHeaders = async (req: Request): Promise<DefaultResponse<Chat
       }
     }))
     return {
+      code: 400,
       success: true,
       data: chatHeaders
     }
-  } catch (err: any) {
-    throw new Error(err)
+  } catch (err: unknown) {
+    return handleError<ChatHeader[]>(err)
   }
 }
 

@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import { getScores, saveScores } from '../service/scores'
+import { DefaultResponse, GetScores, SaveScores } from '../models'
 
 export default class ScoresController {
   async saveScores (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await saveScores(req))
+      const response: DefaultResponse<SaveScores> = await saveScores(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }
@@ -12,7 +14,8 @@ export default class ScoresController {
 
   async getScores (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await getScores(req))
+      const response: DefaultResponse<GetScores> = await getScores(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }

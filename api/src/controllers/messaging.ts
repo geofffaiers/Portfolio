@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import { contact, getChatHeaders, getMessagesForPage } from '../service/messaging'
+import { ChatHeader, DefaultResponse, Message } from '../models'
 
 export default class MessagingController {
   async contact (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await contact(req))
+      const response: DefaultResponse = await contact(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }
@@ -12,7 +14,8 @@ export default class MessagingController {
 
   async getChatHeaders (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await getChatHeaders(req))
+      const response: DefaultResponse<ChatHeader[]> = await getChatHeaders(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }
@@ -20,7 +23,8 @@ export default class MessagingController {
 
   async getMessagesForPage (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.status(200).json(await getMessagesForPage(req))
+      const response: DefaultResponse<Message[]> = await getMessagesForPage(req)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }

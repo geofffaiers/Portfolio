@@ -8,7 +8,7 @@ import { DefaultResponse, MessageType, UpdatedProfile, User } from '../../models
 import { addToPreviousPasswords, getUser, newToken } from './methods'
 import { zxcvbn, ZxcvbnResult } from '@zxcvbn-ts/core'
 import { sendMessageToClient } from '../sockets/methods'
-import { sendValidateEmail } from '../../helpers'
+import { handleError, sendValidateEmail } from '../../helpers'
 
 export const update = async (req: Request): Promise<DefaultResponse<User>> => {
   try {
@@ -24,6 +24,7 @@ export const update = async (req: Request): Promise<DefaultResponse<User>> => {
             message += ` ${passwordStrength.feedback.suggestions.join(' ')}`
           }
           return {
+            code: 400,
             success: false,
             message
           }
@@ -32,6 +33,7 @@ export const update = async (req: Request): Promise<DefaultResponse<User>> => {
         await updateAll(user, existingUser)
       } else {
         return {
+          code: 400,
           success: false,
           message: 'Password has been used in the last 3 months'
         }
@@ -46,11 +48,12 @@ export const update = async (req: Request): Promise<DefaultResponse<User>> => {
     }
     sendMessageToClient(response, user.id)
     return {
+      code: 200,
       success: true,
       data: user
     }
-  } catch (err: any) {
-    throw new Error(err)
+  } catch (err: unknown) {
+    return handleError<User>(err)
   }
 }
 
