@@ -17,6 +17,7 @@ export const login = async (req: Request, res: Response): Promise<DefaultRespons
     )
     if (result.length === 0) {
       return {
+        code: 400,
         success: false,
         message: 'User not found'
       }
@@ -26,6 +27,7 @@ export const login = async (req: Request, res: Response): Promise<DefaultRespons
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
       return {
+        code: 400,
         success: false,
         message: 'Invalid password'
       }
@@ -39,6 +41,7 @@ export const login = async (req: Request, res: Response): Promise<DefaultRespons
     res.cookie('token', await generateJwt(user.id, '2h'), cookieOptions)
     res.cookie('refreshToken', await generateJwt(user.id, '7d'), cookieOptions)
     return {
+      code: 200,
       success: true,
       data: user
     }

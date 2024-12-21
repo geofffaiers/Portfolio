@@ -11,6 +11,7 @@ export const getUserForValidateToken = async (req: Request): Promise<DefaultResp
     const { validateToken } = req.query
     if (validateToken == null) {
       return {
+        code: 400,
         success: false,
         message: 'Validate token is required'
       }
@@ -22,6 +23,7 @@ export const getUserForValidateToken = async (req: Request): Promise<DefaultResp
     )
     if (result.length === 0) {
       return {
+        code: 400,
         success: false,
         message: 'Validate token is invalid'
       }
@@ -30,11 +32,13 @@ export const getUserForValidateToken = async (req: Request): Promise<DefaultResp
     await validateOrReject(user)
     if (user.resetTokenExpires != null && user.resetTokenExpires.getTime() < new Date().getTime()) {
       return {
+        code: 400,
         success: false,
         message: 'Reset token has expired'
       }
     }
     return {
+      code: 200,
       success: true,
       data: user
     }

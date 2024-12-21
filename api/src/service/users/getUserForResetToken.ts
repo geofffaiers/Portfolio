@@ -11,6 +11,7 @@ export const getUserForResetToken = async (req: Request): Promise<DefaultRespons
     const { resetToken } = req.query
     if (resetToken == null) {
       return {
+        code: 400,
         success: false,
         message: 'Reset token is required'
       }
@@ -22,6 +23,7 @@ export const getUserForResetToken = async (req: Request): Promise<DefaultRespons
     )
     if (result.length === 0) {
       return {
+        code: 400,
         success: false,
         message: 'Reset token is invalid'
       }
@@ -30,11 +32,13 @@ export const getUserForResetToken = async (req: Request): Promise<DefaultRespons
     await validateOrReject(user)
     if (user.resetTokenExpires != null && user.resetTokenExpires.getTime() < new Date().getTime()) {
       return {
+        code: 400,
         success: false,
         message: 'Reset token has expired'
       }
     }
     return {
+      code: 200,
       success: true,
       data: user
     }
