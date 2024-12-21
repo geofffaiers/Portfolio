@@ -1,12 +1,11 @@
 'use client'
 import 'reflect-metadata'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ChatHeader, ErrorMessage, Message, MessageType, NewMessage, SocketMessage, UpdatedProfile, User } from '../../models'
+import { ChatHeader, DefaultResponse, ErrorMessage, Message, MessageType, NewMessage, SocketMessage, UpdatedProfile, User } from '../../models'
 import Conversations from './Conversations'
 import Chats from './Chats'
 import { Box, styled } from '@mui/joy'
 import { plainToInstance } from 'class-transformer'
-import { validateOrReject } from 'class-validator'
 import { getApiUrl, getWsUrl } from '@/app/helpers'
 import { usePageContext } from '@/app/context'
 
@@ -68,16 +67,9 @@ export default function Messaging ({ children }: Props): JSX.Element {
           },
           signal
         })
-        if (!response.ok) {
-          throw new Error(response.statusText)
-        }
-        const json = await response.json()
+        const json: DefaultResponse<ChatHeader[]> = await response.json()
         if (json.success) {
-          return await Promise.all(json.data.map(async (h: ChatHeader) => {
-            const header: ChatHeader = plainToInstance(ChatHeader, h, { excludeExtraneousValues: true })
-            await validateOrReject(header)
-            return header
-          }))
+          return json.data
         }
         throw new Error(json.message ?? 'Failed to get conversations')
       } catch (error: unknown) {
@@ -147,7 +139,7 @@ export default function Messaging ({ children }: Props): JSX.Element {
   }, [])
 
   useEffect(() => {
-    if (loggedInUser && loggedInUser.id !== prevUserIdRef.current) {
+    if (loggedInUser != null && loggedInUser.id !== prevUserIdRef.current) {
       prevUserIdRef.current = loggedInUser.id
       if (socketRef.current != null) {
         socketRef.current.close()
@@ -203,7 +195,7 @@ export default function Messaging ({ children }: Props): JSX.Element {
       }
     }
     return () => {
-      if (socketRef.current != null) {
+      if (socketRef.current != null && (loggedInUser == null || loggedInUser.id !== prevUserIdRef.current)) {
         socketRef.current.close()
       }
     }

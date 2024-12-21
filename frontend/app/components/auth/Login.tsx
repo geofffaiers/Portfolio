@@ -60,12 +60,9 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser, setError }: Pr
         body: JSON.stringify({ username, password }),
         signal
       })
-      if (!response.ok) {
-        return 'Login failed'
-      }
-      const json: DefaultResponse = await response.json()
+      const json: DefaultResponse<User> = await response.json()
       if (json.success) {
-        setLoggedInUser(json.data as User)
+        setLoggedInUser(json.data)
         return ''
       } else {
         return json.message ?? ''

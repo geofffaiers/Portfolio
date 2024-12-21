@@ -35,7 +35,7 @@ export default function ResetPasswordPage (): JSX.Element {
         }
         const json: DefaultResponse<User> = await response.json()
         if (json.success) {
-          return [null, json.data as User]
+          return [null, json.data]
         } else {
           return [json.message ?? '', null]
         }

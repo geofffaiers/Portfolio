@@ -66,12 +66,12 @@ export const ForgotPassword = ({ setError }: Props): JSX.Element => {
         body: JSON.stringify({ email }),
         signal
       })
-      if (!response.ok) {
-        return 'Reset password failed'
-      }
       const json: DefaultResponse = await response.json()
       return json.message ?? ''
     } catch (error: unknown) {
+      if (error instanceof Error) {
+        return error.message
+      }
       console.error('Error:', error)
       return `${error}`
     }

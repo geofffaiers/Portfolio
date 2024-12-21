@@ -44,13 +44,6 @@ export const ProfileMenu = ({ setLoggedInUser, setError }: Props): JSX.Element =
         credentials: 'include',
         signal
       })
-      if (!response.ok) {
-        setError('Logout failed')
-        setState(s => ({
-          ...s,
-          loggingOut: false
-        }))
-      }
       const json: DefaultResponse = await response.json()
       if (json.success) {
         setLoggedInUser(null)

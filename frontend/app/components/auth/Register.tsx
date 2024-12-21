@@ -89,14 +89,19 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
       if (!response.ok) {
         return 'Register failed'
       }
-      const json: DefaultResponse = await response.json()
+      const json: DefaultResponse<User> = await response.json()
       if (json.success) {
         return ''
       } else {
         return json.message ?? ''
       }
     } catch (error: unknown) {
-      return `${error}`
+      if (error instanceof Error) {
+        return error.message
+      } else {
+        console.error('Error:', error)
+        return 'An error occurred'
+      }
     }
   }
 
@@ -113,12 +118,9 @@ export const Register = ({ readingFromLocalStorage, setLoggedInUser, setError }:
         body: JSON.stringify({ username, password }),
         signal
       })
-      if (!response.ok) {
-        return 'Login failed'
-      }
-      const json: DefaultResponse = await response.json()
+      const json: DefaultResponse<User> = await response.json()
       if (json.success) {
-        setLoggedInUser(json.data as User)
+        setLoggedInUser(json.data)
         return ''
       } else {
         return json.message ?? ''

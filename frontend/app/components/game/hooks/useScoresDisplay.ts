@@ -35,10 +35,6 @@ export const useScoresDisplay = ({ counter }: Props) => {
       })
       abortControllerRef.current = null
       setLoading(false)
-      if (!response.ok) {
-        setError('Failed to save score')
-        return
-      }
       const json: DefaultResponse<{
         globalScores: Score[]
         userScores: Score[]
@@ -79,10 +75,6 @@ export const useScoresDisplay = ({ counter }: Props) => {
       })
       abortControllerRef.current = null
       setLoading(false)
-      if (!response.ok) {
-        setError('Failed to get scores')
-        return
-      }
       const json: DefaultResponse<{
         globalScores: Score[]
       }> = await response.json()
