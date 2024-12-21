@@ -33,7 +33,7 @@ export const useValidateEmail = ({ validateToken }: Props): UseValidateEmail => 
         return
       }
       const json: DefaultResponse<User> = await response.json()
-      if (json.success && json.data != null) {
+      if (json.success) {
         setUser(json.data)
       } else {
         setError(json.message ?? '')
@@ -64,7 +64,7 @@ export const useValidateEmail = ({ validateToken }: Props): UseValidateEmail => 
         setError('Validate token failed')
         return
       }
-      const json: DefaultResponse<undefined> = await response.json()
+      const json: DefaultResponse = await response.json()
       if (json.success) {
         router.push('/')
       } else {

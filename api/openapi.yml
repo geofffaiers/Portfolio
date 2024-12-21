@@ -8,7 +8,7 @@ servers:
   - url: http://localhost:3000
     description: Local server on port 3000
   - url: http://localhost:4000
-    description: Local server on port 5000
+    description: Local server on port 4000
   - url: https://gfaiers.com
     description: Production server
 paths:
@@ -37,9 +37,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/UserResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/generate-reset-token:
     post:
       tags:
@@ -62,7 +68,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/DefaultResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/get-user-for-reset-token:
     get:
       tags:
@@ -80,9 +92,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/UserResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/get-user-for-validate-token:
     get:
       tags:
@@ -100,9 +118,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/UserResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/login:
     post:
       tags:
@@ -125,9 +149,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/UserResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/reset-password:
     post:
       tags:
@@ -152,7 +182,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/DefaultResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/refresh-token:
     post:
       tags:
@@ -175,7 +211,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/DefaultResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/logout:
     post:
       tags:
@@ -191,7 +233,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/DefaultResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/update:
     post:
       tags:
@@ -216,9 +264,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/UserResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/delete:
     delete:
       tags:
@@ -234,7 +288,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/DefaultResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/validate-email:
     post:
       tags:
@@ -257,7 +317,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/DefaultResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/users/resend-verification:
     post:
       tags:
@@ -273,7 +339,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/DefaultResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
 
   # Scores section
   /api/scores:
@@ -298,9 +370,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/ScoresSavedResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
     get:
       tags:
         - Scores
@@ -311,9 +389,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/ScoresRetrievedResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
 
   # Messaging section
   /api/messaging/contact:
@@ -340,9 +424,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/ContactFormSubmittedResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/messaging/get-chat-headers:
     get:
       tags:
@@ -356,9 +446,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/ChatHeadersRetrievedResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /api/messaging/get-messages-for-page:
     get:
       tags:
@@ -378,12 +474,95 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
+                $ref: '#/components/schemas/MessagesRetrievedResponse'
         '400':
-          description: Bad request
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
 components:
   schemas:
     DefaultResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        stack:
+          type: string
+        data:
+          type: object
+        code:
+          type: number
+          example: 200
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        lastLogin:
+          type: string
+          format: date-time
+        active:
+          type: boolean
+        profilePicture:
+          type: string
+        resetToken:
+          type: string
+        resetTokenExpires:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        verifiedEmail:
+          type: boolean
+        validateToken:
+          type: string
+        validateTokenExpires:
+          type: string
+          format: date-time
+    UserResponse:
+      allOf:
+        - $ref: "#/components/schemas/DefaultResponse"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                user:
+                  $ref: "#/components/schemas/User"
+    Score:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        score:
+          type: number
+        createdAt:
+          type: string
+        ranking:
+          type: number
+    ScoresSavedResponse:
       type: object
       properties:
         success:
@@ -392,7 +571,149 @@ components:
           type: number
         message:
           type: string
-        stack:
+        data:
+          type: object
+          properties:
+            globalScores:
+              type: array
+              items:
+                $ref: '#/components/schemas/Score'
+            userScores:
+              type: array
+              items:
+                $ref: '#/components/schemas/Score'
+            thisScore:
+              $ref: '#/components/schemas/Score'
+    ScoresRetrievedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        code:
+          type: number
+        message:
           type: string
         data:
           type: object
+          properties:
+            scores:
+              type: array
+              items:
+                type: object
+                properties:
+                  userId:
+                    type: number
+                  score:
+                    type: number
+    ContactFormSubmittedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        code:
+          type: number
+        message:
+          type: string
+    ChatHeadersRetrievedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        code:
+          type: number
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            chatHeaders:
+              type: array
+              items:
+                type: object
+                properties:
+                  chatId:
+                    type: number
+                  lastMessage:
+                    type: string
+    MessagesRetrievedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        code:
+          type: number
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            messages:
+              type: array
+              items:
+                type: object
+                properties:
+                  messageId:
+                    type: number
+                  content:
+                    type: string
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/DefaultResponse"
+              - type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  code:
+                    type: number
+                    example: 400
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/DefaultResponse"
+              - type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  code:
+                    type: number
+                    example: 401                    
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/DefaultResponse"
+              - type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  code:
+                    type: number
+                    example: 403
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/DefaultResponse"
+              - type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  code:
+                    type: number
+                    example: 500

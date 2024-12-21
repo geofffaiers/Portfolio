@@ -2,12 +2,14 @@ import { CookieOptions, Request, Response } from 'express'
 import { RowDataPacket } from 'mysql2'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
+import { handleError } from '../../helpers'
 
-export const logout = async (req: Request, res: Response): Promise<DefaultResponse<undefined>> => {
+export const logout = async (req: Request, res: Response): Promise<DefaultResponse> => {
   try {
     const userId: number | undefined = req.userId
     if (userId == null) {
       return {
+        code: 400,
         success: false,
         message: 'Not logged in'
       }
@@ -18,6 +20,7 @@ export const logout = async (req: Request, res: Response): Promise<DefaultRespon
     )
     if (result.length === 0) {
       return {
+        code: 400,
         success: false,
         message: 'User not found'
       }
@@ -30,9 +33,10 @@ export const logout = async (req: Request, res: Response): Promise<DefaultRespon
     res.clearCookie('token', cookieOptions)
     res.clearCookie('refreshToken', cookieOptions)
     return {
+      code: 200,
       success: true
     }
   } catch (err: any) {
-    throw new Error(err)
+    return handleError(err)
   }
 }

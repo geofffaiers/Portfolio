@@ -123,9 +123,6 @@ export default function Chat ({ messages, user, expanded, closeChat, handleSendS
         },
         signal
       })
-      if (!response.ok) {
-        throw new Error(response.statusText)
-      }
       const json = await response.json()
       if (json.success) {
         setState(s => ({

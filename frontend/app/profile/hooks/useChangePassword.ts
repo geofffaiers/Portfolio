@@ -53,10 +53,6 @@ export const useChangePassword = ({ validatePassword, onClose }: Props): HookRes
         credentials: 'include',
         body: JSON.stringify({ ...tempUser, currentPassword })
       })
-      if (!response.ok) {
-        setError('Network response was not ok')
-        return
-      }
       const json: DefaultResponse<User> = await response.json()
       if (json.success) {
         onClose()

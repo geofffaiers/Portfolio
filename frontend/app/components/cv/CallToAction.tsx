@@ -73,18 +73,23 @@ export const CallToAction = (): JSX.Element => {
         body: JSON.stringify({ name, email, message }),
         signal
       })
-      if (!response.ok) {
-        throw new Error('Failed to send email')
+      const json = await response.json()
+      setState({
+        message: json.message || 'Email sent successfully',
+        type: json.success ? 'success' : 'danger'
+      })
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setState({
+          message: err.message,
+          type: 'danger'
+        })
+      } else {
+        setState({
+          message: 'An error occurred',
+          type: 'danger'
+        })
       }
-      setState({
-        message: 'Email sent successfully',
-        type: 'success'
-      })
-    } catch (error: unknown) {
-      setState({
-        message: (error as Error).message,
-        type: 'danger'
-      })
     }
   }
 

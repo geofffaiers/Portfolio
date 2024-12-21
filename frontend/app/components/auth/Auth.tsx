@@ -62,9 +62,6 @@ export default function Auth({ children }: Props): JSX.Element {
       credentials: 'include',
       signal
     })
-    if (!response.ok) {
-      return 'Refresh token failed'
-    }
     const data = await response.json()
     if (data.success) {
       return ''

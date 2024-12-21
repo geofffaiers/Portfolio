@@ -2,7 +2,7 @@ import { Request } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
 import { RowDataPacket } from 'mysql2'
-import { pool, sendResetPasswordEmail } from '../../helpers'
+import { handleError, pool, sendResetPasswordEmail } from '../../helpers'
 import { DefaultResponse, User } from '../../models'
 import { newToken } from './methods'
 
@@ -11,6 +11,7 @@ export const generateResetToken = async (req: Request): Promise<DefaultResponse>
     const { email } = req.body
     if (email == null) {
       return {
+        code: 400,
         success: false,
         message: 'Email is required'
       }
@@ -21,6 +22,7 @@ export const generateResetToken = async (req: Request): Promise<DefaultResponse>
     )
     if (result.length === 0) {
       return {
+        code: 400,
         success: false,
         message: 'User not found'
       }
@@ -37,9 +39,10 @@ export const generateResetToken = async (req: Request): Promise<DefaultResponse>
     await sendResetPasswordEmail(user)
     user.password = ''
     return {
+      code: 200,
       success: true
     }
   } catch (err: any) {
-    throw new Error(err)
+    return handleError(err)
   }
 }

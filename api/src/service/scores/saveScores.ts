@@ -1,23 +1,20 @@
 import { Request } from 'express'
-import { DefaultResponse, Score } from '../../models'
+import { DefaultResponse, Score, SaveScores } from '../../models'
 import { getGlobalScores, getThisScore, getUserScores, saveScore } from './methods'
+import { handleError } from '../../helpers'
 
-interface Response {
-  globalScores: Score[]
-  userScores: Score[]
-  thisScore: Score
-}
-
-export const saveScores = async (req: Request): Promise<DefaultResponse<Response>> => {
+export const saveScores = async (req: Request): Promise<DefaultResponse<SaveScores>> => {
   try {
     if (req.userId == null) {
       return {
+        code: 400,
         success: false,
         message: 'User not found'
       }
     }
     if (req.body.score == null || typeof req.body.score !== 'number') {
       return {
+        code: 400,
         success: false,
         message: 'Score is required as a number'
       }
@@ -27,6 +24,7 @@ export const saveScores = async (req: Request): Promise<DefaultResponse<Response
     const userScores: Score[] = await getUserScores(req.userId)
     const thisScore: Score = await getThisScore(insertId)
     return {
+      code: 200,
       success: true,
       data: {
         globalScores,
@@ -34,7 +32,7 @@ export const saveScores = async (req: Request): Promise<DefaultResponse<Response
         thisScore
       }
     }
-  } catch (err: any) {
-    throw new Error(err)
+  } catch (err: unknown) {
+    return handleError<SaveScores>(err)
   }
 }

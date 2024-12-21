@@ -2,13 +2,15 @@ import { CookieOptions, Request, Response } from 'express'
 import { jwtVerify } from 'jose'
 import { DefaultResponse, ErrorCheck, User } from '../../models'
 import { generateJwt, getUser } from './methods'
+import { handleError } from '../../helpers'
 
 
-export const refreshToken = async (req: Request, res: Response): Promise<DefaultResponse<undefined>> => {
+export const refreshToken = async (req: Request, res: Response): Promise<DefaultResponse> => {
   try {
     const [error, userId]: ErrorCheck<number> = await getUserId(req)
     if (error != null) {
       return {
+        code: 400,
         success: false,
         message: error
       }
@@ -21,13 +23,11 @@ export const refreshToken = async (req: Request, res: Response): Promise<Default
     }
     res.cookie('token', await generateJwt(userId, '2h'), cookieOptions)
     return {
+      code: 200,
       success: true
     }
-  } catch (err: any) {
-    return {
-      success: false,
-      message: 'Invalid refresh token'
-    }
+  } catch (err: unknown) {
+    return handleError(err)
   }
 }
 

@@ -24,6 +24,7 @@ export const handleWebSocketConnection = (wss: WebSocketServer): void => {
           clients.set(clientId, client)
           await setUserActive(userId, true)
           const user: User = await getUser(userId)
+          user.password = ''
           const message: UpdatedProfile = {
             type: MessageType.UPDATED_PROFILE,
             user

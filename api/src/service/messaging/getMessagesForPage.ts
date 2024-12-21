@@ -2,7 +2,7 @@ import { Request } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validateOrReject } from 'class-validator'
 import { RowDataPacket } from 'mysql2'
-import { pool } from '../../helpers'
+import { handleError, pool } from '../../helpers'
 import { DefaultResponse, Message } from '../../models'
 
 export const getMessagesForPage = async (req: Request): Promise<DefaultResponse<Message[]>> => {
@@ -10,6 +10,7 @@ export const getMessagesForPage = async (req: Request): Promise<DefaultResponse<
     const { userId, page } = req.query
     if (userId == null || page == null) {
       return {
+        code: 400,
         success: false,
         message: 'Missing required fields.'
       }
@@ -27,6 +28,7 @@ export const getMessagesForPage = async (req: Request): Promise<DefaultResponse<
     )
     if (result.length === 0) {
       return {
+        code: 200,
         success: true,
         data: []
       }
@@ -34,10 +36,11 @@ export const getMessagesForPage = async (req: Request): Promise<DefaultResponse<
     const messages: Message[] = plainToInstance(Message, result, { excludeExtraneousValues: true })
     await Promise.all(messages.map((m: Message) => validateOrReject(m)))
     return {
+      code: 200,
       success: true,
       data: messages
     }
-  } catch (err: any) {
-    throw new Error(err)
+  } catch (err: unknown) {
+    return handleError<Message[]>(err)
   }
 }

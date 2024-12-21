@@ -104,7 +104,7 @@ export const useProfile = ({ validate }: Props): HookResponse => {
         setError('Network response was not ok')
         return
       }
-      const json: DefaultResponse<User> = await response.json()
+      const json: DefaultResponse = await response.json()
       if (json.success) {
         setLoggedInUser(null)
       } else {
@@ -132,7 +132,7 @@ export const useProfile = ({ validate }: Props): HookResponse => {
         setError('Network response was not ok')
         return
       }
-      const json: DefaultResponse<undefined> = await response.json()
+      const json: DefaultResponse = await response.json()
       if (json.success) {
         setTimeLeftTillResendEnabled(60)
       } else {

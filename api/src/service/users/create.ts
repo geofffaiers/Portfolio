@@ -7,7 +7,7 @@ import { pool } from '../../helpers/db'
 import { DefaultResponse, User } from '../../models'
 import { addToPreviousPasswords, newToken } from './methods'
 import { zxcvbn, ZxcvbnResult } from '@zxcvbn-ts/core'
-import { sendValidateEmail } from '../../helpers'
+import { handleError, sendValidateEmail } from '../../helpers'
 
 export const create = async (req: Request): Promise<DefaultResponse<User>> => {
   try {
@@ -17,18 +17,21 @@ export const create = async (req: Request): Promise<DefaultResponse<User>> => {
     const uniqueEmail = await isEmailUnique(user.email)
     if (uniqueUsername === false && uniqueEmail === false) {
       return {
+        code: 400,
         success: false,
         message: 'Username and email are already taken'
       }
     }
     if (uniqueUsername === false) {
       return {
+        code: 400,
         success: false,
         message: 'Username is already taken'
       }
     }
     if (uniqueEmail === false) {
       return {
+        code: 400,
         success: false,
         message: 'Email is already taken'
       }
@@ -40,6 +43,7 @@ export const create = async (req: Request): Promise<DefaultResponse<User>> => {
         message += ` ${passwordStrength.feedback.suggestions.join(' ')}`
       }
       return {
+        code: 400,
         success: false,
         message
       }
@@ -60,11 +64,12 @@ export const create = async (req: Request): Promise<DefaultResponse<User>> => {
     await addInitialMessage(user)
     await sendValidateEmail(user)
     return {
+      code: 201,
       success: true,
       data: user
     }
   } catch (err: any) {
-    throw err
+    return handleError<User>(err)
   }
 }
 

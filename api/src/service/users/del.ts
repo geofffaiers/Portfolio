@@ -2,13 +2,15 @@ import { Request } from 'express'
 import { pool } from '../../helpers/db'
 import { DefaultResponse, DeleteProfile, MessageType } from '../../models'
 import { sendMessageToClient } from '../sockets/methods'
+import { handleError } from '../../helpers'
 
-export const del = async (req: Request): Promise<DefaultResponse<undefined>> => {
+export const del = async (req: Request): Promise<DefaultResponse> => {
   const connection = await pool.getConnection()
   try {
     const userId = req.userId
     if (userId == null) {
       return {
+        code: 400,
         success: false,
         message: 'User not found'
       }
@@ -24,11 +26,12 @@ export const del = async (req: Request): Promise<DefaultResponse<undefined>> => 
     }
     sendMessageToClient(response, userId)
     return {
+      code: 200,
       success: true
     }
   } catch (err: any) {
     await connection.rollback()
-    throw new Error(err)
+    return handleError(err)
   } finally {
     connection.release()
   }

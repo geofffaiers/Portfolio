@@ -1,6 +1,6 @@
 export * from './sockets/'
 export * from './ChatHeader'
-export * from './DefaultResponse'
+export * from './responses/'
 export * from './ErrorCheck'
 export * from './Message'
 export * from './Score'
