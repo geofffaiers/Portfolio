@@ -26,7 +26,7 @@ export const getChatHeaders = async (req: Request): Promise<DefaultResponse<Chat
       }
     }))
     return {
-      code: 400,
+      code: 200,
       success: true,
       data: chatHeaders
     }

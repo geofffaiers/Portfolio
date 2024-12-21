@@ -31,6 +31,7 @@ export const validateEmail = async (req: Request): Promise<DefaultResponse> => {
       [userId]
     )
     const user: User = await getUser(userId)
+    user.password = ''
     const response: UpdatedProfile = {
       type: MessageType.UPDATED_PROFILE,
       user

@@ -490,17 +490,15 @@ components:
       properties:
         success:
           type: boolean
-        code:
-          type: number
         message:
           type: string
         stack:
           type: string
         data:
           type: object
-        cocks:
+        code:
           type: number
-          required: true
+          example: 200
     User:
       type: object
       properties:
@@ -664,22 +662,58 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DefaultResponse'
+            allOf:
+              - $ref: "#/components/schemas/DefaultResponse"
+              - type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  code:
+                    type: number
+                    example: 400
     Unauthorized:
       description: Unauthorized
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DefaultResponse'
+            allOf:
+              - $ref: "#/components/schemas/DefaultResponse"
+              - type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  code:
+                    type: number
+                    example: 401                    
     Forbidden:
       description: Forbidden
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DefaultResponse'
+            allOf:
+              - $ref: "#/components/schemas/DefaultResponse"
+              - type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  code:
+                    type: number
+                    example: 403
     InternalServerError:
       description: Internal server error
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DefaultResponse'
+            allOf:
+              - $ref: "#/components/schemas/DefaultResponse"
+              - type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  code:
+                    type: number
+                    example: 500
