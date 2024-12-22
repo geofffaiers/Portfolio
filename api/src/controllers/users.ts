@@ -51,7 +51,7 @@ export default class UsersController {
   async logout (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: DefaultResponse = await logout(req, res)
-      res.status(200).json(response.code)
+      res.status(response.code).json(response)
     } catch (err: any) {
       next(err)
     }
