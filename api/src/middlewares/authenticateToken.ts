@@ -6,6 +6,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
   const token: string | undefined = req.cookies.token
   if (token == null || typeof token !== 'string') {
     res.status(401).json({
+      code: 401,
       success: false,
       message: 'Unauthorized'
     })
@@ -17,7 +18,11 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     req.userId = payload.userId as number
     next()
   } catch (err: any) {
-    res.status(403).send('Forbidden')
+    res.status(403).json({
+      code: 403,
+      success: false,
+      message: 'Forbidden'
+    })
   }
 }
 
