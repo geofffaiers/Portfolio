@@ -1,95 +1,9 @@
 'use client'
-import { getApiUrl } from '@/app/helpers'
-import { DefaultResponse } from '@/app/models'
 import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Link, Modal, ModalClose, ModalDialog, Stack } from '@mui/joy'
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import { UseForgotPassword, useForgotPassword } from './hooks/useForgotPassword'
 
-interface Props {
-  setError: (error: string) => void
-}
-
-interface State {
-  openPasswordDialog: boolean
-  openMessageDialog: boolean
-}
-
-export const ForgotPassword = ({ setError }: Props): JSX.Element => {
-  const [state, setState] = useState<State>({
-    openPasswordDialog: false,
-    openMessageDialog: false
-  })
-  const abortControllerRef = useRef<AbortController | null>(null)
-
-  const handleForgotPassword = (): void => {
-    setState(s => ({
-      ...s,
-      openPasswordDialog: true
-    }))
-  }
-
-  const handleClosePasswordDialog = (): void => {
-    setState(s => ({
-      ...s,
-      openPasswordDialog: false
-    }))
-  }
-
-  const handleGenerateResetToken = async (evt: FormEvent<HTMLFormElement>): Promise<void> => {
-    evt.preventDefault()
-    evt.stopPropagation()
-    const formData: FormData = new FormData(evt.currentTarget)
-    const formJson: { [k: string]: FormDataEntryValue } = Object.fromEntries(formData.entries())
-    const email: string = formJson.email as string
-    setState(s => ({
-      ...s,
-      openPasswordDialog: false
-    }))
-    const error: string = await requestResetToken(email)
-    setError(error)
-    setState(s => ({
-      ...s,
-      openMessageDialog: error === '',
-      openLoginDialog: error === ''
-    }))
-  }
-
-  const requestResetToken = async (email: string): Promise<string> => {
-    abortControllerRef.current = new AbortController()
-    const { signal } = abortControllerRef.current
-    try {
-      const response = await fetch(`${getApiUrl()}/users/generate-reset-token`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email }),
-        signal
-      })
-      const json: DefaultResponse = await response.json()
-      return json.message ?? ''
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        return error.message
-      }
-      console.error('Error:', error)
-      return `${error}`
-    }
-  }
-  const handleCloseMessageDialog = (): void => {
-    setState(s => ({
-      ...s,
-      openMessageDialog: false
-    }))
-  }
-  
-  useEffect(() => {
-    return () => {
-      if (abortControllerRef.current != null) {
-        abortControllerRef.current.abort('ForgotPassword: Component unmounted')
-      }
-    }
-  }, [])
+export const ForgotPassword = (): JSX.Element => {
+  const { openPasswordDialog, openMessageDialog, handleForgotPassword, handleClosePasswordDialog, handleGenerateResetToken, handleCloseMessageDialog }: UseForgotPassword = useForgotPassword()
 
   return (
     <>
@@ -97,7 +11,7 @@ export const ForgotPassword = ({ setError }: Props): JSX.Element => {
         Forgot Password?
       </Link>
       <Modal
-        open={state.openPasswordDialog}
+        open={openPasswordDialog}
         onClose={handleClosePasswordDialog}
       >
         <ModalDialog>
@@ -118,7 +32,7 @@ export const ForgotPassword = ({ setError }: Props): JSX.Element => {
         </ModalDialog>
       </Modal>
       <Modal
-        open={state.openMessageDialog}
+        open={openMessageDialog}
         onClose={handleCloseMessageDialog}
       >
         <ModalDialog>

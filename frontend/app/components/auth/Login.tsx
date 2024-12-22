@@ -1,110 +1,25 @@
 'use client'
 import { Button, DialogContent, DialogTitle, FormControl, FormLabel, Input, Modal, ModalClose, ModalDialog, Stack } from '@mui/joy'
-import { FormEvent, useEffect, useRef, useState } from 'react'
-import { DefaultResponse, User } from '@/app/models'
 import { ForgotPassword } from './ForgotPassword'
-import { getApiUrl } from '@/app/helpers'
+import { UseLogin, useLogin } from './hooks/useLogin'
 
 interface Props {
   readingFromLocalStorage: boolean
-  setLoggedInUser: (user: User | null) => void
-  setError: (error: string) => void
 }
 
-interface State {
-  openLoginDialog: boolean
-  openPasswordDialog: boolean
-  openMessageDialog: boolean
-  loggingIn: boolean
-}
-
-export const Login = ({ readingFromLocalStorage, setLoggedInUser, setError }: Props): JSX.Element => {
-  const [state, setState] = useState<State>({
-    openLoginDialog: false,
-    openPasswordDialog: false,
-    openMessageDialog: false,
-    loggingIn: false
-  })
-  const abortControllerRef = useRef<AbortController | null>(null)
-
-  const handleLogin = async (evt: FormEvent<HTMLFormElement>): Promise<void> => {
-    evt.preventDefault()
-    evt.stopPropagation()
-    const formData: FormData = new FormData(evt.currentTarget)
-    const formJson: { [k: string]: FormDataEntryValue } = Object.fromEntries(formData.entries())
-    const username: string = formJson.username as string
-    const password: string = formJson.password as string
-    setState(s => ({
-      ...s,
-      loggingIn: true,
-      openLoginDialog: false
-    }))
-    const error: string = await requestLogin(username, password)
-    setError(error)
-    setState(s => ({
-      ...s,
-      loggingIn: false
-    }))
-  }
-
-  const requestLogin = async (username: string, password: string): Promise<string> => {
-    abortControllerRef.current = new AbortController()
-    const { signal } = abortControllerRef.current
-    try {
-      const response = await fetch(`${getApiUrl()}/users/login`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, password }),
-        signal
-      })
-      const json: DefaultResponse<User> = await response.json()
-      if (json.success) {
-        setLoggedInUser(json.data)
-        return ''
-      } else {
-        return json.message ?? ''
-      }
-    } catch (error: unknown) {
-      console.error('Error:', error)
-      return `${error}`
-    }
-  }
-
-
-  const handleOpenDialog = (): void => {
-    setState(s => ({
-      ...s,
-      openLoginDialog: true
-    }))
-  }
-
-  const handleCloseDialog = (): void => {
-    setState(s => ({
-      ...s,
-      openLoginDialog: false,
-      loggingIn: false,
-      validationFailed: ''
-    }))
-    if (abortControllerRef.current != null) {
-      abortControllerRef.current.abort()
-    }
-  }
-  
-  useEffect(() => {
-    return () => {
-      if (abortControllerRef.current != null) {
-        abortControllerRef.current.abort('Login: Component unmounted')
-      }
-    }
-  }, [])
+export const Login = ({ readingFromLocalStorage }: Props): JSX.Element => {
+  const { 
+    openLoginDialog,
+    loggingIn,
+    handleLogin,
+    handleOpenDialog,
+    handleCloseDialog
+  }: UseLogin = useLogin()
 
   return (
     <>
       <Button
-        loading={state.loggingIn || readingFromLocalStorage}
+        loading={loggingIn || readingFromLocalStorage}
         variant='solid'
         color='neutral'
         onClick={handleOpenDialog}
@@ -112,7 +27,7 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser, setError }: Pr
         Login
       </Button>
       <Modal
-        open={state.openLoginDialog}
+        open={openLoginDialog}
         onClose={handleCloseDialog}
       >
         <ModalDialog>
@@ -131,7 +46,7 @@ export const Login = ({ readingFromLocalStorage, setLoggedInUser, setError }: Pr
                 <FormLabel>Password</FormLabel>
                 <Input name='password' type='password' required/>
               </FormControl>
-              <ForgotPassword setError={setError}/>
+              <ForgotPassword/>
               <Button type='submit'>Login</Button>
             </Stack>
           </form>
