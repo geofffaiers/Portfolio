@@ -13,7 +13,7 @@ import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common'
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en'
 import { setupSwagger } from './helpers/spec'
 
-declare module 'express-serve-static-core' {
+declare module 'express' {
   interface Request {
     server?: Server
     userId?: number

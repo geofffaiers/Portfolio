@@ -16,28 +16,26 @@ export const update = async (req: Request): Promise<DefaultResponse<User>> => {
     await validateOrReject(user)
     const existingUser: User = await getUser(user.id)
     if (user.password.length > 0) {
-      if (await isCurrentPasswordCorrect(user.id, req.body.currentPassword) && await isPasswordNew(user)) {
-        const passwordStrength: ZxcvbnResult = zxcvbn(user.password)
-        if (passwordStrength.score < 3) {
-          let message: string = passwordStrength.feedback.warning ?? ''
-          if (passwordStrength.feedback.suggestions.length > 0) {
-            message += ` ${passwordStrength.feedback.suggestions.join(' ')}`
-          }
-          return {
-            code: 400,
-            success: false,
-            message
-          }
-        }
-        user.password = await bcrypt.hash(user.password, 10)
-        await updateAll(user, existingUser)
-      } else {
+      const issues: string[] = []
+      if (!await isCurrentPasswordCorrect(user.id, req.body.currentPassword)) {
+        issues.push('Current password is incorrect')
+      }
+      if (!await isPasswordNew(user)) {
+        issues.push('Password has been used in the last 3 months')
+      }
+      const passwordStrengthMessage: string = getPasswordStrength(user)
+      if (passwordStrengthMessage.length > 0) {
+        issues.push(passwordStrengthMessage)
+      }
+      if (issues.length > 0) {
         return {
           code: 400,
           success: false,
-          message: 'Password has been used in the last 3 months'
+          message: issues.join(', ')
         }
       }
+      user.password = await bcrypt.hash(user.password, 10)
+      await updateAll(user, existingUser)
     } else {
       await updateExceptPassword(user, existingUser)
     }
@@ -74,6 +72,18 @@ const isPasswordNew = async (user: User): Promise<boolean> => {
     [user.id]
   )
   return result.every((row) => !bcrypt.compareSync(user.password, row.password))
+}
+
+const getPasswordStrength = (user: User): string => {
+  const passwordStrength: ZxcvbnResult = zxcvbn(user.password)
+  let message: string = ''
+  if (passwordStrength.score < 3) {
+    message = passwordStrength.feedback.warning ?? ''
+    if (passwordStrength.feedback.suggestions.length > 0) {
+      message += ` ${passwordStrength.feedback.suggestions.join(' ')}`
+    }
+  }
+  return message
 }
 
 const updateAll = async (user: User, existingUser: User): Promise<void> => {

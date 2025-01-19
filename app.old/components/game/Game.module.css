@@ -1,0 +1,92 @@
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+
+  .canvas {
+    background-color: var(--main-background);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+
+  .content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+
+    .pointerReset {
+      pointer-events: auto;
+    }
+
+    .instructions,
+    .scoreContainer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: auto;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      line-height: 0;
+      color: #fff;
+      text-shadow: 0 0 10px #000;
+      z-index: 2;
+      white-space: pre;
+      
+      @media screen and (min-width: 600px) {
+        display: flex;
+      }
+      
+      .score {
+        display: inline-block;
+        padding: 0.5em 1em;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .animate {
+        transform: scale(1.5);
+      }
+    }
+  }
+}
+
+.endGameContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  text-shadow: 0 0 10px #000;
+  z-index: 2;
+}
+
+.finalScore {
+  font-size: 2em;
+}
+
+.progressBarContainer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0.25rem;
+}
+
+.progressBar {
+  height: 100%;
+  transition: width 1s linear, background-color 0.5s linear;
+}

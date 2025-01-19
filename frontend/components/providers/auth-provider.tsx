@@ -1,0 +1,77 @@
+"use client"
+
+import React, { createContext, useContext, ReactNode, useState, useMemo, useEffect, useCallback, useRef } from "react"
+import { DefaultResponse, User } from "@/models"
+import { useConfigContext } from "./config-provider";
+import { useError } from "@/hooks/use-error";
+
+type AuthContextProps = {
+  authLoading: boolean;
+  user: User | null | undefined;
+  setUser: (user: User | null | undefined) => void;
+}
+
+const AuthContext = createContext<AuthContextProps | undefined>(undefined)
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { displayError } = useError()
+  const { config } = useConfigContext()
+  const [user, setUser] = useState<User | null | undefined>(undefined)
+  const [authLoading, setAuthLoading] = useState<boolean>(true)
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  const refreshToken = useCallback(async (): Promise<string> => {
+    abortControllerRef.current = new AbortController()
+    const { signal } = abortControllerRef.current
+    const response = await fetch(`${config.apiUrl}/users/refresh-token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      signal
+    })
+    const data: DefaultResponse = await response.json()
+    if (data.success) {
+      return ""
+    }
+    return data.message ?? "Refresh token failed"
+  }, [config.apiUrl])
+
+  useEffect(() => {
+    const checkStorage = async () => {
+      setAuthLoading(true)
+      const savedUser = localStorage.getItem("loggedInUser")
+      if (savedUser) {
+        const refreshError: string = await refreshToken()
+        if (refreshError === "") {
+          setUser(JSON.parse(savedUser))
+        } else {
+          setUser(null)
+          displayError(refreshError)
+        }
+      } else {
+        setUser(null)
+      }
+      setAuthLoading(false)
+    }
+
+    if (user === undefined) {
+      checkStorage()
+    }
+  }, [setUser, displayError, refreshToken])
+
+  return (
+    <AuthContext.Provider value={{ authLoading, user, setUser }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export const useAuthContext = () => {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error("useAuthContext must be used within an AuthProvider")
+  }
+  return context
+}

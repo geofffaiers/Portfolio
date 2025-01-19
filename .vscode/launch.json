@@ -5,6 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Express.js server side",
+      "type": "node-terminal",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/api",
+      "command": "npm run dev"
+    },
+    {
       "name": "Debug Next.js server side",
       "type": "node-terminal",
       "request": "launch",
@@ -12,17 +19,17 @@
       "command": "npm run dev"
     },
     {
-      "name": "Debug Express.js server side",
+      "name": "Debug Storybook",
       "type": "node-terminal",
       "request": "launch",
-      "cwd": "${workspaceFolder}/api",
-      "command": "npm run dev"
+      "cwd": "${workspaceFolder}/frontend",
+      "command": "npm run storybook"
     }
   ],
   "compounds": [
     {
       "name": "Compound",
-      "configurations": ["Debug Express.js server side", "Debug Next.js server side"]
+      "configurations": ["Debug Express.js server side", "Debug Next.js server side", "Debug Storybook"]
     }
   ]
 }

@@ -1,21 +1,19 @@
-import 'reflect-metadata'
-import type { Metadata } from 'next'
-import './globals.css'
-import { Inter } from 'next/font/google'
-import { zxcvbnOptions } from '@zxcvbn-ts/core'
-import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common'
-import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en'
-import App from './app'
-
-const roboto = Inter({
-  weight: ['400', '500', '700'],
-  subsets: ['latin'],
-  display: 'swap'
-})
+import "reflect-metadata"
+import type { Metadata } from "next"
+import "./globals.css"
+import { zxcvbnOptions } from "@zxcvbn-ts/core"
+import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common"
+import * as zxcvbnEnPackage from "@zxcvbn-ts/language-en"
+import { ThemeProvider } from "@/components/providers/theme-provider"
+import { AuthProvider } from "@/components/providers/auth-provider"
+import { ConfigProvider } from "@/components/providers/config-provider"
+import { Toaster } from "@/components/ui/toaster"
+import { SocketProvider } from "@/components/providers/socket-provider"
+import { Messaging } from "@/features/messaging/components/messaging"
 
 export const metadata: Metadata = {
-  title: 'Geoff Faiers',
-  description: 'The personal portfolio of Geoff Faiers',
+  title: "Geoff Faiers",
+  description: "The personal portfolio of Geoff Faiers",
 }
 
 zxcvbnOptions.setOptions({
@@ -33,14 +31,27 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en' className={roboto.className}>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className={`antialiased`}>
-        <App>
-          {children}
-        </App>
+      <body className="antialiased">
+        <ConfigProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AuthProvider>
+              <SocketProvider>
+                {children}
+                <Messaging />
+              </SocketProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </ConfigProvider>
+        <Toaster />
       </body>
     </html>
   )
