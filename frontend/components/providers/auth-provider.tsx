@@ -1,9 +1,9 @@
 "use client"
 
-import React, { createContext, useContext, ReactNode, useState, useMemo, useEffect, useCallback, useRef } from "react"
+import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback, useRef } from "react"
 import { DefaultResponse, User } from "@/models"
-import { useConfigContext } from "./config-provider";
-import { useError } from "@/hooks/use-error";
+import { useConfigContext } from "./config-provider"
+import { useError } from "@/hooks/use-error"
 
 type AuthContextProps = {
   authLoading: boolean;
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (user === undefined) {
       checkStorage()
     }
-  }, [setUser, displayError, refreshToken])
+  }, [user, setUser, displayError, refreshToken])
 
   return (
     <AuthContext.Provider value={{ authLoading, user, setUser }}>

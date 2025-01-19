@@ -13,7 +13,6 @@ import { useAuthContext } from "@/components/providers/auth-provider"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { useLogin } from "../../hooks/use-login"
 
 export default function Page() {
   const { user } = useAuthContext()

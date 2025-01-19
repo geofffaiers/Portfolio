@@ -14,7 +14,6 @@ import { Footer } from "./footer"
 import { cv } from "./cv"
 import { useAuthContext } from "@/components/providers/auth-provider"
 import { useMemo } from "react"
-import { Chat } from "@/features/messaging/components/messaging"
 
 export default function Page() {
   const { user } = useAuthContext()

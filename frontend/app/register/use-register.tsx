@@ -23,7 +23,7 @@ type Data = {
 }
 
 export function useRegister(): UseRegister {
-  const { user, setUser } = useAuthContext()
+  const { user } = useAuthContext()
   const { displayError } = useError()
   const { handleLogin } = useLogin()
   const { config } = useConfigContext()
@@ -38,10 +38,10 @@ export function useRegister(): UseRegister {
       abortControllerRef.current = new AbortController()
       const { signal } = abortControllerRef.current
       const response = await fetch(`${config.apiUrl}/users/create`, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           email: data.email,
@@ -52,7 +52,7 @@ export function useRegister(): UseRegister {
         signal
       })
       if (!response.ok) {
-        displayError('Network response was not ok')
+        displayError("Network response was not ok")
         return
       }
       const json: DefaultResponse<User> = await response.json()
@@ -68,7 +68,7 @@ export function useRegister(): UseRegister {
     } finally {
       setLoading(false)
     }
-  }, [setUser, displayError])
+  }, [config.apiUrl, handleLogin, displayError])
   
   useEffect(() => {
     if (user != null) {

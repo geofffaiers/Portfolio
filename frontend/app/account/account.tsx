@@ -12,7 +12,6 @@ import { useEffect } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheckCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons"
 import { Loader2 } from "lucide-react"
-import { time } from "console"
 
 const FormSchema = z.object({
   username: z.string({
@@ -61,7 +60,7 @@ export function Account() {
         lastName: user.lastName ?? "",
       })
     }
-  }, [user])
+  }, [form, user])
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     handleSaveChanges(data)

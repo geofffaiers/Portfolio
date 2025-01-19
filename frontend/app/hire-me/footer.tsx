@@ -1,6 +1,6 @@
 "use client"
 
-import { JSX, useState } from "react"
+import { JSX } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog"
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons"
@@ -8,9 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 
 export const Footer = ({ isLoggedIn }: { isLoggedIn: boolean }): JSX.Element => {
-  const [nameError, setNameError] = useState("")
-  const [emailError, setEmailError] = useState("")
-  const [messageError, setMessageError] = useState("")
+  // const [nameError, setNameError] = useState("")
+  // const [emailError, setEmailError] = useState("")
+  // const [messageError, setMessageError] = useState("")
 
   const handleSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -47,21 +47,21 @@ export const Footer = ({ isLoggedIn }: { isLoggedIn: boolean }): JSX.Element => 
                       Full Name <span className="text-red-700 font-semibold">*</span>
                     </label>
                     <input type="text" name="name" required className="w-full p-2 border border-gray-300 rounded" />
-                    {nameError && <p className="text-red-500 text-sm">{nameError}</p>}
+                    {/* {nameError && <p className="text-red-500 text-sm">{nameError}</p>} */}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">
                       Email <span className="text-red-700 font-semibold">*</span>
                     </label>
                     <input type="email" name="email" required className="w-full p-2 border border-gray-300 rounded" />
-                    {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
+                    {/* {emailError && <p className="text-red-500 text-sm">{emailError}</p>} */}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">
                       Message <span className="text-red-700 font-semibold">*</span>
                     </label>
                     <textarea name="message" required className="w-full p-2 border border-gray-300 rounded" rows={5}></textarea>
-                    {messageError && <p className="text-red-500 text-sm">{messageError}</p>}
+                    {/* {messageError && <p className="text-red-500 text-sm">{messageError}</p>} */}
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-red-700 text-sm font-semibold">* Required</span>

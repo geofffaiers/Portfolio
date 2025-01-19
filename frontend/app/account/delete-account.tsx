@@ -8,7 +8,7 @@ import { z } from "zod"
 import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
 export function DeleteAccount() {
@@ -23,14 +23,14 @@ export function DeleteAccount() {
   }).refine((data) => data.confirmation === requiredText, {
     message: "Confirmation does not match.",
     path: ["confirmation"],
-  }), [user])
+  }), [requiredText])
   
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: { confirmation: "" },
   })
 
-  async function onSubmit(values: z.infer<typeof FormSchema>) {
+  async function onSubmit() {
     await handleDeleteAccount()
   }
 
@@ -47,7 +47,7 @@ export function DeleteAccount() {
         <DialogHeader>
           <DialogTitle>Delete Account</DialogTitle>
           <DialogDescription>
-            Type "{requiredText}" to confirm.
+            Type &quot;{requiredText}&quot; to confirm.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>

@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { zxcvbnAsync, ZxcvbnResult } from '@zxcvbn-ts/core'
-import React from 'react'
+import { zxcvbnAsync, ZxcvbnResult } from "@zxcvbn-ts/core"
+import React from "react"
 
 type Props = {
   password: string
@@ -23,16 +23,16 @@ function PasswordStrength({ password, setPasswordScore }: Props) {
   const getColor = React.useCallback((): string => {
     switch (passwordStrength?.score ?? 0) {
       case 0:
-        return 'transparent'
+        return "transparent"
       case 1:
       case 2:
-        return 'bg-red-700'
+        return "bg-red-700"
       case 3:
-        return 'bg-orange-600'
+        return "bg-orange-600"
       case 4:
-        return 'bg-lime-600'
+        return "bg-lime-600"
       default:
-        return 'transparent'
+        return "transparent"
     }
   }, [passwordStrength])
 

@@ -40,7 +40,7 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          {error !== '' ? (
+          {error !== "" ? (
             <>
               <h1 className="text-4xl font-bold">Validate email error</h1>
               <p>{error}</p>

@@ -1,6 +1,6 @@
 "use client"
 
-import 'reflect-metadata'
+import "reflect-metadata"
 import React, { createContext, useEffect, useRef, useContext, useCallback } from "react"
 import { useConfigContext } from "./config-provider"
 import { useAuthContext } from "./auth-provider"
@@ -47,11 +47,11 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     prevUserIdRef.current = user.id
     socketRef.current = new WebSocket(config.wsUrl)
     socketRef.current.onopen = () => {
-      console.log('Connected', new Date())
+      console.log("Connected", new Date())
     }
     socketRef.current.onclose = () => {
       prevUserIdRef.current = null
-      console.log('Disconnected', new Date())
+      console.log("Disconnected", new Date())
     }
     socketRef.current.onerror = (err) => {
       displayError(`WebSocket error: ${err}`)

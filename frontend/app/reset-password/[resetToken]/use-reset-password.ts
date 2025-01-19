@@ -103,7 +103,7 @@ export function useResetPassword({ resetToken }: Props): UseResetPassword {
         setError("An unexpected error occurred")
       }
     }
-  }, [user, router, toast])
+  }, [config.apiUrl, resetToken, user, router, toast])
 
   return {
     error,

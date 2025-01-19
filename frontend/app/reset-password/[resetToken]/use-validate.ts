@@ -86,7 +86,7 @@ export function useValidate({ validateToken }: Props): UseValidate {
         setError("An unknown error occurred")
       }
     }
-  }, [user, router, validateToken, config.apiUrl])
+  }, [user, router, validateToken, config.apiUrl, toast])
 
   useEffect(() => {
     try {

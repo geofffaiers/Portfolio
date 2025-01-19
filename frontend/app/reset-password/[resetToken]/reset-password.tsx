@@ -1,14 +1,14 @@
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useResetPassword } from "./use-reset-password";
-import { useMemo } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { PasswordStrength } from "@/components/ui/password-strength";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { useResetPassword } from "./use-reset-password"
+import { useMemo } from "react"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Input } from "@/components/ui/input"
+import { PasswordStrength } from "@/components/ui/password-strength"
+import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 type Props = {
   resetToken: string
@@ -63,7 +63,7 @@ export function ResetPassword({ resetToken }: Props) {
     return (
       <>
         <p>{error}</p>
-        <Button onClick={() => router.push('/login')}>Return to login</Button>
+        <Button onClick={() => router.push("/login")}>Return to login</Button>
       </>
     )
   }

@@ -4,12 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Send } from "lucide-react";
-import { useForgotPassword } from "./use-forgot-password";
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Send } from "lucide-react"
+import { useForgotPassword } from "./use-forgot-password"
 
 const FormSchema = z.object({
   email: z.string({
@@ -51,7 +51,7 @@ export function ForgotPassword() {
         <DialogHeader>
           <DialogTitle>Forgot Password</DialogTitle>
           <DialogDescription>
-            Please enter your email address, we'll email you a link to reset your password.
+            Please enter your email address, we&apos;ll email you a link to reset your password.
           </DialogDescription>
         </DialogHeader>
           <Form {...form}>

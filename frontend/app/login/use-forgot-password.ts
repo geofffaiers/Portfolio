@@ -25,25 +25,25 @@ export function useForgotPassword(): UseForgotPassword {
     try {
       setLoading(true)
       const response = await fetch(`${config.apiUrl}/users/generate-reset-token`, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({ email }),
         signal
       })
       const json: DefaultResponse = await response.json()
       setLoading(false)
-      return json.message ?? ''
+      return json.message ?? ""
     } catch (error: unknown) {
       if (error instanceof Error) {
         return error.message
       }
-      console.error('Error:', error)
+      console.error("Error:", error)
       return `${error}`
     }
-  }, [])
+  }, [config.apiUrl])
 
   const handleForgotPassword = useCallback(async (email: string) => {
     const error: string = await requestResetToken(email)
@@ -57,12 +57,12 @@ export function useForgotPassword(): UseForgotPassword {
         duration: 7000,
       })
     }
-  }, [])
+  }, [displayError, requestResetToken, toast])
   
   useEffect(() => {
     return () => {
       if (abortControllerRef.current != null) {
-        abortControllerRef.current.abort('Component unmounted')
+        abortControllerRef.current.abort("Component unmounted")
       }
     }
   }, [])

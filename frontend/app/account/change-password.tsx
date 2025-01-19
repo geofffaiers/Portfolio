@@ -53,7 +53,7 @@ export function ChangePassword() {
     if (!open) {
       form.reset()
     }
-  }, [open])
+  }, [form, open])
 
   if (user == null) {
     return null

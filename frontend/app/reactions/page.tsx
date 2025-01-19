@@ -6,7 +6,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Chat } from "@/features/messaging/components/messaging"
 
 export default function Page() {
   return (

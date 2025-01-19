@@ -14,8 +14,6 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ChangePassword } from "./change-password"
 import { DeleteAccount } from "./delete-account"
-import { Button } from "@/components/ui/button"
-import { Chat } from "@/features/messaging/components/messaging"
 
 export default function Page() {
   const { authLoading, user } = useAuthContext()

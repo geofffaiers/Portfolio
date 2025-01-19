@@ -47,7 +47,7 @@ export function useDeleteAccount(): UseDeleteAccount {
     } finally {
       setLoading(false)
     }
-  }, [displayError, config])
+  }, [setUser, displayError, config])
 
   return {
     loading,
