@@ -1,55 +1,75 @@
-"use client"
+'use client';
 
-import { AppSidebar } from "@/features/nav/app-sidebar"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+import React, { JSX } from 'react';
+import { AppSidebar } from '@/features/nav/app-sidebar';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Separator } from '@/components/ui/separator';
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { Details } from "./details"
-import { Section } from "./section"
-import { Footer } from "./footer"
-import { cv } from "./cv"
-import { useAuthContext } from "@/components/providers/auth-provider"
-import { useMemo } from "react"
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
+} from '@/components/ui/sidebar';
+import { Details } from './details';
+import { Section } from './section';
+import { Footer } from './footer';
+import { cv } from './cv';
+import { useAuthContext } from '@/components/providers/auth-provider';
+import { useConfigContext } from '@/components/providers/config-provider';
+import { Project } from '@/models';
+import { useRouter } from 'next/navigation';
+import { PageLoading } from '@/components/ui/page-loading';
+import Link from 'next/link';
 
-export default function Page() {
-  const { user } = useAuthContext()
-  const isLoggedIn = useMemo(() => !!user, [user])
+export default function Page(): JSX.Element {
+    const { user } = useAuthContext();
+    const { configLoading, config: { projects } } = useConfigContext();
 
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/">
-                    Home
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Hire Me</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <Details isLoggedIn={isLoggedIn}/>
-          {cv.map((section, index) => (
-            <Section section={section} key={index}/>
-          ))}
-        </div>
-        <Footer isLoggedIn={isLoggedIn}/>
-      </SidebarInset>
-    </SidebarProvider>
-  )
+    const project: Project | undefined = projects.find((project) => project.id === 1 && project.isEnabled)
+
+    const router = useRouter();
+    
+    if (configLoading) {
+        return <PageLoading />;
+    }
+
+    if (!project) {
+        router.replace('/page-not-found');
+        return <></>;
+    }
+    
+    return (
+        <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+                <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
+                    <div className="flex items-center gap-2 px-4">
+                        <SidebarTrigger className="-ml-1" />
+                        <Separator orientation="vertical" className="mr-2 h-4" />
+                        <Breadcrumb>
+                            <BreadcrumbList>
+                                <BreadcrumbItem className="hidden md:block">
+                                    <BreadcrumbLink asChild>
+                                        <Link href="/">
+                                            Home
+                                        </Link>
+                                    </BreadcrumbLink>
+                                </BreadcrumbItem>
+                                <BreadcrumbSeparator className="hidden md:block" />
+                                <BreadcrumbItem>
+                                    <BreadcrumbPage>{project.name}</BreadcrumbPage>
+                                </BreadcrumbItem>
+                            </BreadcrumbList>
+                        </Breadcrumb>
+                    </div>
+                </header>
+                <div className="flex flex-1 flex-col gap-4 p-4">
+                    <Details user={user}/>
+                    {cv.map((section, index) => (
+                        <Section section={section} key={index}/>
+                    ))}
+                </div>
+                <Footer user={user}/>
+            </SidebarInset>
+        </SidebarProvider>
+    );
 }

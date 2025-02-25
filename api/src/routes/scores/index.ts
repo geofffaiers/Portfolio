@@ -1,11 +1,11 @@
-import { Router } from 'express'
-import { authenticateToken } from '../../middlewares'
-import ScoresController from '../../controllers/scores'
+import { Router } from 'express';
+import { authenticateToken } from '../../middlewares';
+import ScoresController from '../../controllers/scores';
 
-const router: Router = Router()
-const controller: ScoresController = new ScoresController()
+const router: Router = Router();
+const controller: ScoresController = new ScoresController();
 
-router.post('/', authenticateToken, controller.saveScores)
-router.get('/', controller.getScores)
+router.post('/', authenticateToken, controller.saveScores);
+router.get('/', controller.getScores);
 
-export default router
+export default router;

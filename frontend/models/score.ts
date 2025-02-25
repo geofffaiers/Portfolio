@@ -1,25 +1,25 @@
-import { Expose, Type } from 'class-transformer'
-import { IsDate, IsNumber, IsString } from 'class-validator'
+import { Expose, Type } from 'class-transformer';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 
 export class Score {
   @IsNumber()
   @Expose({ name: 'id' })
-  id: number = 0
+      id: number = 0;
 
   @IsString()
   @Expose({ name: 'name' })
-  name: string = ''
+      name: string = '';
 
   @IsNumber()
   @Expose({ name: 'score' })
-  score: number = 0
+      score: number = 0;
 
   @IsDate()
   @Type(() => Date)
   @Expose({ name: 'createdAt' })
-  createdAt: Date = new Date()
+      createdAt: Date = new Date();
 
   @IsNumber()
   @Expose({ name: 'ranking' })
-  ranking: number = 0
+      ranking: number = 0;
 }

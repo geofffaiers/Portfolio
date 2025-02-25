@@ -1,3 +1,3 @@
-export * from './contact'
-export * from './getChatHeaders'
-export * from './getMessagesForPage'
+export * from './contact';
+export * from './get-chat-headers';
+export * from './get-messages-for-page';

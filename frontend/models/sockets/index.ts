@@ -1,8 +1,8 @@
-export * from './BaseMessage'
-export * from './DeleteProfile'
-export * from './ErrorMessage'
-export * from './MessageType'
-export * from './NewMessage'
-export * from './ReadMessage'
-export * from './SocketMessage'
-export * from './UpdatedProfile'
+export * from './base-message';
+export * from './error-message';
+export * from './message-type';
+export * from './socket-message';
+
+export * from './messaging';
+export * from './planning-poker';
+export * from './profile';

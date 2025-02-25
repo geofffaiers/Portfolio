@@ -1,83 +1,83 @@
-import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from 'class-validator'
-import { Expose, Type } from 'class-transformer'
+import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
 
 export class User {
   @IsNumber()
   @Expose({ name: 'id' })
-  id: number = 0
+      id: number = 0;
 
   @IsString()
   @Expose({ name: 'username' })
-  username: string = ''
+      username: string = '';
 
   @IsString()
   @Expose({ name: 'password' })
-  password: string = ''
+      password: string = '';
 
   @IsString()
   @Expose({ name: 'email' })
-  email: string = ''
+      email: string = '';
 
   @IsOptional()
   @IsString()
   @Expose({ name: 'firstName' })
-  firstName?: string
+      firstName?: string;
 
   @IsOptional()
   @IsString()
   @Expose({ name: 'lastName' })
-  lastName?: string
+      lastName?: string;
 
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   @Expose({ name: 'lastLogin' })
-  lastLogin?: Date = new Date()
+      lastLogin?: Date = new Date();
 
   @IsBoolean()
   @Expose({ name: 'active' })
-  active: boolean = false
+      active: boolean = false;
 
   @IsOptional()
   @IsString()
   @Expose({ name: 'profilePicture' })
-  profilePicture?: string
+      profilePicture?: string;
 
   @IsOptional()
   @IsString()
   @Expose({ name: 'resetToken' })
-  resetToken?: string
+      resetToken?: string;
 
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   @Expose({ name: 'resetTokenExpires' })
-  resetTokenExpires?: Date = new Date()
+      resetTokenExpires?: Date = new Date();
 
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   @Expose({ name: 'createdAt' })
-  createdAt?: Date = new Date()
+      createdAt?: Date = new Date();
 
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   @Expose({ name: 'updatedAt' })
-  updatedAt?: Date = new Date()
+      updatedAt?: Date = new Date();
 
   @IsBoolean()
   @Expose({ name: 'verifiedEmail' })
-  verifiedEmail: boolean = false
+      verifiedEmail: boolean = false;
 
   @IsOptional()
   @IsString()
   @Expose({ name: 'validateToken' })
-  validateToken?: string
+      validateToken?: string;
 
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   @Expose({ name: 'validateTokenExpires' })
-  validateTokenExpires?: Date = new Date()
+      validateTokenExpires?: Date = new Date();
 }
