@@ -3,12 +3,14 @@
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse, WordWithData } from '@/models';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { KeyboardLayout } from './types';
 
 interface UseHangman {
     wordLength: number;
     setWordLength: (length: number) => void;
     word: string;
+    letters: KeyboardLayout;
     guessedLetters: string[];
     loading: boolean;
     canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -24,16 +26,29 @@ export function useHangman(): UseHangman {
     const { displayError } = useToastWrapper();
     const [wordLength, setWordLength] = useState<number>(5);
     const [word, setWord] = useState<string>('');
-    const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
-    const [wrongLetters, setWrongLetters] = useState<string[]>([]);
+    const [letters, setLetters] = useState<KeyboardLayout>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const maxWrong = 6;
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const keyListenerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
+
+    const correctLetters = useMemo(() => letters.flat().filter((l) => l.correct).map((l) => l.letter), [letters]);
+    const wrongLetters = useMemo(() => letters.flat().filter((l) => l.guessed && !l.correct).map((l) => l.letter), [letters]);
+    const guessedLetters = useMemo(() => [...correctLetters, ...wrongLetters], [correctLetters, wrongLetters]);
+
+    const resetLetters = useCallback(() => {
+        const l = [
+            ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+            ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+        ];
+        const newLetters = l.map((row) => row.map((letter) => ({ letter, guessed: false, correct: false })));
+        setLetters(newLetters);
+    }, []);
 
     const restartGame = useCallback(async (wordLength: number) => {
         setLoading(true);
-        setGuessedLetters([]);
-        setWrongLetters([]);
+        resetLetters();
         try {
             const response = await fetch(`${config.apiUrl}/hangman/word?length=${wordLength}`);
             const json: DefaultResponse<WordWithData> = await response.json();
@@ -57,29 +72,46 @@ export function useHangman(): UseHangman {
                 ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
             }
         }
-    }, [config.apiUrl, displayError]);
+    }, [config.apiUrl, resetLetters, displayError]);
 
     const guessLetter = useCallback((letter: string) => {
-        if ((word && word.split('').every(l => guessedLetters.includes(l))) || wrongLetters.length >= maxWrong) {
-            return;
-        }
         letter = letter.toLowerCase();
-        if (guessedLetters.includes(letter)) return;
-        setGuessedLetters((prev) => [...prev, letter]);
-        if (!word.includes(letter)) {
-            setWrongLetters((prev) => [...prev, letter]);
-        }
-    }, [guessedLetters, wrongLetters, word, maxWrong]);
-
+        if (guessedLetters.includes(letter) || wrongLetters.length > wordLength) return;
+        setLetters((prevLetters) => {
+            return prevLetters.map((row) =>
+                row.map((l) => {
+                    if (l.guessed || l.letter !== letter) return l;
+                    return {
+                        letter,
+                        guessed: true,
+                        correct: word.includes(letter)
+                    };
+                })
+            );
+        });
+    }, [word, guessedLetters, wrongLetters, wordLength]);
+    
     useEffect(() => {
+        if (keyListenerRef.current) {
+            window.removeEventListener('keydown', keyListenerRef.current);
+        }
+        
         const handleKeydown = (e: KeyboardEvent) => {
             const letter = e.key;
             if (/^[a-zA-Z]$/.test(letter)) {
-                guessLetter(letter);
+                e.preventDefault();
+                guessLetter(letter.toLowerCase());
             }
         };
+        
+        keyListenerRef.current = handleKeydown;
         window.addEventListener('keydown', handleKeydown);
-        return () => window.removeEventListener('keydown', handleKeydown);
+        
+        return () => {
+            if (keyListenerRef.current) {
+                window.removeEventListener('keydown', keyListenerRef.current);
+            }
+        };
     }, [guessLetter]);
 
     useEffect(() => {
@@ -171,13 +203,14 @@ export function useHangman(): UseHangman {
         }
     }, [wrongLetters]);
 
-    const isGameWon = word.length > 0 && word.split('').every((letter) => guessedLetters.includes(letter));
+    const isGameWon = word.length > 0 && word.split('').every((letter) => correctLetters.find((l) => l === letter));
     const isGameLost = wrongLetters.length >= maxWrong;
 
     return {
         wordLength,
         setWordLength,
         word,
+        letters,
         guessedLetters,
         loading,
         canvasRef,

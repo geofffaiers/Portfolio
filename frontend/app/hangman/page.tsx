@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { JSX } from 'react';
 import { AppSidebar } from '@/features/nav/app-sidebar';
@@ -18,11 +18,10 @@ import Link from 'next/link';
 
 export default function Page(): JSX.Element {
     const { configLoading, config: { projects } } = useConfigContext();
-
-    const project: Project | undefined = projects.find((project) => project.id === 4 && project.isEnabled)
+    const project: Project | undefined = projects.find((project) => project.id === 4 && project.isEnabled);
 
     const router = useRouter();
-    
+
     if (configLoading) {
         return <PageLoading />;
     }
@@ -31,7 +30,7 @@ export default function Page(): JSX.Element {
         router.replace('/page-not-found');
         return <></>;
     }
-        
+
     return (
         <SidebarProvider>
             <AppSidebar />
