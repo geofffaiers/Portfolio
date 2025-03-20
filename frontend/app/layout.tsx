@@ -32,15 +32,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>): JSX.Element {
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang='en' suppressHydrationWarning>
             <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta name='viewport' content='width=device-width, initial-scale=1' />
             </head>
-            <body className="antialiased">
+            <body className='antialiased'>
                 <ConfigProvider>
                     <ThemeProvider
-                        attribute="class"
-                        defaultTheme="dark"
+                        attribute='class'
+                        defaultTheme='dark'
                         enableSystem
                         disableTransitionOnChange
                     >

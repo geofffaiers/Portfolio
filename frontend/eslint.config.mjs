@@ -95,6 +95,7 @@ export default tseslint.config(
             "keyword-spacing": ["error", { "before": true, "after": true }],
             quotes: ["error", "single"],
             semi: ["error", "always"],
+            "jsx-quotes": ["error", "prefer-single"],
         },
     }
 );

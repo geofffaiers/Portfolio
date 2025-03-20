@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 type Props = {
     className?: string;
@@ -15,12 +16,12 @@ export const SelectWordLength: React.FC<Props> = ({ className, wordLength, setWo
         <>
             <div className={cn(className, 'text-center')}>
                 <div className='mb-4'>
-                    <label htmlFor="wordLength" className="mr-2">Word Length:</label>
+                    <label htmlFor='wordLength' className='mr-2'>Word Length:</label>
                     <Input
-                        id="wordLength"
-                        type="number"
-                        min="3"
-                        max="15"
+                        id='wordLength'
+                        type='number'
+                        min='3'
+                        max='15'
                         value={wordLength}
                         onChange={(e) => setWordLength(Number(e.target.value))}
                     />

@@ -39,34 +39,34 @@ export function Chat({ chatHeader, allowClose, handleCloseChat }: ChatProps): JS
     let lastMessageDate: string | null = null;
 
     return (
-        <div className="flex flex-col w-72 bg-[background] border border-[foreground] shadow-lg border-b-0 rounded-t-lg">
-            <div className="flex items-center p-2 border-b">
-                <Avatar className="h-8 w-8  rounded-lg">
+        <div className='flex flex-col w-72 bg-[background] border border-[foreground] shadow-lg border-b-0 rounded-t-lg'>
+            <div className='flex items-center p-2 border-b'>
+                <Avatar className='h-8 w-8  rounded-lg'>
                     <AvatarImage src={chatHeader.user.profilePicture} alt={userName} />
-                    <AvatarFallback className="rounded-lg text-xs">{initials}</AvatarFallback>
+                    <AvatarFallback className='rounded-lg text-xs'>{initials}</AvatarFallback>
                 </Avatar>
-                <span className="ml-2">{userName}</span>
-                <div className="ml-auto">
+                <span className='ml-2'>{userName}</span>
+                <div className='ml-auto'>
                     <Button
                         onClick={() => setMinimized(!minimized)}
-                        variant="ghost"
-                        size="icon"
+                        variant='ghost'
+                        size='icon'
                     >
                         <ChevronUp className={`h-4 w-4 transform transition-transform duration-300 ${minimized ? 'rotate-360' : 'rotate-180'}`} />
                     </Button>
                     {allowClose && (
                         <Button
                             onClick={() => handleCloseChat(chatHeader.user)}
-                            variant="ghost"
-                            size="icon"
+                            variant='ghost'
+                            size='icon'
                         >
-                            <X className="h-4 w-4" />
+                            <X className='h-4 w-4' />
                         </Button>
                     )}
                 </div>
             </div>
             <div className={`flex-1 overflow-hidden transition-all duration-300 ${minimized ? 'max-h-0' : 'max-h-96'}`}>
-                <div className="flex-1 p-2 overflow-y-auto h-52">
+                <div className='flex-1 p-2 overflow-y-auto h-52'>
                     {!loading && hasMore && <Button onClick={loadMoreMessages} variant='link'>Load more</Button>}
                     {messages.map((msg, index) => {
                         const createdAt: Date = new Date(msg.createdAt ?? new Date());
@@ -85,24 +85,24 @@ export function Chat({ chatHeader, allowClose, handleCloseChat }: ChatProps): JS
                             />
                         );
                     })}
-                    {loading && <Loader2 className="h-10 w-10 animate-spin"/>}
+                    {loading && <Loader2 className='h-10 w-10 animate-spin'/>}
                     <div ref={messagesEndRef} />
                 </div>
-                <div className="flex p-2 border-t">
+                <div className='flex p-2 border-t'>
                     <input
-                        type="text"
+                        type='text'
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
-                        className="flex-1 border border-[foreground] rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder='Type a message...'
+                        className='flex-1 border border-[foreground] rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500'
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 sendMessage();
                             }
                         }}
                     />
-                    <Button onClick={sendMessage} variant="ghost" size="icon" className="ml-2">
-                        <Send className="h-4 w-4" />
+                    <Button onClick={sendMessage} variant='ghost' size='icon' className='ml-2'>
+                        <Send className='h-4 w-4' />
                     </Button>
                 </div>
             </div>
@@ -143,8 +143,8 @@ const SingleMessage = ({ message, isOwnMessage, sender, createdAt, showDate, rea
     return (
         <>
             {showDate && (
-                <div className="flex justify-center">
-                    <p className="text-xs font-bold text-center mb-1">{createdAt.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <div className='flex justify-center'>
+                    <p className='text-xs font-bold text-center mb-1'>{createdAt.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
             )}
             <div title={getTitle()} className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-2 text-sm`}>

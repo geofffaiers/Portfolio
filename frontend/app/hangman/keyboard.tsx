@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { useDeviceBreakpoints } from "@/hooks/use-device-breakpoints";
-import { KeyboardLayout } from "./types";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
+import { KeyboardLayout } from './types';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 
 type Props = {
@@ -15,12 +16,12 @@ type Props = {
 export const Keyboard: React.FC<Props> = ({ letters, guessedLetters, guessLetter }) => {
     const { isMobile, isTablet } = useDeviceBreakpoints();
     return (
-        <div className="mt-auto">
+        <div className='mt-auto'>
             {letters.map((row, rowIndex) => {
                 return (
                     <div
                         key={`row-index--${rowIndex}`}
-                        className="text-center"
+                        className='text-center'
                     >
                         {row.map(l => {
                             const { letter } = l;

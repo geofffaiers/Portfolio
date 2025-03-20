@@ -26,14 +26,14 @@ export function Conversations({ chatHeaders, displayConversations, handleOpenCha
     }
 
     return (
-        <div className="flex flex-col w-72 bg-[background] h-full">
-            <div className="flex items-center px-2 py-1 text-white cursor-pointer hover:bg-gray-600 border border-[foreground] border-b-0 rounded-t-lg" onClick={() => setExpanded(!expanded)}>
-                <Avatar className="h-8 w-8 rounded-lg">
+        <div className='flex flex-col w-72 bg-[background] h-full'>
+            <div className='flex items-center px-2 py-1 text-white cursor-pointer hover:bg-gray-600 border border-[foreground] border-b-0 rounded-t-lg' onClick={() => setExpanded(!expanded)}>
+                <Avatar className='h-8 w-8 rounded-lg'>
                     <AvatarImage src={user?.profilePicture} alt={userName} />
-                    <AvatarFallback className="rounded-lg text-xs">{initials}</AvatarFallback>
+                    <AvatarFallback className='rounded-lg text-xs'>{initials}</AvatarFallback>
                 </Avatar>
-                <span className="ml-2">Messaging</span>
-                <Button className="ml-auto" onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }} variant="ghost" size="icon">
+                <span className='ml-2'>Messaging</span>
+                <Button className='ml-auto' onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }} variant='ghost' size='icon'>
                     <ChevronUp className={`h-4 w-4 transform transition-transform duration-300 ${expanded ? 'rotate-180' : 'rotate-360'}`} />
                 </Button>
             </div>
@@ -43,7 +43,7 @@ export function Conversations({ chatHeaders, displayConversations, handleOpenCha
                         <Conversation key={chatHeader.user.id} chatHeader={chatHeader} handleOpenChat={handleOpenChat} />
                     ))
                 ) : (
-                    <span className="p-2 text-white">No conversations</span>
+                    <span className='p-2 text-white'>No conversations</span>
                 )}
             </div>
         </div>
@@ -54,14 +54,14 @@ function Conversation({ chatHeader, handleOpenChat }: { chatHeader: ChatHeader, 
     const { userName, initials } = useUserDetails({ user: chatHeader.user });
 
     return (
-        <div className="flex items-center px-2 py-1 cursor-pointer hover:bg-gray-600" onClick={() => handleOpenChat(chatHeader.user)}>
-            <Avatar className="h-8 w-8 rounded-lg">
+        <div className='flex items-center px-2 py-1 cursor-pointer hover:bg-gray-600' onClick={() => handleOpenChat(chatHeader.user)}>
+            <Avatar className='h-8 w-8 rounded-lg'>
                 <AvatarImage src={chatHeader.user.profilePicture} alt={userName} />
-                <AvatarFallback className="rounded-lg text-xs">{initials}</AvatarFallback>
+                <AvatarFallback className='rounded-lg text-xs'>{initials}</AvatarFallback>
             </Avatar>
-            <div className="ml-2">
-                <div className="text-white">{userName}</div>
-                <div className="text-gray-400 text-sm">{chatHeader.lastMessage?.content}</div>
+            <div className='ml-2'>
+                <div className='text-white'>{userName}</div>
+                <div className='text-gray-400 text-sm'>{chatHeader.lastMessage?.content}</div>
             </div>
         </div>
     );

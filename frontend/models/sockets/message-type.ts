@@ -13,6 +13,7 @@ export enum MessageType {
     NEW_GAME = 'newGame',
     NEW_ROUND = 'newRound',
     UPDATED_ROOM = 'updatedRoom',
+    UPDATED_PLAYERS = 'updatedPlayers',
     UPDATED_GAME = 'updatedGame',
     UPDATED_ROUND = 'updatedRound',
     SUBMIT_SCORE = 'submitScore',

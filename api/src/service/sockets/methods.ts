@@ -1,10 +1,21 @@
-import { Client, ErrorMessage, MessageType, SocketMessage } from '../../models';
+import { ErrorMessage, MessageType, SocketMessage } from '../../models/sockets';
+import { Client } from '../../models/sockets/client';
 import { clients } from '../../routes/ws';
 
 export const findMatchingClientUserId = (userId: number): Client[] => {
     const foundClients: Client[] = [];
     clients.forEach((client: Client) => {
         if (client.userId === userId) {
+            foundClients.push(client);
+        }
+    });
+    return foundClients;
+};
+
+export const findMatchingClientsForUserIds = (userIds: number[]): Client[] => {
+    const foundClients: Client[] = [];
+    clients.forEach((client: Client) => {
+        if (userIds.includes(client.userId)) {
             foundClients.push(client);
         }
     });

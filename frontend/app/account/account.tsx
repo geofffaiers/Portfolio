@@ -68,18 +68,18 @@ export function Account(): JSX.Element {
     }
 
     if (user == null) {
-        return <Loader2 className="animate-spin" />;
+        return <Loader2 className='animate-spin' />;
     }
 
     return (
         <>
-            <div className="flex flex-col gap-6">
+            <div className='flex flex-col gap-6'>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-6">
+                        <div className='flex flex-col gap-6'>
                             <FormField
                                 control={form.control}
-                                name="username"
+                                name='username'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Username</FormLabel>
@@ -92,15 +92,15 @@ export function Account(): JSX.Element {
                             />
                             <FormField
                                 control={form.control}
-                                name="email"
+                                name='email'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="flex justify-between">
+                                        <FormLabel className='flex justify-between'>
                                             <span>Email</span>
                                             {user.verifiedEmail ? (
-                                                <FontAwesomeIcon icon={faCheckCircle} className="text-green-500" title="Verified"/>
+                                                <FontAwesomeIcon icon={faCheckCircle} className='text-green-500' title='Verified'/>
                                             ) : (
-                                                <FontAwesomeIcon icon={faTimesCircle} className="text-red-500" title="Not verified"/>
+                                                <FontAwesomeIcon icon={faTimesCircle} className='text-red-500' title='Not verified'/>
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -112,7 +112,7 @@ export function Account(): JSX.Element {
                             />
                             <FormField
                                 control={form.control}
-                                name="firstName"
+                                name='firstName'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>First Name</FormLabel>
@@ -125,7 +125,7 @@ export function Account(): JSX.Element {
                             />
                             <FormField
                                 control={form.control}
-                                name="lastName"
+                                name='lastName'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Last Name</FormLabel>
@@ -136,7 +136,7 @@ export function Account(): JSX.Element {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="w-full" disabled={saveLoading}>
+                            <Button type='submit' className='w-full' disabled={saveLoading}>
                 Save Changes
                             </Button>
                         </div>
@@ -145,7 +145,7 @@ export function Account(): JSX.Element {
             </div>
             {user?.verifiedEmail === false && (
                 <Button
-                    variant="secondary"
+                    variant='secondary'
                     onClick={handleVerify}
                     disabled={verifyLoading || timeLeftTillResendEnabled > 0}
                 >

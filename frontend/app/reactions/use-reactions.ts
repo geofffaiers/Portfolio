@@ -23,7 +23,7 @@ type Dimensions = {
   height: number
 }
 
-export const DEFAULT_TIME: number = 3;
+export const DEFAULT_TIME: number = 15;
 
 export const useReactions = (): UseReactions => {
     const { state } = useSidebar();

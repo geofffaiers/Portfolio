@@ -1,7 +1,7 @@
 import { Expose, Transform, Type } from "class-transformer";
 import { IsArray, IsDate, IsString, ValidateNested } from "class-validator";
 import { Player } from "./player";
-import { Game } from "../game";
+import { Game } from "./game";
 
 export class Room {
     @IsString()
@@ -35,7 +35,7 @@ export class Room {
 
     @IsArray()
     @Expose({ name: 'games' })
-    @ValidateNested({ each: true})
+    @ValidateNested({ each: true })
     @Type(() => Game)
     games: Game[] = [];
 }

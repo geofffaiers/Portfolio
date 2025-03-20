@@ -20,20 +20,20 @@ export default function Page(): JSX.Element {
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-                <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
-                    <div className="flex items-center gap-2 px-4">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
+                <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
+                    <div className='flex items-center gap-2 px-4'>
+                        <SidebarTrigger className='-ml-1' />
+                        <Separator orientation='vertical' className='mr-2 h-4' />
                         <Breadcrumb>
                             <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
+                                <BreadcrumbItem className='hidden md:block'>
                                     <BreadcrumbLink asChild>
-                                        <Link href="/">
+                                        <Link href='/'>
                                             Home
                                         </Link>
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
+                                <BreadcrumbSeparator className='hidden md:block' />
                                 <BreadcrumbItem>
                                     <BreadcrumbPage>Reset Password</BreadcrumbPage>
                                 </BreadcrumbItem>
@@ -41,8 +41,8 @@ export default function Page(): JSX.Element {
                         </Breadcrumb>
                     </div>
                 </header>
-                <div className="flex flex-1 flex-col gap-4 p-4">
-                    <h1 className="text-2xl font-bold">Reset Password</h1>
+                <div className='flex flex-1 flex-col gap-4 p-4'>
+                    <h1 className='text-2xl font-bold'>Reset Password</h1>
                     {token == null ? (
                         <p>Token is undefined</p>
                     ) : (

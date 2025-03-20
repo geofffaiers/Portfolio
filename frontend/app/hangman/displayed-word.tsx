@@ -1,4 +1,4 @@
-
+import React from 'react';
 
 type Props = {
     word: string;
@@ -11,7 +11,7 @@ export const DisplayedWord: React.FC<Props> = ({ word, guessedLetters, isGameLos
         <>
             {
                 word.split('').map((letter, index) => (
-                    <span key={index} className="mx-1 text-2xl">
+                    <span key={index} className='mx-1 text-2xl'>
                         {guessedLetters.includes(letter)
                             ? letter.toUpperCase()
                             : isGameLost

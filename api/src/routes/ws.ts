@@ -2,14 +2,15 @@ import { WebSocket, Server as WebSocketServer } from 'ws';
 import { Request } from 'express';
 import { v4 as uuid } from 'uuid';
 import { Client } from '../models/sockets/client';
-import { SocketMessage, MessageType, UpdatedProfile } from '../models/sockets';
-import { newMessageHandler, readMessageHandler } from '../service/sockets/messaging';
 import { authenticateTokenForSocket } from '../middlewares';
 import { logError, pool } from '../helpers';
 import { ResultSetHeader } from 'mysql2';
 import { getUser } from '../service/users/methods';
 import { sendMessageToClient } from '../service/sockets/methods';
 import { User } from '../models';
+import { newMessageHandler, readMessageHandler } from '../service/messaging';
+import { submitScoreHandler } from '../service/planning-poker';
+import { MessageType, SocketMessage, UpdatedProfile } from '../models/sockets';
 
 export const clients: Map<string, Client> = new Map();
 
@@ -97,5 +98,9 @@ const messageRouter: MessageRoute[] = [
     {
         type: MessageType.READ_MESSAGE,
         fn: readMessageHandler
+    },
+    {
+        type: MessageType.SUBMIT_SCORE,
+        fn: submitScoreHandler
     }
 ];

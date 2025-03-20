@@ -39,29 +39,29 @@ export function ForgotPassword(): JSX.Element {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
-                    variant="link"
-                    size="default"
+                    variant='link'
+                    size='default'
                     onClick={() => setOpen(true)}
                     tabIndex={0}
-                    className="px-0"
+                    className='px-0'
                 >
-          Forgot your password?
+                    Forgot your password?
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Forgot Password</DialogTitle>
                     <DialogDescription>
-            Please enter your email address, we&apos;ll email you a link to reset your password.
+                        Please enter your email address, we&apos;ll email you a link to reset your password.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-6">
-                            <div className="grid gap-2">
+                        <div className='flex flex-col gap-6'>
+                            <div className='grid gap-2'>
                                 <FormField
                                     control={form.control}
-                                    name="email"
+                                    name='email'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Email</FormLabel>
@@ -73,8 +73,8 @@ export function ForgotPassword(): JSX.Element {
                                     )}
                                 />
                             </div>
-                            <Button type="submit" className="w-full" loading={loading} tabIndex={3}>
-                  Send email
+                            <Button type='submit' className='w-full' loading={loading} tabIndex={3}>
+                                Send email
                                 <Send />
                             </Button>
                         </div>

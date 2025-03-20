@@ -22,8 +22,8 @@ export const Section = ({ section }: Props): JSX.Element => {
     }, []);
 
     return (
-        <div className="mb-8">
-            <h4 className="text-2xl font-bold mb-4">
+        <div className='mb-8'>
+            <h4 className='text-2xl font-bold mb-4'>
                 {section.title}
             </h4>
             {section.items.map((item, idx) => {
@@ -32,22 +32,22 @@ export const Section = ({ section }: Props): JSX.Element => {
                 return (
                     <div className={isLastItem ? '' : 'mb-6'} key={idx}>
                         {item.company && (
-                            <div className="text-xl font-semibold">
+                            <div className='text-xl font-semibold'>
                                 {item.company}
                             </div>
                         )}
                         {item.role && (
-                            <div className="text-lg">
+                            <div className='text-lg'>
                                 {item.role}
                             </div>
                         )}
                         {duration != null && (
-                            <div className="text-md text-gray-500">
+                            <div className='text-md text-gray-500'>
                                 {duration}
                             </div>
                         )}
                         {item.description && (
-                            <div className="text-md">
+                            <div className='text-md'>
                                 {item.description}
                             </div>
                         )}

@@ -53,7 +53,7 @@ export function useContactMe(): UseContactMe {
         } finally {
             setLoading(false);
         }
-    }, [config.apiUrl, displayError]);
+    }, [config.apiUrl, displayError, displayInfo]);
 
     return {
         open,

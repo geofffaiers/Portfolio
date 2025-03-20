@@ -1,10 +1,9 @@
 export * from './base-message';
 export * from './client';
-export * from './delete-profile';
 export * from './error-message';
 export * from './message-type';
-export * from './new-message';
-export * from './read-message';
 export * from './socket-message';
-export * from './updated-message';
-export * from './updated-profile';
+
+export * from './messaging';
+export * from './planning-poker';
+export * from './profile';

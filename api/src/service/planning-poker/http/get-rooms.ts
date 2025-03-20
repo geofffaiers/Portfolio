@@ -1,7 +1,7 @@
 import { Request } from "express";
-import { DefaultResponse, GetRooms } from "../../models";
-import { handleError } from "../../helpers";
-import { getRoomsFromDbForUser } from "./methods";
+import { DefaultResponse, GetRooms } from "../../../models";
+import { handleError } from "../../../helpers";
+import { getRoomsFromDbForUser } from "../methods";
 
 export const getRooms = async (req: Request): Promise<DefaultResponse<GetRooms>> => {
     try {

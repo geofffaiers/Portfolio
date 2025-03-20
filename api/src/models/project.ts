@@ -1,4 +1,4 @@
-import { Expose } from "class-transformer";
+import { Expose, Transform } from "class-transformer";
 import { IsBoolean, IsNumber, IsString } from "class-validator";
 
 export class Project {
@@ -12,6 +12,7 @@ export class Project {
 
     @IsBoolean()
     @Expose({ name: 'isEnabled' })
+    @Transform(({ value, obj }) => value === 1 || value === true || obj.is_enabled === 1 || obj.is_enabled === true, { toClassOnly: true })
     isEnabled: boolean = false;
 
 };

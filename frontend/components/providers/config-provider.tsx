@@ -158,8 +158,8 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
             setLoaded(true);
             setLoading(false);
         }
-    }, [config.apiUrl]);
-    
+    }, [config.apiUrl, displayError]);
+
     useEffect(() => {
         if (!loaded) {
             fetchConfig();

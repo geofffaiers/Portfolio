@@ -11,7 +11,6 @@ import {
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useConfigContext } from '@/components/providers/config-provider';
-import { Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function NavProjects() {
@@ -42,7 +41,7 @@ export function NavProjects() {
                         </SidebarMenuItem>
                     );
                 })}
-                {configLoading && (<Skeleton className="h-7" />)}
+                {configLoading && (<Skeleton className='h-7' />)}
                 {!configLoading && enabledProjects.length === 0 && (
                     <>No pages are enabled.</>
                 )}

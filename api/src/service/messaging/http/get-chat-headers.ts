@@ -2,8 +2,8 @@ import { Request } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import { RowDataPacket } from 'mysql2';
-import { handleError, pool } from '../../helpers';
-import { ChatHeader, DefaultResponse, Message, User } from '../../models';
+import { handleError, pool } from '../../../helpers';
+import { ChatHeader, DefaultResponse, Message, User } from '../../../models';
 
 export const getChatHeaders = async (req: Request): Promise<DefaultResponse<ChatHeader[]>> => {
     try {

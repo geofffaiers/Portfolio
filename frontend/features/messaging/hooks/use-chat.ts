@@ -61,10 +61,15 @@ export function useChat({ chatHeader }: Props): UseChat {
         }]);
     }, []);
 
+    const messageForThisChat = useCallback((message: Message): boolean => {
+        const userIds = [user?.id, chatHeader.user.id];
+        return userIds.includes(message.senderId) && userIds.includes(message.receiverId);
+    }, [user?.id, chatHeader.user.id]);
+
     const handleMessages = useCallback((newMessages: Message[]): void => {
         setMessages((messages: Message[]): Message[] => {
             const previous: Message[] = structuredClone(messages);
-            scrollToBottom.current = newMessages.length === 1 && newMessages[0].id > messages[messages.length - 1].id;
+            scrollToBottom.current = newMessages.length === 1 && newMessages[0].id > messages[messages.length - 1]?.id;
             newMessages.forEach((newMessage: Message) => {
                 const index = previous.findIndex((msg: Message) => msg.id === newMessage.id);
                 if (index !== -1) {
@@ -94,7 +99,9 @@ export function useChat({ chatHeader }: Props): UseChat {
                 throw new Error('Unsupported message type');
             }
             await validateOrReject(message);
-            handleMessages([message]);
+            if (messageForThisChat(message)) {
+                handleMessages([message]);
+            }
         } catch (err: unknown) {
             if (err instanceof Error) {
                 addError(err.message);
@@ -102,7 +109,7 @@ export function useChat({ chatHeader }: Props): UseChat {
                 addError('An unknown error occurred');
             }
         }
-    }, [addError, handleMessages]);
+    }, [addError, messageForThisChat, handleMessages]);
 
     const getSender = useCallback((sender: number): User | null => {
         if (sender === user?.id) {

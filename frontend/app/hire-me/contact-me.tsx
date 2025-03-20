@@ -52,8 +52,8 @@ export function ContactMe(): JSX.Element {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
-                    variant="default"
-                    size="lg"
+                    variant='default'
+                    size='lg'
                     onClick={() => setOpen(true)}
                 >
                     Contact me
@@ -67,11 +67,11 @@ export function ContactMe(): JSX.Element {
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <div className="flex flex-col gap-6">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+                        <div className='flex flex-col gap-6'>
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name='name'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Full name</FormLabel>
@@ -84,7 +84,7 @@ export function ContactMe(): JSX.Element {
                             />
                             <FormField
                                 control={form.control}
-                                name="email"
+                                name='email'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Email</FormLabel>
@@ -97,7 +97,7 @@ export function ContactMe(): JSX.Element {
                             />
                             <FormField
                                 control={form.control}
-                                name="message"
+                                name='message'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Message</FormLabel>
@@ -108,7 +108,7 @@ export function ContactMe(): JSX.Element {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" loading={loading}>
+                            <Button type='submit' loading={loading}>
                                 Send
                                 <Send />
                             </Button>

@@ -9,6 +9,7 @@ export class Game {
 
     @IsString()
     @Expose({ name: 'roomId' })
+    @Transform(({ value, obj }) => value ?? obj.room_id, { toClassOnly: true })
     roomId: string = '';
 
     @IsString()
@@ -17,6 +18,7 @@ export class Game {
 
     @IsBoolean()
     @Expose({ name: 'inProgress' })
+    @Transform(({ value, obj }) => value === 1 || value === true || obj.in_progress === 1 || obj.in_progress === true, { toClassOnly: true })
     inProgress: boolean = false;
 
     @IsDate()

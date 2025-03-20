@@ -6,12 +6,19 @@ export class Vote {
     @Expose({ name: 'id' })
     id: number = -1;
 
+    @IsString()
+    @Expose({ name: 'roomId' })
+    @Transform(({ value, obj }) => value ?? obj.room_id, { toClassOnly: true })
+    roomId: string = '';
+
     @IsNumber()
     @Expose({ name: 'roundId' })
+    @Transform(({ value, obj }) => value ?? obj.round_id, { toClassOnly: true })
     roundId: number = -1;
 
     @IsNumber()
     @Expose({ name: 'userId' })
+    @Transform(({ value, obj }) => value ?? obj.user_id, { toClassOnly: true })
     userId: number = -1;
 
     @IsString()

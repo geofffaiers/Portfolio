@@ -1,8 +1,8 @@
 import { ValidateNested } from 'class-validator';
-import { BaseMessage } from './base-message';
-import { MessageType } from './message-type';
+import { BaseMessage } from '../base-message';
+import { MessageType } from '../message-type';
 import { Expose, Type } from 'class-transformer';
-import { Message } from '../message';
+import { Message } from '../../message';
 
 export class UpdatedMessage extends BaseMessage {
     type: MessageType.UPDATED_MESSAGE = MessageType.UPDATED_MESSAGE;

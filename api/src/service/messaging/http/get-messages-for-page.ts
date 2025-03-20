@@ -2,8 +2,8 @@ import { Request } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import { RowDataPacket } from 'mysql2';
-import { handleError, pool } from '../../helpers';
-import { DefaultResponse, Message } from '../../models';
+import { handleError, pool } from '../../../helpers';
+import { DefaultResponse, Message } from '../../../models';
 
 export const getMessagesForPage = async (req: Request): Promise<DefaultResponse<Message[]>> => {
     try {

@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from 'next/navigation'
-import { useConfigContext } from "@/components/providers/config-provider";
-import { useToastWrapper } from "@/hooks/use-toast-wrapper";
-import { DefaultResponse, Room } from "@/models";
-import { useAuthContext } from "@/components/providers/auth-provider";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useConfigContext } from '@/components/providers/config-provider';
+import { useToastWrapper } from '@/hooks/use-toast-wrapper';
+import { DefaultResponse, Room } from '@/models';
+import { useAuthContext } from '@/components/providers/auth-provider';
 
 type UsePokerLobby = {
     loadingRooms: boolean;
@@ -52,13 +52,13 @@ export function usePokerLobby (): UsePokerLobby {
             if (error instanceof Error) {
                 displayError(error.message);
             } else {
-                displayError('An unexpected error occurred.')
+                displayError('An unexpected error occurred.');
             }
         } finally {
             setLoadingRooms(false);
         }
     }, [config.apiUrl, displayError]);
-    
+
     const handleJoinRoom = useCallback(async (roomId: string) => {
         router.push(`/planning-poker/${roomId}`);
     }, [router]);
@@ -96,13 +96,13 @@ export function usePokerLobby (): UsePokerLobby {
         } finally {
             setLoadingCreateRoom(false);
         }
-    }, [config.apiUrl, displayError]);
+    }, [config.apiUrl, displayError, handleJoinRoom]);
 
     useEffect(() => {
         if (!authLoading && user != null && !loadingRooms && rooms == null) {
             getRooms();
         }
-    }, [authLoading, user, loadingRooms, getRooms]);
+    }, [authLoading, user, loadingRooms, rooms, getRooms]);
 
     return {
         loadingRooms,

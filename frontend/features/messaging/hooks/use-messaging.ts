@@ -42,6 +42,9 @@ export function useMessaging(): UseMessaging {
             const json: DefaultResponse<ChatHeader[]> = await response.json();
             if (json.success) {
                 setChatHeaders(json.data);
+                if (json.data.length === 1) {
+                    setOpenChats([json.data[0].user]);
+                }
             } else {
                 displayError(json.message ?? 'Failed to get conversations');
             }
@@ -57,7 +60,6 @@ export function useMessaging(): UseMessaging {
     }, [config.apiUrl, displayError]);
 
     useEffect(() => {
-
         if (initialLoadRef.current && user != null && config.apiUrl != null) {
             initialLoadRef.current = false;
             getConversations();

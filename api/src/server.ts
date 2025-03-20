@@ -13,6 +13,8 @@ import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common';
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en';
 import { setupSwagger } from './helpers/spec';
 import { logError } from './helpers';
+import { limiter } from './helpers/rate-limiter';
+import helmet from 'helmet';
 
 declare module 'express' {
   interface Request {
@@ -59,11 +61,13 @@ export class Server {
             req.server = this;
             next();
         });
+        this.#app.use(helmet());
         this.#app.use(morgan('dev'));
         this.#app.use(cors(corsOptions));
         this.#app.use(cookieParser());
         this.#app.use(express.json());
         this.#app.use(express.urlencoded({ extended: true }));
+        this.#app.use(limiter());
         zxcvbnOptions.setOptions({
             dictionary: {
                 ...zxcvbnCommonPackage.dictionary,

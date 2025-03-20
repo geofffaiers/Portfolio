@@ -42,7 +42,7 @@ export function DeleteAccount(): JSX.Element | null {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="destructive">Delete Account</Button>
+                <Button variant='destructive'>Delete Account</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -53,20 +53,20 @@ export function DeleteAccount(): JSX.Element | null {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-6">
+                        <div className='flex flex-col gap-6'>
                             <FormField
                                 control={form.control}
-                                name="confirmation"
+                                name='confirmation'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <Input type="confirmation" {...field} />
+                                            <Input type='confirmation' {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" variant="destructive" className="w-full" loading={loading}>
+                            <Button type='submit' variant='destructive' className='w-full' loading={loading}>
                 Delete
                             </Button>
                         </div>

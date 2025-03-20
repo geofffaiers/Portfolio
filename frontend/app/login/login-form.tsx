@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { LogIn } from 'lucide-react';
-import { useLogin } from '../../hooks/use-login';
+import { useLogin } from '@/hooks/use-login';
 import Link from 'next/link';
 import { ForgotPassword } from './forgot-password';
 
@@ -54,19 +54,19 @@ export function LoginForm({
         <div className={cn('flex flex-col gap-6', className)} {...props}>
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-2xl">Login</CardTitle>
+                    <CardTitle className='text-2xl'>Login</CardTitle>
                     <CardDescription>
-            Enter your credentials below to login
+                        Enter your credentials below to login
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
-                            <div className="flex flex-col gap-6">
-                                <div className="grid gap-2">
+                            <div className='flex flex-col gap-6'>
+                                <div className='grid gap-2'>
                                     <FormField
                                         control={form.control}
-                                        name="username"
+                                        name='username'
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Username</FormLabel>
@@ -78,35 +78,35 @@ export function LoginForm({
                                         )}
                                     />
                                 </div>
-                                <div className="grid gap-2">
+                                <div className='grid gap-2'>
                                     <FormField
                                         control={form.control}
-                                        name="password"
+                                        name='password'
                                         render={({ field }) => (
                                             <FormItem>
-                                                <div className="flex items-center">
+                                                <div className='flex items-center'>
                                                     <FormLabel>Password</FormLabel>
                                                 </div>
                                                 <FormControl>
-                                                    <Input type="password" disabled={loggingIn} required tabIndex={0} {...field} />
+                                                    <Input type='password' disabled={loggingIn} required tabIndex={0} {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
-                                <Button type="submit" className="w-full" loading={loggingIn} tabIndex={0}>
-                  Login
+                                <Button type='submit' className='w-full' loading={loggingIn} tabIndex={0}>
+                                    Login
                                     <LogIn />
                                 </Button>
                             </div>
                         </form>
                     </Form>
                     <ForgotPassword />
-                    <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-                        <Link href="/register" className="underline underline-offset-4" tabIndex={0}>
-              Sign up
+                    <div className='mt-4 text-center text-sm'>
+                        Don&apos;t have an account?{' '}
+                        <Link href='/register' className='underline underline-offset-4' tabIndex={0}>
+                            Sign up
                         </Link>
                     </div>
                 </CardContent>

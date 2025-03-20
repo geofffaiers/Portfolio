@@ -90,12 +90,12 @@ export function useHangman(): UseHangman {
             );
         });
     }, [word, guessedLetters, wrongLetters, wordLength]);
-    
+
     useEffect(() => {
         if (keyListenerRef.current) {
             window.removeEventListener('keydown', keyListenerRef.current);
         }
-        
+
         const handleKeydown = (e: KeyboardEvent) => {
             const letter = e.key;
             if (/^[a-zA-Z]$/.test(letter)) {
@@ -103,10 +103,10 @@ export function useHangman(): UseHangman {
                 guessLetter(letter.toLowerCase());
             }
         };
-        
+
         keyListenerRef.current = handleKeydown;
         window.addEventListener('keydown', handleKeydown);
-        
+
         return () => {
             if (keyListenerRef.current) {
                 window.removeEventListener('keydown', keyListenerRef.current);

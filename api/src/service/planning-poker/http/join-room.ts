@@ -1,9 +1,9 @@
 import { Request } from "express";
-import { DefaultResponse, GetRoom, Room } from "../../models";
-import { handleError } from "../../helpers";
-import { getRoomDetails } from "./methods";
+import { DefaultResponse, GetRoom, Room } from "../../../models";
+import { handleError } from "../../../helpers";
+import { getRoomDetails, joinRoomByRoomId, sendPlayersToClients } from "../methods";
 
-export const getRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> => {
+export const joinRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> => {
     try {
         const roomId: string | undefined = req.query.roomId
             ? String(req.query.roomId)
@@ -22,7 +22,8 @@ export const getRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> =
                 message: 'User not found'
             };
         }
-        const room: Room | undefined = await getRoomDetails(roomId)
+        await joinRoomByRoomId(roomId, req.userId);
+        const room: Room | undefined = await getRoomDetails(roomId);
         if (room == null) {
             return {
                 code: 400,
@@ -30,6 +31,7 @@ export const getRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> =
                 message: 'Room not found'
             }
         }
+        await sendPlayersToClients(roomId, room.players);
         return {
             success: true,
             code: 200,

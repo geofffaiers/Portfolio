@@ -14,7 +14,7 @@ export function useLogout(): UseLogout {
     const handleLogout = useCallback(() => {
         localStorage.removeItem('loggedInUser');
         setUser(null);
-        if (pathname === '/account') {
+        if (pathname === '/account' || /^\/planning-poker\/.+/.test(pathname)) {
             router.push('/');
         }
     }, [setUser, pathname, router]);

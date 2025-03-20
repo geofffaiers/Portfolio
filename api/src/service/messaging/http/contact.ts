@@ -1,6 +1,6 @@
 import { Request } from 'express';
-import { handleError, pool, sendContactEmail } from '../../helpers';
-import { DefaultResponse } from '../../models';
+import { handleError, pool, sendContactEmail } from '../../../helpers';
+import { DefaultResponse } from '../../../models';
 
 export const contact = async (req: Request): Promise<DefaultResponse> => {
     try {

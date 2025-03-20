@@ -64,8 +64,8 @@ export function ChangePassword(): JSX.Element | null {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
-                    variant="secondary"
-                    size="default"
+                    variant='secondary'
+                    size='default'
                     onClick={() => setOpen(true)}
                 >
                     Change password
@@ -80,15 +80,15 @@ export function ChangePassword(): JSX.Element | null {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-6">
+                        <div className='flex flex-col gap-6'>
                             <FormField
                                 control={form.control}
-                                name="oldPassword"
+                                name='oldPassword'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Old password</FormLabel>
                                         <FormControl>
-                                            <Input type="password" required {...field} />
+                                            <Input type='password' disabled={loading} required {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -96,12 +96,12 @@ export function ChangePassword(): JSX.Element | null {
                             />
                             <FormField
                                 control={form.control}
-                                name="newPassword"
+                                name='newPassword'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>New password</FormLabel>
                                         <FormControl>
-                                            <Input type="password" required {...field} />
+                                            <Input type='password' disabled={loading} required {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -109,19 +109,19 @@ export function ChangePassword(): JSX.Element | null {
                             />
                             <FormField
                                 control={form.control}
-                                name="confirmPassword"
+                                name='confirmPassword'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Confirm password</FormLabel>
                                         <FormControl>
-                                            <Input type="password" required {...field} />
+                                            <Input type='password' disabled={loading} required {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <PasswordStrength password={form.watch('newPassword')} setPasswordScore={setPasswordScore}/>
-                            <Button type="submit" className="w-full" loading={loading}>
+                            <Button type='submit' className='w-full' loading={loading}>
                                 Save
                             </Button>
                         </div>

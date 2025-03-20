@@ -29,8 +29,8 @@ export const PokerLobby: React.FC = () => {
 const AccessGranted: React.FC = () => {
     const { rooms, handleJoinRoom, handleCreateRoom } = usePokerLobby();
     return (
-        <div className="flex h-full w-full items-center justify-center p-6 md:p-10">
-            <div className="w-full max-w-sm">
+        <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
+            <div className='w-full max-w-sm'>
                 <div className='flex flex-col gap-6'>
                     {rooms == null ? (
                         <Loader2 className='mx-auto animate-spin' />
@@ -38,12 +38,12 @@ const AccessGranted: React.FC = () => {
                         <>
                             {rooms.length > 0 && (
                                 <>
-                                <JoinRoom rooms={rooms} handleJoinRoom={handleJoinRoom}/>
-                                <div className='flex items-center'>
-                                <Separator className='flex-grow w-auto' />
-                                <span className='mx-2'>Or</span>
-                                <Separator className='flex-grow w-auto' />
-                                </div>
+                                    <JoinRoom rooms={rooms} handleJoinRoom={handleJoinRoom}/>
+                                    <div className='flex items-center'>
+                                        <Separator className='flex-grow w-auto' />
+                                        <span className='mx-2'>Or</span>
+                                        <Separator className='flex-grow w-auto' />
+                                    </div>
                                 </>
                             )}
                             <NewRoom rooms={rooms} handleCreateRoom={handleCreateRoom}/>

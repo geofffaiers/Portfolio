@@ -80,4 +80,26 @@ export class User {
   @Type(() => Date)
   @Expose({ name: 'validateTokenExpires' })
       validateTokenExpires?: Date = new Date();
+
+    constructor (user?: User) {
+        if (user == null) {
+            return;
+        }
+        this.id = user.id;
+        this.username = user.username;
+        this.password = user.password;
+        this.email = user.email;
+        this.firstName = user.firstName;
+        this.lastName = user.lastName;
+        this.lastLogin = user.lastLogin;
+        this.active = user.active;
+        this.profilePicture = user.profilePicture;
+        this.resetToken = user.resetToken;
+        this.resetTokenExpires = user.resetTokenExpires;
+        this.createdAt = user.createdAt;
+        this.updatedAt = user.updatedAt;
+        this.verifiedEmail = user.verifiedEmail;
+        this.validateToken = user.validateToken;
+        this.validateTokenExpires = user.validateTokenExpires;
+    }
 }

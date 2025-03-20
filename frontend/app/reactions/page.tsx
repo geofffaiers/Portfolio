@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { JSX } from 'react';
 import { AppSidebar } from '@/features/nav/app-sidebar';
@@ -19,10 +19,10 @@ import Link from 'next/link';
 export default function Page(): JSX.Element {
     const { configLoading, config: { projects } } = useConfigContext();
 
-    const project: Project | undefined = projects.find((project) => project.id === 3 && project.isEnabled)
+    const project: Project | undefined = projects.find((project) => project.id === 3 && project.isEnabled);
 
     const router = useRouter();
-    
+
     if (configLoading) {
         return <PageLoading />;
     }
@@ -31,25 +31,25 @@ export default function Page(): JSX.Element {
         router.replace('/page-not-found');
         return <></>;
     }
-        
+
     return (
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-                <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
-                    <div className="flex items-center gap-2 px-4">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
+                <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
+                    <div className='flex items-center gap-2 px-4'>
+                        <SidebarTrigger className='-ml-1' />
+                        <Separator orientation='vertical' className='mr-2 h-4' />
                         <Breadcrumb>
                             <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
+                                <BreadcrumbItem className='hidden md:block'>
                                     <BreadcrumbLink asChild>
-                                        <Link href="/">
+                                        <Link href='/'>
                                             Home
                                         </Link>
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
+                                <BreadcrumbSeparator className='hidden md:block' />
                                 <BreadcrumbItem>
                                     <BreadcrumbPage>{project.name}</BreadcrumbPage>
                                 </BreadcrumbItem>

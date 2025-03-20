@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 const buttonVariants = cva(
-    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
     {
         variants: {
             variant: {
@@ -54,10 +54,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         if (loading) {
             const previousChildren = props.children;
             props.children = <>
-                <span className="absolute inset-0 w-full h-full flex items-center justify-center">
-                    <Loader2 className="animate-spin" />
+                <span className='absolute inset-0 w-full h-full flex items-center justify-center'>
+                    <Loader2 className='animate-spin' />
                 </span>
-                <span className="opacity-25 flex items-center justify-center">{previousChildren}</span>
+                <span className='opacity-25 flex items-center justify-center'>{previousChildren}</span>
             </>;
         }
         return (

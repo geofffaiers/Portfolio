@@ -43,7 +43,7 @@ function PasswordStrength({ password, setPasswordScore }: Props) {
 
     return (
         <div
-            className="w-full h-2 bg-gray-300 rounded overflow-hidden"
+            className='w-full h-2 bg-gray-300 rounded overflow-hidden'
         >
             <div
                 className={`h-full transition-all duration-200 ${getColor()}`}
