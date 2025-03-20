@@ -1,9 +1,9 @@
-import { plainToInstance } from "class-transformer";
-import { Client, Message, MessageType, ReadMessage, SocketMessage, UpdatedMessage } from "../../../models";
-import { sendErrorToClient, sendMessageToClient } from "../../sockets/methods";
-import { RowDataPacket } from "mysql2";
-import { validateOrReject } from "class-validator";
-import { pool } from "../../../helpers";
+import { plainToInstance } from 'class-transformer';
+import { Client, Message, MessageType, ReadMessage, SocketMessage, UpdatedMessage } from '../../../models';
+import { sendErrorToClient, sendMessageToClient } from '../../sockets/methods';
+import { RowDataPacket } from 'mysql2';
+import { validateOrReject } from 'class-validator';
+import { pool } from '../../../helpers';
 
 export const readMessageHandler = async (client: Client, message: SocketMessage): Promise<void> => {
     try {

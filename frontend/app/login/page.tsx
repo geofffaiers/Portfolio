@@ -26,7 +26,7 @@ export default function Page(): JSX.Element {
             const returnUrl = searchParams.get('returnUrl') || '/account';
             router.push(returnUrl === '/' ? '/account' : returnUrl);
         }
-    }, [user, router]);
+    }, [user, searchParams, router]);
 
     return (
         <SidebarProvider>

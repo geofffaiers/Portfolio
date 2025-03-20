@@ -1,7 +1,7 @@
-import { Request } from "express";
-import { DefaultResponse } from "../../../models";
-import { handleError } from "../../../helpers";
-import { sendRoomToClients, validateThenUpdateRoom } from "../methods";
+import { Request } from 'express';
+import { DefaultResponse } from '../../../models';
+import { handleError } from '../../../helpers';
+import { sendRoomToClients, validateThenUpdateRoom } from '../methods';
 
 export const updateRoom = async (req: Request): Promise<DefaultResponse> => {
     try {

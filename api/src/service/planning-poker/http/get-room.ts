@@ -1,7 +1,7 @@
-import { Request } from "express";
-import { DefaultResponse, GetRoom, Room } from "../../../models";
-import { handleError } from "../../../helpers";
-import { connectToRoom, getRoomDetails, sendPlayersToClients } from "../methods";
+import { Request } from 'express';
+import { DefaultResponse, GetRoom, Room } from '../../../models';
+import { handleError } from '../../../helpers';
+import { connectToRoom, getRoomDetails, sendPlayersToClients } from '../methods';
 
 export const getRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> => {
     try {
@@ -13,7 +13,7 @@ export const getRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> =
                 code: 400,
                 success: false,
                 message: 'No room id provided'
-            }
+            };
         }
         if (req.userId == null) {
             return {
@@ -28,7 +28,7 @@ export const getRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> =
                 code: 400,
                 success: false,
                 message: 'Room not found'
-            }
+            };
         }
         await connectToRoom(roomId, req.userId);
         await sendPlayersToClients(roomId, room.players);

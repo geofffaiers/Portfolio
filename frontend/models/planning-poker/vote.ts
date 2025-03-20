@@ -5,7 +5,7 @@ export class Vote {
     @IsString()
     @Expose({ name: 'roomId' })
     @Transform(({ value, obj }) => value ?? obj.room_id, { toClassOnly: true })
-    roomId: string = '';
+        roomId: string = '';
 
     @IsNumber()
     @Expose({ name: 'id' })

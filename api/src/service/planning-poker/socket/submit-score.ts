@@ -1,7 +1,7 @@
-import { plainToInstance } from "class-transformer";
-import { sendErrorToClient, sendMessageToClient } from "../../sockets/methods";
-import { Client, SocketMessage, SubmitScore, UpdatedRound } from "../../../models/sockets";
-import { getClients, getRoundById, saveScoreToDb } from "../methods";
+import { plainToInstance } from 'class-transformer';
+import { sendErrorToClient, sendMessageToClient } from '../../sockets/methods';
+import { Client, SocketMessage, SubmitScore, UpdatedRound } from '../../../models/sockets';
+import { getClients, getRoundById, saveScoreToDb } from '../methods';
 
 export const submitScoreHandler = async (client: Client, message: SocketMessage): Promise<void> => {
     try {

@@ -1,6 +1,6 @@
-import { useCallback } from "react";
-import { PlayerWrapper } from "./player-wrapper";
-import { Role } from "@/models/planning-poker/role";
+import { useCallback } from 'react';
+import { PlayerWrapper } from './player-wrapper';
+import { Role } from '@/models/planning-poker/role';
 
 type UseManagePlayers = {
     handleUpdatePlayer: (player: PlayerWrapper, option: string) => void;

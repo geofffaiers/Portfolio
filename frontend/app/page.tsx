@@ -40,8 +40,8 @@ export default function Page(): JSX.Element {
                         <h1 className='text-4xl font-bold'>Welcome!</h1>
                         <SocialIcons user={user}/>
                     </div>
-                    <p>This is my portfolio. Below are some business sites that I've designed, built, and currently manage.</p>
-                    <p>Enjoy playing the games on this site, hopefully you find the Planning Poker tool useful, if you find any bugs, or have any suggestions please don't hesitate to message me.</p>
+                    <p>This is my portfolio. Below are some business sites that I&apos;ve designed, built, and currently manage.</p>
+                    <p>Enjoy playing the games on this site, hopefully you find the Planning Poker tool useful, if you find any bugs, or have any suggestions please don&apos;t hesitate to message me.</p>
                     <p>Thank you for visiting!</p>
                     <article className='flex flex-row gap-4 p-4 border border-foreground rounded-lg'>
                         <div className='flex flex-col gap-2'>

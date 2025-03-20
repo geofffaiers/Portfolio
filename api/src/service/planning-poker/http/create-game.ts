@@ -1,7 +1,7 @@
-import { Request } from "express";
-import { DefaultResponse } from "../../../models";
-import { handleError } from "../../../helpers";
-import { createGameAndSaveToDb, sendGameToClients } from "../methods";
+import { Request } from 'express';
+import { DefaultResponse } from '../../../models';
+import { handleError } from '../../../helpers';
+import { createGameAndSaveToDb, sendGameToClients } from '../methods';
 
 export const createGame = async (req: Request): Promise<DefaultResponse> => {
     try {

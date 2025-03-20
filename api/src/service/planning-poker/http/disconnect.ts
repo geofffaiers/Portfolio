@@ -1,7 +1,7 @@
-import { Request } from "express";
-import { DefaultResponse } from "../../../models";
-import { handleError } from "../../../helpers";
-import { disconnectFromRoom, sendPlayersToClients } from "../methods";
+import { Request } from 'express';
+import { DefaultResponse } from '../../../models';
+import { handleError } from '../../../helpers';
+import { disconnectFromRoom, sendPlayersToClients } from '../methods';
 
 export const disconnect = async (req: Request): Promise<DefaultResponse> => {
     try {
@@ -17,7 +17,7 @@ export const disconnect = async (req: Request): Promise<DefaultResponse> => {
                 code: 400,
                 success: false,
                 message: 'No room id provided'
-            }
+            };
         }
         if (userId == null) {
             return {

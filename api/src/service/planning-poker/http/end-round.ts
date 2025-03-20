@@ -1,7 +1,7 @@
-import { Request } from "express";
-import { DefaultResponse } from "../../../models";
-import { handleError } from "../../../helpers";
-import { finishActiveRoundsForGame, sendRoundToClients } from "../methods";
+import { Request } from 'express';
+import { DefaultResponse } from '../../../models';
+import { handleError } from '../../../helpers';
+import { finishActiveRoundsForGame, sendRoundToClients } from '../methods';
 
 export const endRound = async (req: Request): Promise<DefaultResponse> => {
     try {
@@ -13,7 +13,7 @@ export const endRound = async (req: Request): Promise<DefaultResponse> => {
                 code: 400,
                 success: false,
                 message: 'No round id provided'
-            }
+            };
         }
         await finishActiveRoundsForGame(undefined, roundId);
         await sendRoundToClients(roundId);

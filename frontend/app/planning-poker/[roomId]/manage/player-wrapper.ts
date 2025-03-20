@@ -1,4 +1,4 @@
-import { Player } from "@/models";
+import { Player } from '@/models';
 
 export class PlayerWrapper extends Player {
     updated: boolean;

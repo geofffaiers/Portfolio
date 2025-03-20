@@ -18,19 +18,19 @@ export function Messaging(): JSX.Element | null {
 
     return (
         <div className='fixed bottom-0 right-4 flex items-end'>
-                {!loading && (
-                    <>
-                        {chatHeaders.map((header) => {
-                            const chatOpen: boolean = openChats.some(u => u.id === header.user.id);
-                            if (!chatOpen) return null;
-                            return (
-                                <div key={header.user.id} className={`flex flex-col h-full justify-end ${displayConversations ? 'mr-4' : ''}`}>
-                                    <Chat chatHeader={header} handleCloseChat={handleCloseChat} allowClose={true}/>
-                                </div>
-                            );
-                        })}
-                    </>
-                )}
+            {!loading && (
+                <>
+                    {chatHeaders.map((header) => {
+                        const chatOpen: boolean = openChats.some(u => u.id === header.user.id);
+                        if (!chatOpen) return null;
+                        return (
+                            <div key={header.user.id} className={`flex flex-col h-full justify-end ${displayConversations ? 'mr-4' : ''}`}>
+                                <Chat chatHeader={header} handleCloseChat={handleCloseChat} allowClose={true}/>
+                            </div>
+                        );
+                    })}
+                </>
+            )}
             <div className='flex flex-col h-full justify-end'>
                 <Conversations chatHeaders={chatHeaders} handleOpenChat={handleOpenChat} displayConversations={displayConversations}/>
             </div>

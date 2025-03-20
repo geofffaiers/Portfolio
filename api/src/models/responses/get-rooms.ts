@@ -1,4 +1,4 @@
-import { Room } from "../planning-poker/room";
+import { Room } from '../planning-poker/room';
 
 export interface GetRooms {
     rooms: Room[];

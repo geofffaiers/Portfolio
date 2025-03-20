@@ -150,7 +150,7 @@ export function usePlanningPoker ({ roomId, setRoomName }: Props): UsePlanningPo
             const updatedPlayers = plainToInstance(UpdatedPlayers, socketMessage, { excludeExtraneousValues: true });
             await validateOrReject(updatedPlayers);
             const playersForRoom = updatedPlayers.players
-                .filter((p) => p.roomId === room?.id)
+                .filter((p) => p.roomId === room?.id);
             if (playersForRoom.length === 0) {
                 return;
             }

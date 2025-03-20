@@ -1,7 +1,7 @@
-import { Request } from "express";
-import { ConfigResponse, DefaultResponse } from "../../models";
-import { handleError } from "../../helpers";
-import { Project } from "../../models/project";
+import { Request } from 'express';
+import { ConfigResponse, DefaultResponse } from '../../models';
+import { handleError } from '../../helpers';
+import { Project } from '../../models/project';
 
 export const getConfig = async (_req: Request): Promise<DefaultResponse<ConfigResponse>> => {
     try {
@@ -44,7 +44,7 @@ export const getConfig = async (_req: Request): Promise<DefaultResponse<ConfigRe
         ];
         const configResponse: ConfigResponse = {
             projects,
-        }
+        };
         return {
             success: true,
             code: 200,

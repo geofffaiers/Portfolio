@@ -1,4 +1,4 @@
-import { Expose, Transform, Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { IsArray, IsDate, IsString, ValidateNested } from 'class-validator';
 import { Player } from './player';
 import { Game } from './game';

@@ -1,10 +1,10 @@
-import { ResultSetHeader, RowDataPacket } from "mysql2";
-import { getRandomString, pool } from "../../helpers";
-import { Client, Game, Player, Room, Round, SubmitScore, UpdatedGame, UpdatedRoom, UpdatedRound, Vote } from "../../models";
-import { plainToInstance } from "class-transformer";
-import { validateOrReject } from "class-validator";
-import { findMatchingClientsForUserIds, sendMessageToClient } from "../sockets/methods";
-import { UpdatedPlayers } from "../../models/sockets/planning-poker/updated-players";
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
+import { getRandomString, pool } from '../../helpers';
+import { Client, Game, Player, Room, Round, SubmitScore, UpdatedGame, UpdatedRoom, UpdatedRound, Vote } from '../../models';
+import { plainToInstance } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
+import { findMatchingClientsForUserIds, sendMessageToClient } from '../sockets/methods';
+import { UpdatedPlayers } from '../../models/sockets/planning-poker/updated-players';
 
 export const saveRoomToDb = async (room: Room, userId: number, generateId: boolean = true): Promise<Room> => {
     if (generateId) {
@@ -29,7 +29,7 @@ export const saveRoomToDb = async (room: Room, userId: number, generateId: boole
 
 export const getRoomsFromDbForUser = async (userId: number): Promise<Room[]> => {
     const [roomIdsRows] = await pool.query<RowDataPacket[]>(
-        `SELECT room_id FROM pp_room_players WHERE user_id = ?`,
+        'SELECT room_id FROM pp_room_players WHERE user_id = ?',
         [userId]
     );
 
@@ -40,7 +40,7 @@ export const getRoomsFromDbForUser = async (userId: number): Promise<Room[]> => 
     const roomIds = roomIdsRows.map((row: RowDataPacket) => row.room_id);
 
     const [result] = await pool.query<Room[] & RowDataPacket[]>(
-        `SELECT * FROM pp_rooms WHERE id IN (?)`,
+        'SELECT * FROM pp_rooms WHERE id IN (?)',
         [roomIds]
     );
     const rooms = await convertResultToRooms(result);
@@ -82,7 +82,7 @@ export const createGameAndSaveToDb = async (roomId: string, name: string, userId
 
 const doesRoomExist = async (roomId: string): Promise<boolean> => {
     const [result] = await pool.query<RowDataPacket[]>(
-        `SELECT id FROM pp_rooms WHERE id = ?`,
+        'SELECT id FROM pp_rooms WHERE id = ?',
         [roomId]
     );
     return result.length > 0;
@@ -91,14 +91,14 @@ const doesRoomExist = async (roomId: string): Promise<boolean> => {
 const doesGameExist = async (gameId?: number, roomId?: string, name?: string): Promise<boolean> => {
     if (gameId != null) {
         const [result] = await pool.query<RowDataPacket[]>(
-            `SELECT id FROM pp_games WHERE id = ?`,
+            'SELECT id FROM pp_games WHERE id = ?',
             [gameId]
         );
         return result.length > 0;
     }
     if (roomId != null && name != null) {
         const [result] = await pool.query<RowDataPacket[]>(
-            `SELECT id FROM pp_games WHERE room_id = ? AND name = ?`,
+            'SELECT id FROM pp_games WHERE room_id = ? AND name = ?',
             [roomId, name]
         );
         return result.length > 0;
@@ -107,7 +107,7 @@ const doesGameExist = async (gameId?: number, roomId?: string, name?: string): P
 };
 
 export const finishActiveGamesForRoom = async (roomId?: string, gameId?: number, success?: boolean): Promise<void> => {
-    const param = roomId != null ? roomId : gameId
+    const param = roomId != null ? roomId : gameId;
     if (param == null) {
         return;
     }
@@ -144,7 +144,7 @@ export const finishActiveGamesForRoom = async (roomId?: string, gameId?: number,
 
 const getFinalEstimateForGame = async (gameId: number): Promise<number> => {
     const [rounds] = await pool.query<RowDataPacket[]>(
-        `SELECT median_score FROM pp_rounds WHERE game_id = ? ORDER BY ended_at DESC LIMIT 1`,
+        'SELECT median_score FROM pp_rounds WHERE game_id = ? ORDER BY ended_at DESC LIMIT 1',
         [gameId]
     );
     if (rounds.length === 0) {
@@ -184,33 +184,33 @@ export const finishActiveRoundsForGame = async (gameId?: number, roundId?: numbe
         query,
         [param]
     );
-    
+
     if (activeRounds.length === 0) {
         return;
     }
-    
+
     for (const roundRow of activeRounds) {
         const roundId = roundRow.id;
-        
+
         // First, check if there are any scores for this round
         const [scoreCount] = await pool.query<RowDataPacket[]>(
-            `SELECT COUNT(*) as count FROM pp_votes WHERE round_id = ?`,
+            'SELECT COUNT(*) as count FROM pp_votes WHERE round_id = ?',
             [roundId]
         );
-        
+
         let total = 0;
         let mean = 0;
         let lowest = 0;
         let highest = 0;
         let differentCounts = 0;
         let median = 0;
-        
+
         if (scoreCount[0].count > 0) {
             const [allScores] = await pool.query<RowDataPacket[]>(
-                `SELECT value FROM pp_votes WHERE round_id = ?`,
+                'SELECT value FROM pp_votes WHERE round_id = ?',
                 [roundId]
             );
-            
+
             const numericValues = allScores
                 .map(s => {
                     if (s.value === '1/2') {
@@ -221,27 +221,27 @@ export const finishActiveRoundsForGame = async (gameId?: number, roundId?: numbe
                 .filter(val => /^\d+(\.\d+)?$/.test(val))
                 .map(val => parseFloat(val))
                 .filter(n => !isNaN(n));
-            
+
             if (numericValues.length > 0) {
                 total = numericValues.reduce((sum, val) => sum + val, 0);
                 mean = total / numericValues.length;
                 numericValues.sort((a, b) => a - b);
                 lowest = numericValues[0];
                 highest = numericValues[numericValues.length - 1];
-                
+
                 const mid = Math.floor(numericValues.length / 2);
                 median = numericValues.length % 2 === 0
                     ? (numericValues[mid - 1] + numericValues[mid]) / 2
                     : numericValues[mid];
             }
-            
+
             const [distinctCount] = await pool.query<RowDataPacket[]>(
-                `SELECT COUNT(DISTINCT value) as count FROM pp_votes WHERE round_id = ?`,
+                'SELECT COUNT(DISTINCT value) as count FROM pp_votes WHERE round_id = ?',
                 [roundId]
             );
             differentCounts = distinctCount[0].count;
         }
-        
+
         await pool.query(
             `UPDATE pp_rounds
             SET
@@ -270,7 +270,7 @@ export const finishActiveRoundsForGame = async (gameId?: number, roundId?: numbe
 
 export const getRoomDetails = async (roomId: string): Promise<Room | undefined> => {
     const [result] = await pool.query<Room[] & RowDataPacket[]>(
-        `SELECT * FROM pp_rooms WHERE id = ?`,
+        'SELECT * FROM pp_rooms WHERE id = ?',
         [roomId]
     );
     if (result.length === 0) {
@@ -296,7 +296,7 @@ const getUniqueId = async (attempts: number = 0): Promise<string> => {
         id = await getUniqueId(attempts + 1);
     }
     return id;
-}
+};
 
 const convertResultToRooms = async (result: Room[]): Promise<Room[]> => {
     const rooms = await Promise.all(result.map(async (row: Room) => {
@@ -320,19 +320,19 @@ const getPlayersForRoom = async (roomId?: string, gameId?: number, roundId?: num
     let sql = 'SELECT u.*, rp.room_id, rp.online, rp.role FROM users u JOIN pp_room_players rp ON u.id = rp.user_id';
 
     const conditions: string[] = [];
-    const params: any[] = [];
+    const params: (string | number)[] = [];
 
     if (roomId) {
         conditions.push('rp.room_id = ?');
         params.push(roomId);
     }
-    
+
     if (gameId) {
         sql += ' JOIN pp_games g ON g.room_id = rp.room_id';
         conditions.push('g.id = ?');
         params.push(gameId);
     }
-    
+
     if (roundId) {
         if (!gameId) {
             sql += ' JOIN pp_games g ON g.room_id = rp.room_id';
@@ -349,7 +349,7 @@ const getPlayersForRoom = async (roomId?: string, gameId?: number, roundId?: num
     }
 
     const [players] = await pool.query<Player[] & RowDataPacket[]>(sql, params);
-    
+
     return Promise.all(players.map(async (row: Player) => {
         const player: Player = plainToInstance(Player, row, { excludeExtraneousValues: true });
         player.password = '';
@@ -359,7 +359,7 @@ const getPlayersForRoom = async (roomId?: string, gameId?: number, roundId?: num
 
 const getGamesForRoom = async (roomId: string): Promise<Game[]> => {
     const [games] = await pool.query<Game[] & RowDataPacket[]>(
-        `SELECT * FROM pp_games WHERE room_id = ?`,
+        'SELECT * FROM pp_games WHERE room_id = ?',
         [roomId]
     );
     return await Promise.all(games.map(async (row: Game) => {
@@ -371,7 +371,7 @@ const getGamesForRoom = async (roomId: string): Promise<Game[]> => {
 
 const getRoundsForGame = async (gameId: number): Promise<Round[]> => {
     const [rounds] = await pool.query<Round[] & RowDataPacket[]>(
-        `SELECT * FROM pp_rounds WHERE game_id = ?`,
+        'SELECT * FROM pp_rounds WHERE game_id = ?',
         [gameId]
     );
     return await Promise.all(rounds.map(async (row: Round) => {
@@ -383,7 +383,7 @@ const getRoundsForGame = async (gameId: number): Promise<Round[]> => {
 
 const getVotesForRound = async (roundId: number): Promise<Vote[]> => {
     const [votes] = await pool.query<Vote[] & RowDataPacket[]>(
-        `SELECT * FROM pp_votes WHERE round_id = ?`,
+        'SELECT * FROM pp_votes WHERE round_id = ?',
         [roundId]
     );
     return await Promise.all(votes.map(async (row: Vote) => {
@@ -432,7 +432,7 @@ export const getClients = async (roomId?: string, gameId?: number, roundId?: num
 
 export const getGameById = async (gameId: number): Promise<Game | undefined> => {
     const [result] = await pool.query<Game[] & RowDataPacket[]>(
-        `SELECT * FROM pp_games WHERE id = ?`,
+        'SELECT * FROM pp_games WHERE id = ?',
         [gameId]
     );
     if (result.length === 0) {
@@ -446,7 +446,7 @@ export const getGameById = async (gameId: number): Promise<Game | undefined> => 
 
 export const getRoundById = async (roundId: number): Promise<Round | undefined> => {
     const [result] = await pool.query<Round[] & RowDataPacket[]>(
-        `SELECT * FROM pp_rounds WHERE id = ?`,
+        'SELECT * FROM pp_rounds WHERE id = ?',
         [roundId]
     );
     if (result.length === 0) {
@@ -509,13 +509,13 @@ const updatePlayersForRoom = async (userId: number, roomId: string, updatedPlaye
     }
     if (removedPlayers.length > 0) {
         await pool.query<ResultSetHeader>(
-            `DELETE FROM pp_room_players WHERE room_id = ? AND user_id IN (?)`,
+            'DELETE FROM pp_room_players WHERE room_id = ? AND user_id IN (?)',
             [roomId, removedPlayers.map((p) => p.id)]
         );
     }
     if (updatedPlayers.length > 0) {
         const toUpdate = updatedPlayers.filter(p => !removedPlayers.find(r => r.id === p.id));
-        const promises = toUpdate.map(player => 
+        const promises = toUpdate.map(player =>
             pool.query<ResultSetHeader>(
                 `UPDATE pp_room_players 
                 SET role = ? 

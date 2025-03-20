@@ -45,7 +45,7 @@ export class Words {
                 });
                 this.wordsLoaded = true;
             } catch (err) {
-                console.error('Error reading the file', err);
+                logError(err);
             }
         }
     }
@@ -93,24 +93,22 @@ export class Words {
     }
 
     public static async getWord(firstLetter?: string, length?: number): Promise<WordWithData> {
-        console.time('getWords');
         let words: string[] = await this.getWords(firstLetter, length);
-        console.timeEnd('getWords');
         let word: string;
-        let isValid: boolean
-        let data: unknown
+        let isValid: boolean;
+        let data: unknown;
         do {
             word = words[Math.floor(Math.random() * words.length)];
             const check: ValidityCheck = await Words.isWordValid(word);
             isValid = check.isValid;
-            data = check.data
+            data = check.data;
             if (!isValid) {
                 words = await Words.getWords(firstLetter, length);
                 if (words.length === 0) {
                     throw new Error(`No words found for the given combination: ${firstLetter ?? 'no first letter filter'}, ${length ?? 'no length filter'}`);
                 }
             }
-        } while (!isValid)
+        } while (!isValid);
         return {
             word,
             data
@@ -121,14 +119,14 @@ export class Words {
         if (this._validationCache[word] !== undefined) {
             return this._validationCache[word];
         }
-        let returnValue: ValidityCheck = { isValid: true }
+        let returnValue: ValidityCheck = { isValid: true };
         try {
             const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
             if (response.status === 200) {
                 returnValue = {
                     isValid: true,
                     data: response.data
-                }
+                };
             }
         } catch (err: unknown) {
             if (err instanceof AxiosError) {
@@ -136,13 +134,13 @@ export class Words {
                     const index = this._words.indexOf(word);
                     if (index > -1) {
                         this._words[index] = '';
-                        
+
                         const firstLetter = word.charAt(0).toLowerCase();
                         const length = word.length;
-                        
+
                         this._wordIndex[firstLetter] = this._wordIndex[firstLetter].filter(i => i !== index);
                         this._lengthIndex[length] = this._lengthIndex[length].filter(i => i !== index);
-                        
+
                         returnValue = {
                             isValid: false
                         };
@@ -151,7 +149,6 @@ export class Words {
                     }
                 }
             }
-            console.error('API call error');
         }
         this._validationCache[word] = returnValue;
         return returnValue;
@@ -172,7 +169,7 @@ export class Words {
             await fs.writeFile(__dirname + '/../data/words.txt', this._words.join('\n'), 'utf8');
             this.wordsListChanged = false;
         } catch (err: unknown) {
-            logError(err)
+            logError(err);
         }
     }
 }

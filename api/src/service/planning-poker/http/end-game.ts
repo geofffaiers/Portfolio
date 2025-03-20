@@ -1,7 +1,7 @@
-import { Request } from "express";
-import { DefaultResponse } from "../../../models";
-import { handleError } from "../../../helpers";
-import { finishActiveGamesForRoom, sendGameToClients } from "../methods";
+import { Request } from 'express';
+import { DefaultResponse } from '../../../models';
+import { handleError } from '../../../helpers';
+import { finishActiveGamesForRoom, sendGameToClients } from '../methods';
 
 export const endGame = async (req: Request): Promise<DefaultResponse> => {
     try {
@@ -13,7 +13,7 @@ export const endGame = async (req: Request): Promise<DefaultResponse> => {
                 code: 400,
                 success: false,
                 message: 'No game id provided'
-            }
+            };
         }
         await finishActiveGamesForRoom(undefined, gameId, Boolean(req.body?.success));
         await sendGameToClients(gameId);

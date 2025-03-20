@@ -1,7 +1,7 @@
-import { Request } from "express";
-import { CreateRoom, DefaultResponse, Room } from "../../../models";
-import { handleError } from "../../../helpers";
-import { saveRoomToDb } from "../methods";
+import { Request } from 'express';
+import { CreateRoom, DefaultResponse, Room } from '../../../models';
+import { handleError } from '../../../helpers';
+import { saveRoomToDb } from '../methods';
 
 export const createRoom = async (req: Request): Promise<DefaultResponse<CreateRoom>> => {
     try {

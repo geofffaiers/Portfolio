@@ -1,14 +1,14 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Trash2 } from "lucide-react";
-import React from "react";
-import { useManagePlayers } from "./use-manage-players";
-import { PlayerWrapper } from "./player-wrapper";
-import { useUserDetails } from "@/hooks/use-user-details";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Role } from "@/models/planning-poker/role";
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Trash2 } from 'lucide-react';
+import React from 'react';
+import { useManagePlayers } from './use-manage-players';
+import { PlayerWrapper } from './player-wrapper';
+import { useUserDetails } from '@/hooks/use-user-details';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Role } from '@/models/planning-poker/role';
 
 type Props = {
     tempPlayers: PlayerWrapper[];
@@ -20,7 +20,7 @@ const roleOptions: Role[] = ['observer', 'player', 'owner'];
 export const ManagePlayers: React.FC<Props> = ({ tempPlayers, setTempPlayers }) => {
     const { handleUpdatePlayer, handleRemovePlayer } = useManagePlayers({ tempPlayers, setTempPlayers });
     return (
-        <div className="max-h-[400px] overflow-y-auto">
+        <div className='max-h-[400px] overflow-y-auto'>
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -53,9 +53,9 @@ const ManagePlayer: React.FC<ManagePlayerProps> = ({ player, handleUpdatePlayer,
     return (
         <TableRow>
             <TableCell className={player.removed ? 'line-through text-red-500' : ''}>{userName} ({player.username})</TableCell>
-            <TableCell className="w-[125px]">
+            <TableCell className='w-[125px]'>
                 <Select onValueChange={(option) => handleUpdatePlayer(player, option)} defaultValue={player.role} disabled={player.removed}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className='w-full'>
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -72,7 +72,7 @@ const ManagePlayer: React.FC<ManagePlayerProps> = ({ player, handleUpdatePlayer,
                     title={`${player.removed ? 'Restore' : 'Delete'} player`}
                     onClick={(event) => {
                         event.preventDefault();
-                        handleRemovePlayer(player)
+                        handleRemovePlayer(player);
                     }}
                 >
                     <Trash2 />

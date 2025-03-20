@@ -2,7 +2,7 @@ import { ValidateNested } from 'class-validator';
 import { BaseMessage } from '../base-message';
 import { MessageType } from '../message-type';
 import { Expose, Type } from 'class-transformer';
-import { Player, Room } from '../../planning-poker';
+import { Player } from '../../planning-poker';
 
 export class UpdatedPlayers extends BaseMessage {
     type: MessageType.UPDATED_PLAYERS = MessageType.UPDATED_PLAYERS;

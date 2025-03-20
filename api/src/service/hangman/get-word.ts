@@ -1,7 +1,7 @@
-import { Request } from "express";
-import { Words } from "../../helpers/load-words";
-import { DefaultResponse, WordWithData } from "../../models";
-import { handleError } from "../../helpers";
+import { Request } from 'express';
+import { Words } from '../../helpers/load-words';
+import { DefaultResponse, WordWithData } from '../../models';
+import { handleError } from '../../helpers';
 
 export const getWord = async (req: Request): Promise<DefaultResponse<WordWithData>> => {
     try {
