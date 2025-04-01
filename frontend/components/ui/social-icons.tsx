@@ -1,16 +1,17 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from './button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
-import { User } from '@/models';
+import { useAuthContext } from '../providers/auth-provider';
 
-type Props = {
-    user?: User | null;
-};
 
-export const SocialIcons: React.FC<Props> = ({ user }) => {
+export const SocialIcons: React.FC = () => {
+    const { user } = useAuthContext();
+
     return (
         <div className='flex gap-2'>
             <Button asChild variant='ghost' size='icon'>

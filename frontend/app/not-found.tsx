@@ -1,14 +1,15 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Typography } from '@/components/ui/typography';
 
 export default function NotFound() {
     return (
         <div className='flex flex-col items-center justify-center h-screen bg-background'>
-            <h1 className='text-4xl font-bold'>404 - Page Not Found</h1>
-            <p className='my-4 text-lg'>
+            <Typography variant='h1'>404 - Page Not Found</Typography>
+            <Typography variant='p' className='my-4 text-lg'>
                 Sorry, we couldn&apos;t find the page you&apos;re looking for.
-            </p>
+            </Typography>
             <Button
                 asChild
                 variant='default'

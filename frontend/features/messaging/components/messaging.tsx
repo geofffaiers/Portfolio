@@ -1,16 +1,16 @@
 'use client';
 
-import { useMessaging } from '../hooks/use-messaging';
 import { Conversations } from './conversations';
 import { Chat } from './chat';
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { useSocketContext } from '@/components/providers/socket-provider';
 import React, { JSX } from 'react';
+import { useMessagingContext } from '../context/messaging-provider';
 
 export function Messaging(): JSX.Element | null {
     const { user } = useAuthContext();
     const { socket } = useSocketContext();
-    const { loading, chatHeaders, openChats, displayConversations, handleOpenChat, handleCloseChat } = useMessaging();
+    const { loading, chatHeaders, openChats, displayConversations, handleOpenChat, handleCloseChat } = useMessagingContext();
 
     if (user == null || socket == null) {
         return null;

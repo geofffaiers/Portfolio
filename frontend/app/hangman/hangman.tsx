@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { SelectWordLength } from './select-word-length';
 import { DisplayedWord } from './displayed-word';
 import { Keyboard } from './keyboard';
+import { Typography } from '@/components/ui/typography';
 
 export const Hangman: React.FC = () => {
     const {
@@ -45,14 +46,14 @@ export const Hangman: React.FC = () => {
                         <SelectWordLength className='mt-4' wordLength={wordLength} setWordLength={setWordLength} restartGame={restartGame} buttonText='New Game'/>
                     )}
                     {isGameWon && (
-                        <h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-8xl text-green-500 font-bold my-auto'>
+                        <Typography variant='h1' className='text-green-500 my-auto'>
                             You won!
-                        </h1>
+                        </Typography>
                     )}
                     {isGameLost && (
-                        <h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-8xl text-red-500 font-bold my-auto'>
+                        <Typography variant='h1' className='text-red-500 my-auto'>
                             Game over!
-                        </h1>
+                        </Typography>
                     )}
                 </>
             )}

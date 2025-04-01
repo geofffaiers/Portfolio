@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from './button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card';
 import { usePathname } from 'next/navigation';
+import { Typography } from './typography';
 
 type Props = {
     message: string
@@ -25,8 +26,7 @@ export const AccessRestricted: React.FC<Props> = ({ message }) => {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <h1 className='text-4xl font-bold'></h1>
-                            <p className='leading-7 [&:not(:first-child)]:mt-6'>{message}</p>
+                            <Typography variant='p'>{message}</Typography>
                             <div className='flex flex-row gap-4 justify-end'>
                                 <Button
                                     className='mt-4'

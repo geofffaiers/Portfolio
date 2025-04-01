@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { ChangePassword } from './change-password';
 import { DeleteAccount } from './delete-account';
 import Link from 'next/link';
+import { Typography } from '@/components/ui/typography';
 
 export default function Page(): JSX.Element {
     const { authLoading, user } = useAuthContext();
@@ -53,7 +54,7 @@ export default function Page(): JSX.Element {
                     </div>
                 </header>
                 <div className='flex flex-1 flex-col gap-4 p-4'>
-                    <h1 className='text-4xl font-bold'>Your account</h1>
+                    <Typography variant='h1'>Your account</Typography>
                     <Account />
                     <ChangePassword />
                     <DeleteAccount />

@@ -6,6 +6,7 @@ import { Cards } from './cards';
 import { CreateGame } from './create-game';
 import { CurrentRound } from './current-round';
 import { ManageRoom } from './manage/manage-room';
+import { Typography } from '@/components/ui/typography';
 
 type Props = {
     roomId: string;
@@ -47,7 +48,7 @@ const Header: React.FC<{ player: Player; room: Room, game: Game | null }> = ({ p
     return (
         <div className='flex flex-row gap-4 items-top'>
             <div className='flex flex-col gap-2 w-full'>
-                {room.description != null && room.description !== '' && (<h3 className='w-full'>{room.description}</h3>)}
+                {room.description != null && room.description !== '' && (<Typography variant='h3' className='w-full'>{room.description}</Typography>)}
                 <div className='flex flex-row gap-2 items-center w-full'>
                     {game != null && (<span>{game.name}</span>)}
                     {game != null && game.rounds.length > 0 && (<span className='[&>svg]:w-3.5 [&>svg]:h-3.5'><ChevronRight /></span>)}

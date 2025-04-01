@@ -1,5 +1,3 @@
-'use client';
-
 import React, { JSX } from 'react';
 import { AppSidebar } from '@/features/nav/app-sidebar';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
@@ -9,34 +7,14 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { Details } from './details';
-import { Section } from './section';
-import { HireMeFooter } from './hire-me-footer';
-import { cv } from './cv';
-import { useAuthContext } from '@/components/providers/auth-provider';
-import { useConfigContext } from '@/components/providers/config-provider';
-import { Project } from '@/models';
-import { useRouter } from 'next/navigation';
-import { PageLoading } from '@/components/ui/page-loading';
 import Link from 'next/link';
+import { Typography } from '@/components/ui/typography';
+import { ContactForm } from '@/features/contact-form';
+import { Footer } from '@/components/ui/footer';
+import { SocialIcons } from '@/components/ui/social-icons';
+import { OpenMessaging } from '@/features/messaging';
 
 export default function Page(): JSX.Element {
-    const { user } = useAuthContext();
-    const { configLoading, config: { projects } } = useConfigContext();
-
-    const project: Project | undefined = projects.find((project) => project.id === 1 && project.isEnabled);
-
-    const router = useRouter();
-
-    if (configLoading) {
-        return <PageLoading />;
-    }
-
-    if (!project) {
-        router.replace('/page-not-found');
-        return <></>;
-    }
-
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -56,19 +34,22 @@ export default function Page(): JSX.Element {
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className='hidden md:block' />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>{project.name}</BreadcrumbPage>
+                                    <BreadcrumbPage>Contact</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
                 </header>
                 <div className='flex flex-1 flex-col gap-4 p-4'>
-                    <Details user={user}/>
-                    {cv.map((section, index) => (
-                        <Section section={section} key={index}/>
-                    ))}
+                    <div className='flex justify-between items-center'>
+                        <Typography variant='h1'>Contact Me</Typography>
+                        <SocialIcons/>
+                    </div>
+                    <Typography variant='p'>If you have any questions, suggestions, or just want to say hello, feel free to reach out using messaging, or the form below. I look forward to hearing from you!</Typography>
+                    <OpenMessaging />
+                    <ContactForm />
                 </div>
-                <HireMeFooter user={user}/>
+                <Footer />
             </SidebarInset>
         </SidebarProvider>
     );

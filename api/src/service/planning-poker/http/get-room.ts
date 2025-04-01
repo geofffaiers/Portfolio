@@ -22,6 +22,7 @@ export const getRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> =
                 message: 'User not found'
             };
         }
+        await connectToRoom(roomId, req.userId);
         const room: Room | undefined = await getRoomDetails(roomId);
         if (room == null) {
             return {
@@ -30,7 +31,6 @@ export const getRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> =
                 message: 'Room not found'
             };
         }
-        await connectToRoom(roomId, req.userId);
         await sendPlayersToClients(roomId, room.players);
         return {
             success: true,

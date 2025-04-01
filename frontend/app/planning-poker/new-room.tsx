@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useMemo } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Room } from '@/models';
+import { Typography } from '@/components/ui/typography';
 
 type Props = {
     rooms: Room[];
@@ -47,7 +48,7 @@ export const NewRoom: React.FC<Props> = ({ rooms, handleCreateRoom }) => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-                <h3 className='scroll-m-20 text-2xl font-semibold tracking-tight'>Create a new room</h3>
+                <Typography variant='h3'>Create a new room</Typography>
                 <FormField
                     control={form.control}
                     name='name'

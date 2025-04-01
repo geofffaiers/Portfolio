@@ -13,6 +13,7 @@ import { Loader2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useValidate } from './use-validate';
 import Link from 'next/link';
+import { Typography } from '@/components/ui/typography';
 
 export default function Page(): JSX.Element {
     const { validateToken } = useParams();
@@ -46,12 +47,12 @@ export default function Page(): JSX.Element {
                 <div className='flex flex-1 flex-col gap-4 p-4'>
                     {error !== '' ? (
                         <>
-                            <h1 className='text-4xl font-bold'>Validate email error</h1>
-                            <p>{error}</p>
+                            <Typography variant='h1'>Validate email error</Typography>
+                            <Typography variant='p'>{error}</Typography>
                         </>
                     ) : (
                         <>
-                            <h1 className='text-4xl font-bold'>Validate email account</h1>
+                            <Typography variant='h1'>Validate email account</Typography>
                             <Loader2 className='w-10 h-10 animate-spin' />
                         </>
                     )}

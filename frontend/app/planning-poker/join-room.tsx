@@ -6,6 +6,7 @@ import { Room } from '@/models';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Typography } from '@/components/ui/typography';
 
 type Props = {
     rooms: Room[];
@@ -30,7 +31,7 @@ export const JoinRoom: React.FC<Props> = ({ handleJoinRoom, rooms }) => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-                <h3 className='scroll-m-20 text-2xl font-semibold tracking-tight'>Join an existing room</h3>
+                <Typography variant='h3'>Join an existing room</Typography>
                 <FormField
                     control={form.control}
                     name='roomId'

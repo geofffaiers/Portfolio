@@ -10,7 +10,8 @@ import { AuthProvider } from '@/components/providers/auth-provider';
 import { ConfigProvider } from '@/components/providers/config-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { SocketProvider } from '@/components/providers/socket-provider';
-import { Messaging } from '@/features/messaging/components/messaging';
+import { Messaging, MessagingProvider } from '@/features/messaging';
+import { CookieProvider } from '@/components/providers/cookie-provider';
 
 export const metadata: Metadata = {
     title: 'Geoff Faiers',
@@ -44,12 +45,16 @@ export default function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
-                        <AuthProvider>
-                            <SocketProvider>
-                                {children}
-                                <Messaging />
-                            </SocketProvider>
-                        </AuthProvider>
+                        <CookieProvider>
+                            <AuthProvider>
+                                <SocketProvider>
+                                    <MessagingProvider>
+                                        {children}
+                                        <Messaging />
+                                    </MessagingProvider>
+                                </SocketProvider>
+                            </AuthProvider>
+                        </CookieProvider>
                     </ThemeProvider>
                 </ConfigProvider>
                 <Toaster />

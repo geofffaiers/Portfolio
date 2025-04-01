@@ -6,8 +6,6 @@ import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarHeader,
-    SidebarHeaderImage,
     SidebarRail,
 } from '@/components/ui/sidebar';
 

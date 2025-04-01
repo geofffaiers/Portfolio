@@ -6,17 +6,9 @@ import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse, User } from '@/models';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChatHeader } from '../types/chat-header';
+import { Messaging } from '../types/messaging.type';
 
-type UseMessaging = {
-  loading: boolean
-  chatHeaders: ChatHeader[]
-  openChats: User[]
-  displayConversations: boolean
-  handleOpenChat: (user: User) => void
-  handleCloseChat: (user: User) => void
-}
-
-export function useMessaging(): UseMessaging {
+export function useMessaging(): Messaging {
     const { config } = useConfigContext();
     const { user } = useAuthContext();
     const { displayError } = useToastWrapper();
@@ -85,6 +77,14 @@ export function useMessaging(): UseMessaging {
         setOpenChats((chats) => chats.filter((u) => u.id !== user.id));
     }, []);
 
+    const handleOpenMessaging = useCallback((): void => {
+        if (chatHeaders.length > 0) {
+            handleOpenChat(chatHeaders[0].user);
+        } else {
+            getConversations();
+        }
+    }, [chatHeaders, handleOpenChat, getConversations]);
+
     return {
         loading,
         chatHeaders,
@@ -92,5 +92,6 @@ export function useMessaging(): UseMessaging {
         displayConversations: chatHeaders.length > 1,
         handleOpenChat,
         handleCloseChat,
+        handleOpenMessaging
     };
 }

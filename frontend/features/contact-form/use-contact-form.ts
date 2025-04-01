@@ -3,9 +3,11 @@ import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse } from '@/models';
 import { useCallback, useRef, useState } from 'react';
 
+type Props = {
+    setComplete?: (completed: boolean) => void
+}
+
 type UseContactMe = {
-  open: boolean
-  setOpen: (open: boolean) => void
   loading: boolean
   handleSubmitForm: (data: Data) => Promise<void>
 }
@@ -16,10 +18,9 @@ type Data = {
   message: string
 }
 
-export function useContactMe(): UseContactMe {
+export function useContactMe({ setComplete }: Props): UseContactMe {
     const { config } = useConfigContext();
     const { displayError, displayInfo } = useToastWrapper();
-    const [open, setOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -39,7 +40,7 @@ export function useContactMe(): UseContactMe {
             });
             const json: DefaultResponse = await response.json();
             if (json.success) {
-                setOpen(false);
+                setComplete?.(false);
                 displayInfo('Message sent successfully.');
             } else {
                 displayError(`Failed to send message: ${json.message}`);
@@ -53,11 +54,9 @@ export function useContactMe(): UseContactMe {
         } finally {
             setLoading(false);
         }
-    }, [config.apiUrl, displayError, displayInfo]);
+    }, [config.apiUrl, setComplete, displayError, displayInfo]);
 
     return {
-        open,
-        setOpen,
         loading,
         handleSubmitForm,
     };

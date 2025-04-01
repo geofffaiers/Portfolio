@@ -12,6 +12,7 @@ import {
 import { useParams } from 'next/navigation';
 import { ResetPassword } from './reset-password';
 import Link from 'next/link';
+import { Typography } from '@/components/ui/typography';
 
 export default function Page(): JSX.Element {
     const { resetToken } = useParams();
@@ -42,7 +43,7 @@ export default function Page(): JSX.Element {
                     </div>
                 </header>
                 <div className='flex flex-1 flex-col gap-4 p-4'>
-                    <h1 className='text-2xl font-bold'>Reset Password</h1>
+                    <Typography variant='h1'>Reset Password</Typography>
                     {token == null ? (
                         <p>Token is undefined</p>
                     ) : (

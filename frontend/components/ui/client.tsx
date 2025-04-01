@@ -2,45 +2,52 @@ import React, { JSX } from 'react';
 import Link from 'next/link';
 import { Button } from './button';
 import { Card } from './card';
+import { Typography } from './typography';
 
 type Props = {
     name: string;
-    url: string;
     text: JSX.Element;
+    url?: string | undefined;
     image?: JSX.Element | undefined;
     imageSrc?: string | undefined;
     buttonText?: string | undefined
 };
 
-export const Client: React.FC<Props> = ({ name, url, text, image, imageSrc, buttonText }) => {
+export const Client: React.FC<Props> = ({ name, text, url, image, imageSrc, buttonText }) => {
     let img: JSX.Element | undefined;
     if (image != null) {
         img = image;
     } else if (imageSrc != null) {
-        img = (
+        img = url ? (
             <Link href={url} target='_blank' className='flex flex-col gap-2'>
                 <picture>
-                    <img src={imageSrc} alt={name} className='rounded-lg w-[300px] h-auto'/>
+                    <img src={imageSrc} alt={name} className='rounded-lg h-[75px] w-auto'/>
                 </picture>
             </Link>
+        ) : (
+            <picture>
+                <img src={imageSrc} alt={name} className='rounded-lg h-[75px] w-auto'/>
+            </picture>
         );
     } else {
         img = (
-            <h3 className='scroll-m-20 text-2xl font-semibold tracking-tight'>{name}</h3>
+            <Typography variant='h3'>{name}</Typography>
         );
     }
     return (
-        <Card className='p-4'>
-            <div className='flex flex-col gap-4'>
+        <Card className='p-4 w-[calc(50% - 1rem)]]'>
+            <div className='flex flex-col gap-4 h-full'>
                 {img}
                 {text}
-                <div>
-                    <Button asChild variant='default' size='default'>
-                        <Link href={url} target='_blank'>
-                            {buttonText ? buttonText : 'Visit Site'}
-                        </Link>
-                    </Button>
-                </div>
+                {url && (
+                    <div className='mt-auto'>
+                        <Button asChild variant='default' size='default'>
+                            <Link href={url} target='_blank'>
+                                {buttonText ? buttonText : 'Visit Site'}
+                            </Link>
+                        </Button>
+                    </div>
+                )}
             </div>
         </Card>
     );

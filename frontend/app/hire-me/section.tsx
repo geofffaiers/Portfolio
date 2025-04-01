@@ -3,6 +3,7 @@
 import React from 'react';
 import { CvHeader } from './types';
 import { JSX, useMemo } from 'react';
+import { Typography } from '@/components/ui/typography';
 
 type Props = {
   section: CvHeader;
@@ -23,9 +24,9 @@ export const Section = ({ section }: Props): JSX.Element => {
 
     return (
         <div className='mb-8'>
-            <h4 className='text-2xl font-bold mb-4'>
+            <Typography variant='h3' className='mb-4'>
                 {section.title}
-            </h4>
+            </Typography>
             {section.items.map((item, idx) => {
                 const duration: string | undefined = getDuration(item.startDate, item.endDate);
                 const isLastItem = idx === section.items.length - 1;

@@ -238,21 +238,21 @@ export function usePlanningPoker ({ roomId, setRoomName }: Props): UsePlanningPo
 
     useEffect(() => {
         let hasDisconnected = false;
-
         const disconnect = () => {
             if (!hasDisconnected && user?.id && roomId) {
-                navigator.sendBeacon(`${config.apiUrl}/planning-poker/disconnect`, JSON.stringify({ roomId, userId: user.id }));
+                const blob = new Blob([JSON.stringify({ roomId, userId: user.id })], {
+                    type: 'application/json'
+                });
+
+                navigator.sendBeacon(`${config.apiUrl}/planning-poker/disconnect`, blob);
                 hasDisconnected = true;
             }
         };
-
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
             event.preventDefault();
             disconnect();
         };
-
         window.addEventListener('beforeunload', handleBeforeUnload);
-
         return () => {
             disconnect();
             window.removeEventListener('beforeunload', handleBeforeUnload);

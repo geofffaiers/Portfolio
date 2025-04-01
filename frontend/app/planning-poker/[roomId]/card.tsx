@@ -3,6 +3,7 @@ import { Player, Vote } from '@/models';
 import { Binoculars, Coffee, Loader2, UserX } from 'lucide-react';
 import React, { JSX } from 'react';
 import { useCard } from './use-card';
+import { Typography } from '@/components/ui/typography';
 
 type CardProps = {
     value: JSX.Element | string;
@@ -47,7 +48,12 @@ export const Card: React.FC<CardProps> = ({ value, length, selected, player, hid
             )}
             onClick={submitVote ? () => submitVote(String(value)) : undefined}
         >
-            {!hidden && <h3 style={{ fontSize: `${width}px` }} className='font-semibold tracking-tight'>{label}</h3>}
+            {!hidden && (
+                <Typography
+                    variant='h3'
+                    style={{ fontSize: `${width}px` }}
+                >{label}</Typography>
+            )}
         </div>
     );
 };
