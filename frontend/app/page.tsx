@@ -12,8 +12,7 @@ import {
 import { JSX } from 'react';
 import { SocialIcons } from '@/components/ui/social-icons';
 import { useAuthContext } from '@/components/providers/auth-provider';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Client } from '@/components/ui/client';
 
 export default function Page(): JSX.Element {
     const { user } = useAuthContext();
@@ -43,38 +42,23 @@ export default function Page(): JSX.Element {
                     <p>This is my portfolio. Below are some business sites that I&apos;ve designed, built, and currently manage.</p>
                     <p>Enjoy playing the games on this site, hopefully you find the Planning Poker tool useful, if you find any bugs, or have any suggestions please don&apos;t hesitate to message me.</p>
                     <p>Thank you for visiting!</p>
-                    <article className='flex flex-row gap-4 p-4 border border-foreground rounded-lg'>
-                        <div className='flex flex-col gap-2'>
-                            <h3 className='scroll-m-20 text-2xl font-semibold tracking-tight'>BatteryBasics</h3>
-                            <p>Text about BatteryBasics</p>
-                            <div>
-                                <Button asChild variant='default' size='default'>
-                                    <Link href='https://batterybasics.com' target='_blank'>
-                                        Visit Site
-                                    </Link>
-                                </Button>
-                            </div>
-                        </div>
-                        <picture className='flex flex-col gap-2 ml-auto'>
-                            <img src='/images/batterybasics.png' alt='BatteryBasics' className='rounded-lg' />
-                        </picture>
-                    </article>
-                    <article className='flex flex-row gap-4 p-4 border border-foreground rounded-lg'>
-                        <div className='flex flex-col gap-2'>
-                            <h3 className='scroll-m-20 text-2xl font-semibold tracking-tight'>The Commercial Clearance Company</h3>
-                            <p>Text about commercial clearance company</p>
-                            <div>
-                                <Button asChild variant='default' size='default'>
-                                    <Link href='https://thecommercialclearancecompany.co.uk' target='_blank'>
-                                        Visit Site
-                                    </Link>
-                                </Button>
-                            </div>
-                        </div>
-                        <picture className='flex flex-col gap-2 ml-auto'>
-                            <img src='/images/thecommercialclearancecompany.png' alt='The Commercial Clearance Company' className='rounded-lg' />
-                        </picture>
-                    </article>
+                    <Client
+                        name='BatteryBasics'
+                        imageSrc='/logos/battery-basics-white.png'
+                        url='https://batterybasics.com'
+                        text={
+                            <>
+                                <p><strong>BatteryBasics</strong> is a leading company in the renewable energy sector, providing diverse solutions for both residential and commercial customers. Whether you need solar panels, batteries, or both, they can design and install the system that meets your requirements and preferences.</p>
+                                <p>They are committed to delivering excellent customer service and supporting you throughout your journey. Whether you are just exploring your options or ready to switch to renewable energy, they are here to help!</p>
+                            </>
+                        }
+                    />
+                    <Client
+                        name='The Commercial Clearance Company'
+                        imageSrc='/logos/the-commercial-clearance-company.png'
+                        url='https://thecommercialclearancecompany.co.uk'
+                        text={<p>The Commercial Clearance Company specialize in providing comprehensive commercial clearance services across the nation. Their expert team is dedicated to ensuring a thorough and efficient clearance process, tailored to meet your specific needs. Whether you require a complete property clearance or the removal of unwanted items, they handle everything from start to finish. Their meticulous approach ensures that your commercial space is cleared, organized, and ready for the next phase of your project.</p>}
+                    />
                 </div>
             </SidebarInset>
         </SidebarProvider>

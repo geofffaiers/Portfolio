@@ -12,7 +12,7 @@ type UseDeviceBreakpoints = {
 };
 
 export function useDeviceBreakpoints(): UseDeviceBreakpoints {
-    const [width, setWidth] = React.useState<number>(window.innerWidth);
+    const [width, setWidth] = React.useState<number>(0);
     const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
     const [isTablet, setIsTablet] = React.useState<boolean | undefined>(undefined);
 

@@ -25,14 +25,16 @@ export const PlanningPoker: React.FC<Props> = ({ roomId, setRoomName }) => {
         <>
             {loading && (<Loader2 className='animate-spin' />)}
             {!loading && player && room && (
-                <div className='w-full h-full flex items-center justify-center'>
-                    <div className='w-full h-full max-w-[calc(100vh)] flex flex-col gap-4'>
-                        <Header player={player} room={room} game={game}/>
-                        {game && round && <CurrentRound player={player} room={room} game={game} round={round}/>}
-                        {!game && <CreateGame player={player} room={room}/>}
-                        {player.role !== 'observer' && round && <Cards round={round}/>}
+                <>
+                    <Header player={player} room={room} game={game}/>
+                    <div className='w-full h-full flex items-center justify-center'>
+                        <div className='w-full h-full max-w-[calc(100vh)] flex flex-col gap-4'>
+                            {game && round && <CurrentRound player={player} room={room} game={game} round={round}/>}
+                            {!game && <CreateGame player={player} room={room}/>}
+                            {player.role !== 'observer' && round && <Cards round={round}/>}
+                        </div>
                     </div>
-                </div>
+                </>
             )}
         </>
     );

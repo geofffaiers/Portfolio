@@ -14,9 +14,6 @@ import {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible='icon' {...props}>
-            <SidebarHeader>
-                <SidebarHeaderImage src='/header_1_no_bg.png' alt='Geoff' />
-            </SidebarHeader>
             <SidebarContent>
                 <NavProjects />
             </SidebarContent>
