@@ -2,7 +2,7 @@
 
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
-import { DefaultResponse, WordWithData } from '@/models';
+import { DefaultResponse, WordData, WordWithData } from '@/models';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { KeyboardLayout } from './types';
 
@@ -10,6 +10,7 @@ interface UseHangman {
     wordLength: number;
     setWordLength: (length: number) => void;
     word: string;
+    wordData: WordData | null;
     letters: KeyboardLayout;
     guessedLetters: string[];
     loading: boolean;
@@ -26,6 +27,7 @@ export function useHangman(): UseHangman {
     const { displayError } = useToastWrapper();
     const [wordLength, setWordLength] = useState<number>(5);
     const [word, setWord] = useState<string>('');
+    const [wordData, setWordData] = useState<WordData | null>(null);
     const [letters, setLetters] = useState<KeyboardLayout>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const maxWrong = 6;
@@ -54,8 +56,14 @@ export function useHangman(): UseHangman {
             const json: DefaultResponse<WordWithData> = await response.json();
             if (json.success && json.data.word) {
                 setWord(json.data.word.toLowerCase());
+                if (Array.isArray(json.data.data) && json.data.data.length > 0) {
+                    setWordData(json.data.data[0]);
+                } else {
+                    setWordData(null);
+                }
             } else {
                 setWord('');
+                setWordData(null);
             }
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -64,6 +72,7 @@ export function useHangman(): UseHangman {
                 displayError('An unknown error occurred');
             }
             setWord('');
+            setWordData(null);
         }
         setLoading(false);
         if (canvasRef.current) {
@@ -210,6 +219,7 @@ export function useHangman(): UseHangman {
         wordLength,
         setWordLength,
         word,
+        wordData,
         letters,
         guessedLetters,
         loading,

@@ -7,12 +7,14 @@ import { SelectWordLength } from './select-word-length';
 import { DisplayedWord } from './displayed-word';
 import { Keyboard } from './keyboard';
 import { Typography } from '@/components/ui/typography';
+import { DefinitionDialog } from './definition-dialog/definition-dialog';
 
 export const Hangman: React.FC = () => {
     const {
         wordLength,
         setWordLength,
         word,
+        wordData,
         letters,
         guessedLetters,
         loading,
@@ -43,7 +45,10 @@ export const Hangman: React.FC = () => {
                         <Keyboard letters={letters} guessedLetters={guessedLetters} guessLetter={guessLetter} />
                     )}
                     {(isGameWon || isGameLost) && (
-                        <SelectWordLength className='mt-4' wordLength={wordLength} setWordLength={setWordLength} restartGame={restartGame} buttonText='New Game'/>
+                        <>
+                            <SelectWordLength className='my-4' wordLength={wordLength} setWordLength={setWordLength} restartGame={restartGame} buttonText='New Game'/>
+                            {wordData && <DefinitionDialog wordData={wordData}/>}
+                        </>
                     )}
                     {isGameWon && (
                         <Typography variant='h1' className='text-green-500 my-auto'>
