@@ -60,6 +60,11 @@ export default function Page(): JSX.Element {
                                         </Link> - Information about site cookies
                                     </li>
                                     <li>
+                                        <Link href='/privacy-policy' className='text-blue-600 hover:underline'>
+                                            Privacy Policy
+                                        </Link> - Information about data collection and usage
+                                    </li>
+                                    <li>
                                         <Link href='/site-map' className='text-blue-600 hover:underline'>
                                             Site Map
                                         </Link> - This page
