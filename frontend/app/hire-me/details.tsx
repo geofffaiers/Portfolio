@@ -12,7 +12,7 @@ export const Details: React.FC<Props> = ({ user }) => {
         <div className='mb-8'>
             <div className='flex justify-between items-center'>
                 <Typography variant='h1'>Geoff Faiers</Typography>
-                <SocialIcons user={user}/>
+                <SocialIcons/>
             </div>
             <Typography variant='h4'>
                 {user != null
