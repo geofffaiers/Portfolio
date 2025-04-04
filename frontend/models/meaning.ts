@@ -1,4 +1,4 @@
-import { Definition } from "./definition";
+import { Definition } from './definition';
 
 export type Meaning = {
     partOfSpeech: string;

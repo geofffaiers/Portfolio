@@ -11,7 +11,14 @@ type Props = {
 
 export const DefinitionDialog: React.FC<Props> = ({ wordData }) => {
     const [open, setOpen] = useState<boolean>(false);
-    const { word, meanings, phonetic, phonetics, sourceUrls, license } = wordData;
+    const {
+        word,
+        meanings,
+        phonetic: _phonetic,
+        phonetics: _phonetics,
+        sourceUrls: _sourceUrls,
+        license: _license
+    } = wordData;
     const titleCaseWord = useMemo(() => word.charAt(0).toUpperCase() + word.slice(1), [word]);
 
     return (
@@ -30,7 +37,7 @@ export const DefinitionDialog: React.FC<Props> = ({ wordData }) => {
                     <DialogTitle>{titleCaseWord}</DialogTitle>
                 </DialogHeader>
                 {meanings.length > 0 && (
-                    <Accordion type="single" collapsible className="w-full">
+                    <Accordion type='single' collapsible className='w-full'>
                         {meanings.map((meaning, index) => (
                             <MeaningRow key={`meaning-${index}`} index={index} meaning={meaning}/>
                         ))}
