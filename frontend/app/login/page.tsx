@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { AppSidebar } from '@/features/nav/app-sidebar';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
@@ -15,9 +15,9 @@ import { Loader2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { JSX, useEffect } from 'react';
 import Link from 'next/link';
+import { User } from '@/models';
 
-export default function Page(): JSX.Element {
-    const { user } = useAuthContext();
+function Login({ user }: { user: User | null | undefined }): JSX.Element {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -27,6 +27,20 @@ export default function Page(): JSX.Element {
             router.push(returnUrl === '/' ? '/account' : returnUrl);
         }
     }, [user, searchParams, router]);
+    return (
+        <>
+            {(user || user === undefined) && (
+                <div className='flex items-center justify-center'>
+                    <Loader2 className='animate-spin' />
+                </div>
+            )}
+            {user === null && <LoginForm />}
+        </>
+    );
+}
+
+export default function Page(): JSX.Element {
+    const { user } = useAuthContext();
 
     return (
         <SidebarProvider>
@@ -55,12 +69,9 @@ export default function Page(): JSX.Element {
                 </header>
                 <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
                     <div className='w-full max-w-sm'>
-                        {(user || user === undefined) && (
-                            <div className='flex items-center justify-center'>
-                                <Loader2 className='animate-spin' />
-                            </div>
-                        )}
-                        {user === null && <LoginForm />}
+                        <Suspense fallback={<Loader2 className='animate-spin' />}>
+                            <Login user={user}/>
+                        </Suspense>
                     </div>
                 </div>
             </SidebarInset>
