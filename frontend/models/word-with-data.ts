@@ -1,4 +1,4 @@
-import { WordData } from "./word-data";
+import { WordData } from './word-data';
 
 export interface WordWithData {
     word: string;

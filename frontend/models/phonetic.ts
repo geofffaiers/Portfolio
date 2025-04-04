@@ -1,4 +1,4 @@
-import { License } from "./license";
+import { License } from './license';
 
 export type Phonetic = {
     text: string;
