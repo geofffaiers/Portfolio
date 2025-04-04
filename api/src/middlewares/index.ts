@@ -1,1 +1,1 @@
-export * from './authenticateToken'
+export * from './authenticate-token';

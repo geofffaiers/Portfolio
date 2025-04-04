@@ -8,9 +8,11 @@ until mysqladmin ping -h "localhost" --silent; do
   sleep 2
 done
 
+export MYSQL_PWD=${MYSQL_ROOT_PASSWORD}
+
 for f in /docker-entrypoint-initdb.d/migrations/*.sql; do
   echo "Running $f"
-  mysql -u root -p${MYSQL_ROOT_PASSWORD} portfolio < "$f"
+  mysql -u root portfolio < "$f"
 done
 
 wait

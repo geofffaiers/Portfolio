@@ -5,6 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Express.js server side",
+      "type": "node-terminal",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/api",
+      "command": "npm run dev"
+    },
+    {
       "name": "Debug Next.js server side",
       "type": "node-terminal",
       "request": "launch",
@@ -12,17 +19,41 @@
       "command": "npm run dev"
     },
     {
-      "name": "Debug Express.js server side",
+        "name": "Launch Chrome with Next.js",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:3001",
+        "webRoot": "${workspaceFolder}/frontend"
+    },
+    {
+        "name": "Debug Next.js in Edge",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:3001",
+        "webRoot": "${workspaceFolder}/frontend",
+        "sourceMaps": true,
+        "preLaunchTask": "npm: dev"
+    },
+    {
+      "name": "Debug Storybook",
       "type": "node-terminal",
       "request": "launch",
-      "cwd": "${workspaceFolder}/api",
-      "command": "npm run dev"
+      "cwd": "${workspaceFolder}/frontend",
+      "command": "npm run storybook"
     }
   ],
   "compounds": [
     {
-      "name": "Compound",
+      "name": "API, Frontend",
       "configurations": ["Debug Express.js server side", "Debug Next.js server side"]
+    },
+    {
+      "name": "API, Frontend 2",
+      "configurations": ["Debug Express.js server side", "Debug Next.js server side", "Launch Chrome with Next.js"]
+    },
+    {
+      "name": "API, Frontend, Storybook",
+      "configurations": ["Debug Express.js server side", "Debug Next.js server side", "Debug Storybook"]
     }
   ]
 }
