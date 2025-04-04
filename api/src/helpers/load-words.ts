@@ -33,7 +33,7 @@ export class Words {
     private static async loadWords() {
         if (!this.wordsLoaded) {
             try {
-                const data = await fs.readFile(__dirname + '/../data/words.txt', 'utf8');
+                const data = await fs.readFile(__dirname + '/../../data/words.txt', 'utf8');
                 const allWords = data.split('\n');
                 allWords.forEach(rawWord => {
                     const word = rawWord.trim();
@@ -166,7 +166,7 @@ export class Words {
     private static async saveWordsToFile() {
         if (!this.wordsListChanged) return;
         try {
-            await fs.writeFile(__dirname + '/../data/words.txt', this._words.join('\n'), 'utf8');
+            await fs.writeFile(__dirname + '/../../data/words.txt', this._words.join('\n'), 'utf8');
             this.wordsListChanged = false;
         } catch (err: unknown) {
             logError(err);
