@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import { AppSidebar } from '@/features/nav/app-sidebar';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
     SidebarInset,
-    SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { JSX } from 'react';
@@ -55,50 +53,47 @@ export default function Page(): JSX.Element {
     }
 
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-                <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4 justify-between'>
-                    <div className='flex items-center gap-2 px-4'>
-                        <SidebarTrigger className='-ml-1' />
-                        <Separator orientation='vertical' className='mr-2 h-4' />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className='hidden md:block'>
-                                    <BreadcrumbLink asChild>
-                                        <Link href='/'>
-                                            Home
-                                        </Link>
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className='hidden md:block' />
-                                <BreadcrumbItem>
-                                    <BreadcrumbLink asChild>
-                                        <Link href={project.url}>
-                                            {project.name}
-                                        </Link>
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className='hidden md:block' />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>{roomName}</BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                    </div>
-                    <Button
-                        variant='outline'
-                        size='default'
-                        onClick={shareRoom}
-                    >
-                        Share
-                        <Share2 />
-                    </Button>
-                </header>
-                <div className='flex flex-1 flex-col gap-4 p-4'>
-                    <PlanningPoker roomId={String(roomId ?? '')} setRoomName={setRoomName}/>
+        <SidebarInset>
+            <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4 justify-between'>
+                <div className='flex items-center gap-2 px-4'>
+                    <SidebarTrigger className='-ml-1' />
+                    <Separator orientation='vertical' className='mr-2 h-4' />
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem className='hidden md:block'>
+                                <BreadcrumbLink asChild>
+                                    <Link href='/'>
+                                        Home
+                                    </Link>
+                                </BreadcrumbLink>
+                            </BreadcrumbItem>
+                            <BreadcrumbSeparator className='hidden md:block' />
+                            <BreadcrumbItem>
+                                <BreadcrumbLink asChild>
+                                    <Link href={project.url}>
+                                        {project.name}
+                                    </Link>
+                                </BreadcrumbLink>
+                            </BreadcrumbItem>
+                            <BreadcrumbSeparator className='hidden md:block' />
+                            <BreadcrumbItem>
+                                <BreadcrumbPage>{roomName}</BreadcrumbPage>
+                            </BreadcrumbItem>
+                        </BreadcrumbList>
+                    </Breadcrumb>
                 </div>
-            </SidebarInset>
-        </SidebarProvider>
+                <Button
+                    variant='outline'
+                    size='default'
+                    onClick={shareRoom}
+                >
+                    Share
+                    <Share2 />
+                </Button>
+            </header>
+            <div className='flex flex-1 flex-col gap-4 p-4'>
+                <PlanningPoker roomId={String(roomId ?? '')} setRoomName={setRoomName}/>
+            </div>
+        </SidebarInset>
     );
 }

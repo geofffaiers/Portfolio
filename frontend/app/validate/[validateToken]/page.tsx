@@ -1,12 +1,10 @@
 'use client';
 
 import React, { JSX } from 'react';
-import { AppSidebar } from '@/features/nav/app-sidebar';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
     SidebarInset,
-    SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Loader2 } from 'lucide-react';
@@ -20,44 +18,41 @@ export default function Page(): JSX.Element {
     const token = Array.isArray(validateToken) ? validateToken[0] : validateToken;
     const { error } = useValidate({ validateToken: token as string });
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-                <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
-                    <div className='flex items-center gap-2 px-4'>
-                        <SidebarTrigger className='-ml-1' />
-                        <Separator orientation='vertical' className='mr-2 h-4' />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className='hidden md:block'>
-                                    <BreadcrumbLink asChild>
-                                        <Link href='/'>
-                                            Home
-                                        </Link>
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className='hidden md:block' />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>Validate Email Account</BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                    </div>
-                </header>
-                <div className='flex flex-1 flex-col gap-4 p-4'>
-                    {error !== '' ? (
-                        <>
-                            <Typography variant='h1'>Validate email error</Typography>
-                            <Typography variant='p'>{error}</Typography>
-                        </>
-                    ) : (
-                        <>
-                            <Typography variant='h1'>Validate email account</Typography>
-                            <Loader2 className='w-10 h-10 animate-spin' />
-                        </>
-                    )}
+        <SidebarInset>
+            <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
+                <div className='flex items-center gap-2 px-4'>
+                    <SidebarTrigger className='-ml-1' />
+                    <Separator orientation='vertical' className='mr-2 h-4' />
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem className='hidden md:block'>
+                                <BreadcrumbLink asChild>
+                                    <Link href='/'>
+                                        Home
+                                    </Link>
+                                </BreadcrumbLink>
+                            </BreadcrumbItem>
+                            <BreadcrumbSeparator className='hidden md:block' />
+                            <BreadcrumbItem>
+                                <BreadcrumbPage>Validate Email Account</BreadcrumbPage>
+                            </BreadcrumbItem>
+                        </BreadcrumbList>
+                    </Breadcrumb>
                 </div>
-            </SidebarInset>
-        </SidebarProvider>
+            </header>
+            <div className='flex flex-1 flex-col gap-4 p-4'>
+                {error !== '' ? (
+                    <>
+                        <Typography variant='h1'>Validate email error</Typography>
+                        <Typography variant='p'>{error}</Typography>
+                    </>
+                ) : (
+                    <>
+                        <Typography variant='h1'>Validate email account</Typography>
+                        <Loader2 className='w-10 h-10 animate-spin' />
+                    </>
+                )}
+            </div>
+        </SidebarInset>
     );
 }

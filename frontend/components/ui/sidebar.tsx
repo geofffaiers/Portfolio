@@ -18,6 +18,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { DialogTitle } from './dialog';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar:state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -195,6 +197,9 @@ const Sidebar = React.forwardRef<
         if (isMobile) {
             return (
                 <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
+                    <VisuallyHidden>
+                        <DialogTitle>Sidebar</DialogTitle>
+                    </VisuallyHidden>
                     <SheetContent
                         data-sidebar='sidebar'
                         data-mobile='true'

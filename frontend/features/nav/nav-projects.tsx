@@ -12,9 +12,11 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
 
 export function NavProjects() {
-    const { open } = useSidebar();
+    const { isMobile } = useDeviceBreakpoints();
+    const { setOpenMobile, open } = useSidebar();
     const currentPath = usePathname();
     const { configLoading, config: { projects } } = useConfigContext();
     const enabledProjects = useMemo(() => projects.filter((item) => item.isEnabled), [projects]);
@@ -33,7 +35,11 @@ export function NavProjects() {
                                 isActive={isActive}
                                 className={'px-2.5 md:px-2'}
                             >
-                                <Link href={item.url} target={item.target}>
+                                <Link href={item.url} target={item.target} onClick={() => {
+                                    if (isMobile) {
+                                        setOpenMobile(false);
+                                    }
+                                }}>
                                     <item.icon />
                                     <span>{item.name}</span>
                                 </Link>

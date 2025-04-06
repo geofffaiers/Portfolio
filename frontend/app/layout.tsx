@@ -12,6 +12,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { SocketProvider } from '@/components/providers/socket-provider';
 import { Messaging, MessagingProvider } from '@/features/messaging';
 import { CookieProvider } from '@/components/providers/cookie-provider';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/features/nav/app-sidebar';
 
 export const metadata: Metadata = {
     title: 'Geoff Faiers',
@@ -49,7 +51,10 @@ export default function RootLayout({
                             <AuthProvider>
                                 <SocketProvider>
                                     <MessagingProvider>
-                                        {children}
+                                        <SidebarProvider>
+                                            <AppSidebar />
+                                            {children}
+                                        </SidebarProvider>
                                         <Messaging />
                                     </MessagingProvider>
                                 </SocketProvider>
