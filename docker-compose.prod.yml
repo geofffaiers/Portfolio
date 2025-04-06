@@ -64,7 +64,14 @@ services:
       - /var/lib/letsencrypt:/var/lib/letsencrypt
       - ./nginx.prod.conf:/etc/nginx/nginx.conf
       - /var/www/certbot:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot certonly --webroot -w /var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d gfaiers.com -d www.gfaiers.com --deploy-hook \"docker exec portfolio-nginx nginx -s reload\"; sleep 12h & wait $${!}; done;'"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+    entrypoint: >
+      /bin/sh -c 'trap exit TERM;
+      while :; do
+         certbot certonly --webroot -w /var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d gfaiers.com -d www.gfaiers.com --deploy-hook "docker exec portfolio-nginx nginx -s reload";
+         sleep 12h & wait $${!};
+      done;'
     restart: unless-stopped
 
 volumes:
