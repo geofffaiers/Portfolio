@@ -46,6 +46,7 @@ BEGIN
         `total_score` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
         `median_score` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
         `mean_score` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+        `mode_score` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
         `lowest_score` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
         `highest_score` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
         `count_of_different_scores` INT NOT NULL DEFAULT 0,
