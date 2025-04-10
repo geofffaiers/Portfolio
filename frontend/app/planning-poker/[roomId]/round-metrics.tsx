@@ -41,6 +41,10 @@ export const RoundMetrics: React.FC<Props> = ({ displayMetrics, setDisplayMetric
                             <TableHead>{round.meanScore}</TableHead>
                         </TableRow>
                         <TableRow>
+                            <TableHead>Mode score</TableHead>
+                            <TableHead>{round.modeScore}</TableHead>
+                        </TableRow>
+                        <TableRow>
                             <TableHead>Highest score</TableHead>
                             <TableHead>{parseInt(`${round.highestScore}`)}</TableHead>
                         </TableRow>

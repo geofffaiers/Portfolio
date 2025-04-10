@@ -43,6 +43,11 @@ export class Round {
         meanScore: number = 0;
 
     @IsDecimal()
+    @Expose({ name: 'modeScore' })
+    @Transform(({ value, obj }) => value ?? obj.mode_score, { toClassOnly: true })
+        modeScore: number = 0;
+
+    @IsDecimal()
     @Expose({ name: 'lowestScore' })
     @Transform(({ value, obj }) => value ?? obj.lowest_score, { toClassOnly: true })
         lowestScore: number = 0;

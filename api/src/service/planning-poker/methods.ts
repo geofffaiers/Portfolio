@@ -204,6 +204,7 @@ export const finishActiveRoundsForGame = async (gameId?: number, roundId?: numbe
         let highest = 0;
         let differentCounts = 0;
         let median = 0;
+        let mode = 0;
 
         if (scoreCount[0].count > 0) {
             const [allScores] = await pool.query<RowDataPacket[]>(
@@ -229,10 +230,8 @@ export const finishActiveRoundsForGame = async (gameId?: number, roundId?: numbe
                 lowest = numericValues[0];
                 highest = numericValues[numericValues.length - 1];
 
-                const mid = Math.floor(numericValues.length / 2);
-                median = numericValues.length % 2 === 0
-                    ? (numericValues[mid - 1] + numericValues[mid]) / 2
-                    : numericValues[mid];
+                median = calculateMedian(numericValues);
+                mode = calculateMode(numericValues);
             }
 
             const [distinctCount] = await pool.query<RowDataPacket[]>(
@@ -249,6 +248,7 @@ export const finishActiveRoundsForGame = async (gameId?: number, roundId?: numbe
                 total_score = ?,
                 median_score = ?,
                 mean_score = ?,
+                mode_score = ?,
                 lowest_score = ?,
                 highest_score = ?,
                 count_of_different_scores = ?,
@@ -258,6 +258,7 @@ export const finishActiveRoundsForGame = async (gameId?: number, roundId?: numbe
                 total,
                 median,
                 mean,
+                mode,
                 lowest,
                 highest,
                 differentCounts,
@@ -266,6 +267,33 @@ export const finishActiveRoundsForGame = async (gameId?: number, roundId?: numbe
             ]
         );
     }
+};
+
+const calculateMedian = (sortedValues: number[]): number => {
+    if (sortedValues.length === 0) return 0;
+
+    const mid = Math.floor(sortedValues.length / 2);
+    return sortedValues.length % 2 === 0
+        ? (sortedValues[mid - 1] + sortedValues[mid]) / 2
+        : sortedValues[mid];
+};
+
+const calculateMode = (values: number[]): number => {
+    if (values.length === 0) return 0;
+
+    const frequency: Record<number, number> = {};
+    let maxFreq = 0;
+    let mode = 0;
+
+    values.forEach(val => {
+        frequency[val] = (frequency[val] || 0) + 1;
+        if (frequency[val] > maxFreq) {
+            maxFreq = frequency[val];
+            mode = val;
+        }
+    });
+
+    return mode;
 };
 
 export const getRoomDetails = async (roomId: string): Promise<Room | undefined> => {
