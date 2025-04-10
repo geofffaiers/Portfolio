@@ -65,7 +65,7 @@ jobs:
             docker-compose -f docker-compose.prod.yml pull
             docker-compose -f docker-compose.prod.yml up -d
   
-      - name: Clean Up Docker Volumes
+      - name: Clean Up Docker Resources
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DROPLET_IP }}
@@ -74,4 +74,4 @@ jobs:
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
           port: 22
           script: |
-            docker volume prune -f
+            docker system prune -af --volumes  # Remove all unused containers, networks, images and volumes
