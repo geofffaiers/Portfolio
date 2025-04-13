@@ -50,7 +50,7 @@ export function NavUser() {
 }
 
 function LoggedIn({ user }: { user: User }) {
-    const { isMobile } = useSidebar();
+    const { isMobile, setOpenMobile } = useSidebar();
     const { userName, initials } = useUserDetails({ user });
     const { handleLogout } = useLogout();
 
@@ -93,7 +93,11 @@ function LoggedIn({ user }: { user: User }) {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuItem asChild className='cursor-pointer'>
-                        <Link href='/account'>
+                        <Link href='/account' onClick={() => {
+                            if (isMobile) {
+                                setOpenMobile(false);
+                            }
+                        }}>
                             <BadgeCheck />
                             Account
                         </Link>
@@ -110,7 +114,7 @@ function LoggedIn({ user }: { user: User }) {
 }
 
 function LoggedOut() {
-    const { open } = useSidebar();
+    const { isMobile, open, setOpenMobile } = useSidebar();
     const currentPath = usePathname();
     const isActive = currentPath === '/login';
 
@@ -125,7 +129,13 @@ function LoggedOut() {
                     isActive={isActive}
                     className={'px-2.5 md:px-2'}
                 >
-                    <Link href={`/login?returnUrl=${encodeURIComponent(currentPath)}`}>
+                    <Link
+                        href={`/login?returnUrl=${encodeURIComponent(currentPath)}`}
+                        onClick={() => {
+                            if (isMobile) {
+                                setOpenMobile(false);
+                            }
+                    }}>
                         <LogIn />
                         <span>Login / Sign up</span>
                     </Link>
