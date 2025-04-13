@@ -52,14 +52,10 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./api
-          push: false
-          tags: portfolio-api:${{ env.IMAGE_TAG }}
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/portfolio-api:${{ env.IMAGE_TAG }}
+            ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Tag and Push Docker images
-        run: |
-          docker tag portfolio-api:${IMAGE_TAG} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:${IMAGE_TAG}
-          docker tag portfolio-api:${IMAGE_TAG} ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-api:${IMAGE_TAG}
-          docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-api:latest
+          

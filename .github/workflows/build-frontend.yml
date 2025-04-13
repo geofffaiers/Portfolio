@@ -52,14 +52,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
-          push: false
-          tags: portfolio-frontend:${{ env.IMAGE_TAG }}
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:${{ env.IMAGE_TAG }}
+            ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Tag and Push Docker images
-        run: |
-          docker tag portfolio-frontend:${IMAGE_TAG} ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:${IMAGE_TAG}
-          docker tag portfolio-frontend:${IMAGE_TAG} ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:${IMAGE_TAG}
-          docker push ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:latest
