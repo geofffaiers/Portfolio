@@ -16,6 +16,7 @@ export const reportError = async (err: Error): Promise<void> => {
 
 export const handleError = <T = undefined>(err: unknown): DefaultResponse<T> => {
     if (err instanceof Error) {
+        logError(err);
         return {
             code: 500,
             success: false,
@@ -28,6 +29,7 @@ export const handleError = <T = undefined>(err: unknown): DefaultResponse<T> => 
 export const logError = (err: unknown): void => {
     if (err instanceof Error) {
         console.error(err.message); // eslint-disable-line no-console
+        console.error(err.stack); // eslint-disable-line no-console
     } else {
         console.error(JSON.stringify(err));  // eslint-disable-line no-console
     }

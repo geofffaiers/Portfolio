@@ -20,14 +20,14 @@ export type Config = {
 };
 
 const getApiUrl = (): string => {
-    if (process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_APP_ENV !== 'staging') {
         return process.env.NEXT_PUBLIC_API_URL ?? '/api';
     }
     return '/api';
 };
 
 const getWsUrl = (): string => {
-    if (process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_APP_ENV !== 'staging') {
         return process.env.NEXT_PUBLIC_WS_URL ?? '/api/ws';
     }
     return '/api/ws';

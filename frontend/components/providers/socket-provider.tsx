@@ -45,11 +45,19 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         }
         if (user.id === prevUserIdRef.current) return;
         prevUserIdRef.current = user.id;
-        socketRef.current = new WebSocket(config.wsUrl);
+        let wsUrl = config.wsUrl;
+        if (wsUrl.startsWith('/') && window.location.hostname !== 'localhost') {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            wsUrl = `${protocol}//${window.location.host}${wsUrl}`;
+        }
+
+        socketRef.current = new WebSocket(wsUrl);
+
         socketRef.current.onopen = () => {
             // eslint-disable-next-line no-console
-            console.log('Connected', new Date());
+            console.log('Connected to WebSocket at', wsUrl, new Date());
         };
+
         socketRef.current.onclose = () => {
             prevUserIdRef.current = null;
             // eslint-disable-next-line no-console
@@ -57,6 +65,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         };
         socketRef.current.onerror = (err) => {
             displayError(`WebSocket error: ${err}`);
+            // eslint-disable-next-line no-console
+            console.error('WebSocket error:', err);
         };
         socketRef.current.onmessage = (event) => {
             const message: BaseMessage = JSON.parse(event.data);

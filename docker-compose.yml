@@ -3,7 +3,7 @@ services:
     image: mysql:latest
     container_name: portfolio-mysql-db
     env_file: 
-      - .env
+      - .env.development
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
     restart: unless-stopped
@@ -20,15 +20,17 @@ services:
     build: ./api
     container_name: portfolio-api
     env_file:
-      - .env
+      - .env.development
     depends_on:
       mysql-db:
         condition: service_healthy
     volumes:
       - /usr/src/app/node_modules
+      - ./api:/usr/src/app
     ports:
-      - ${API_PORT}:${API_PORT}
+      - ${STAGING_API_PORT}:${STAGING_API_PORT}
     restart: unless-stopped
+    command: npm run staging
 
   frontend:
     build: ./frontend
@@ -38,9 +40,11 @@ services:
         condition: service_started
     volumes:
       - /usr/src/app/node_modules
+      - ./frontend:/app
     ports:
-      - ${CLIENT_PORT}:${CLIENT_PORT}
+      - ${STAGING_CLIENT_PORT}:${STAGING_CLIENT_PORT}
     restart: unless-stopped
+    command: npm run staging
 
   nginx:
     image: nginx:latest

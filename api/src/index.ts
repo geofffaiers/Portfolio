@@ -9,7 +9,9 @@ import { reportError } from './helpers';
 const envPath = process.env.NODE_ENV == null ? '../.env' : `../.env.${process.env.NODE_ENV}`;
 dotenv.config({ path: envPath });
 
-const PORT: string | undefined = process.env.API_PORT;
+const PORT: string | undefined = process.env.APP_ENV === 'staging'
+    ? process.env.STAGING_API_PORT
+    : process.env.API_PORT;
 const server: Server = new Server(express());
 server.start(PORT);
 
