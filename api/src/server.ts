@@ -33,6 +33,7 @@ export class Server {
             throw new Error('Add .env file with values: MYSQL_ROOT_USER and MYSQL_ROOT_PASSWORD');
         }
         this.#app = app;
+        this.#app.set('trust proxy', 1);
         this.#config();
         router(app);
         setupSwagger(app);
@@ -45,15 +46,51 @@ export class Server {
             allowedOrigins.push(process.env.CLIENT_URL);
         }
 
+        const allowLocalNetworkAccess = process.env.NODE_ENV === 'development' || process.env.APP_ENV === 'staging';
+
         const corsOptions: CorsOptions = {
             origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
                 if (process.env.NODE_ENV === 'development') {
                     callback(null, true);
-                } else if (!origin || allowedOrigins.includes(origin)) {
-                    callback(null, true);
-                } else {
-                    callback(new Error('Not allowed by CORS'));
+                    return;
                 }
+
+                if (!origin) {
+                    callback(null, true);
+                    return;
+                }
+
+                if (allowedOrigins.includes(origin)) {
+                    callback(null, true);
+                    return;
+                }
+
+                let message: string = 'Not allowed by CORS';
+                if (allowLocalNetworkAccess) {
+                    try {
+                        const url = new URL(origin);
+                        const host = url.hostname;
+
+                        if (
+                            host === 'localhost' ||
+                            host === '127.0.0.1' ||
+                            host.startsWith('192.168.') ||
+                            host.startsWith('10.') ||
+                            host.match(/^172\.(1[6-9]|2[0-9]|3[0-1])\./)
+                        ) {
+                            callback(null, true);
+                            return;
+                        }
+                    } catch (err: unknown) {
+                        if (err instanceof Error) {
+                            message = err.message;
+                        } else {
+                            message = 'Error parsing origin URL';
+                        }
+                    }
+                }
+
+                callback(new Error(message));
             },
             credentials: true
         };
