@@ -18,6 +18,23 @@ import { AppSidebar } from '@/features/nav/app-sidebar';
 export const metadata: Metadata = {
     title: 'Geoff Faiers',
     description: 'The personal portfolio of Geoff Faiers',
+    metadataBase: new URL('https://gfaiers.com/'),
+    openGraph: {
+        title: 'Geoff Faiers',
+        description: 'The personal portfolio of Geoff Faiers',
+        url: 'https://gfaiers.com/',
+        siteName: 'Geoff Faiers',
+        images: [
+            {
+                url: '/logo.png',
+                width: 1200,
+                height: 630,
+                alt: 'Geoff Faiers Logo',
+            },
+        ],
+        locale: 'en_GB',
+        type: 'website',
+    }
 };
 
 zxcvbnOptions.setOptions({
