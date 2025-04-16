@@ -47,6 +47,7 @@ jobs:
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_WORKSPACE/.env
           echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> $GITHUB_WORKSPACE/.env
           echo "EMAIL=${{ vars.EMAIL }}" >> $GITHUB_WORKSPACE/.env
+          echo "IPINFO_API_KEY=${{ secrets.IPINFO_API_KEY }}" >> $GITHUB_WORKSPACE/.env
 
       - name: Build Docker images
         uses: docker/build-push-action@v5

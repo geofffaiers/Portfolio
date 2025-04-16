@@ -1,6 +1,7 @@
 export * from './create';
 export * from './del';
 export * from './generate-reset-token';
+export * from './get-sessions';
 export * from './get-user-for-reset-token';
 export * from './get-user-for-validate-token';
 export * from './login';

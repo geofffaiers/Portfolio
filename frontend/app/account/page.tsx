@@ -15,8 +15,12 @@ import { ChangePassword } from './change-password';
 import { DeleteAccount } from './delete-account';
 import Link from 'next/link';
 import { Typography } from '@/components/ui/typography';
+import { ActiveSessions } from './active-sessions';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
 
 export default function Page(): JSX.Element {
+    const { isMobile } = useDeviceBreakpoints();
     const { authLoading, user } = useAuthContext();
     const router = useRouter();
 
@@ -49,11 +53,19 @@ export default function Page(): JSX.Element {
                     </Breadcrumb>
                 </div>
             </header>
-            <div className='flex flex-1 flex-col gap-4 p-4'>
+            <div className='flex flex-col gap-4 p-4'>
                 <Typography variant='h1'>Your account</Typography>
-                <Account />
-                <ChangePassword />
-                <DeleteAccount />
+                <div className='flex flex-col md:flex-row gap-4'>
+                    <Card className='flex-1'>
+                        <CardHeader>Account Details</CardHeader>
+                        <CardContent className='flex flex-col gap-4'>
+                            <Account/>
+                            <ChangePassword/>
+                            <DeleteAccount/>
+                        </CardContent>
+                    </Card>
+                    <ActiveSessions/>
+                </div>
             </div>
         </SidebarInset>
     );

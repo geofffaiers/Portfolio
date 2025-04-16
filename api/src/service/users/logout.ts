@@ -1,4 +1,5 @@
-import { CookieOptions, Request, Response } from 'express';
+import crypto from 'crypto';
+import { Request, Response } from 'express';
 import { RowDataPacket } from 'mysql2';
 import { pool } from '../../helpers/db';
 import { DefaultResponse, User } from '../../models';
@@ -25,13 +26,22 @@ export const logout = async (req: Request, res: Response): Promise<DefaultRespon
                 message: 'User not found'
             };
         }
-        const cookieOptions: CookieOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
-        };
-        res.clearCookie('token', cookieOptions);
-        res.clearCookie('refreshToken', cookieOptions);
+        const refreshToken = req.cookies.refreshToken;
+
+        if (refreshToken) {
+            const tokenHash = crypto
+                .createHash('sha256')
+                .update(refreshToken)
+                .digest('hex');
+
+            await pool.query(
+                'UPDATE users_sessions SET is_active = 0 WHERE refresh_token = ?',
+                [tokenHash]
+            );
+        }
+        res.clearCookie('token');
+        res.clearCookie('refreshToken');
+
         return {
             code: 200,
             success: true
