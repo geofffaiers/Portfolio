@@ -5,6 +5,7 @@ export * from './get-sessions';
 export * from './get-user-for-reset-token';
 export * from './get-user-for-validate-token';
 export * from './login';
+export * from './logout-session';
 export * from './logout';
 export * from './refresh-token';
 export * from './resend-validation';

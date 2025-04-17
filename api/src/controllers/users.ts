@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { create, del, generateResetToken, getSessions, getUserForResetToken, getUserForValidateToken, login, logout, refreshToken, resendVerification, resetPassword, update, validateEmail } from '../service/users';
+import { create, del, generateResetToken, getSessions, getUserForResetToken, getUserForValidateToken, login, logout, logoutSession, refreshToken, resendVerification, resetPassword, update, validateEmail } from '../service/users';
 import { DefaultResponse, GetSessions, User } from '../models';
 import { handleRoutingError } from '../helpers';
 
@@ -115,6 +115,15 @@ export default class UsersController {
     async getSessions (req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const response: DefaultResponse<GetSessions> = await getSessions(req);
+            res.status(response.code).json(response);
+        } catch (err: unknown) {
+            handleRoutingError(err, next);
+        }
+    }
+
+    async logoutSession (req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const response: DefaultResponse<GetSessions> = await logoutSession(req);
             res.status(response.code).json(response);
         } catch (err: unknown) {
             handleRoutingError(err, next);

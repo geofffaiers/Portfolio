@@ -52,7 +52,7 @@ export function useActiveSessions(): UseActiveSessions {
         try {
             setLoading(true);
             const response = await fetch(`${config.apiUrl}/users/sessions/${session.id}`, {
-                method: 'DELETE',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },

@@ -16,7 +16,7 @@ import { DeleteAccount } from './delete-account';
 import Link from 'next/link';
 import { Typography } from '@/components/ui/typography';
 import { ActiveSessions } from './active-sessions';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
 
 export default function Page(): JSX.Element {
@@ -57,7 +57,9 @@ export default function Page(): JSX.Element {
                 <Typography variant='h1'>Your account</Typography>
                 <div className='flex flex-col md:flex-row gap-4'>
                     <Card className='flex-1'>
-                        <CardHeader>Account Details</CardHeader>
+                        <CardHeader>
+                            <CardTitle>Account Details</CardTitle>
+                        </CardHeader>
                         <CardContent className='flex flex-col gap-4'>
                             <Account/>
                             <ChangePassword/>

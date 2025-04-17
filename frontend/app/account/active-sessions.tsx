@@ -2,12 +2,12 @@
 
 import React, { JSX } from 'react';
 import { useAuthContext } from '@/components/providers/auth-provider';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useActiveSessions } from './use-active-sessions';
 import { Session } from '@/models';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, LogOut } from 'lucide-react';
 
 export function ActiveSessions(): JSX.Element | null {
     const { user, authLoading } = useAuthContext();
@@ -19,7 +19,9 @@ export function ActiveSessions(): JSX.Element | null {
 
     return (
         <Card className='flex-1'>
-            <CardHeader>Active Sessions</CardHeader>
+            <CardHeader>
+                <CardTitle>Active Sessions</CardTitle>
+            </CardHeader>
             <CardContent>
                 {loading || authLoading ? (
                     <Loader2 className='animate-spin' />
@@ -74,7 +76,7 @@ function SessionRow ({ session, handleLogOutSession }: { session: Session; handl
                             handleLogOutSession(session);
                         }}
                     >
-                        <Trash2 />
+                        <LogOut />
                     </Button>
                 )}
             </TableCell>
