@@ -7,10 +7,10 @@ export class Session {
         id: number = 0;
 
     @IsOptional()
-    @IsString()
+    @IsNumber()
     @Transform(({ value, obj }) => value ?? obj.user_id, { toClassOnly: true })
     @Expose({ name: 'userId' })
-        userId?: string;
+        userId?: number;
 
     @IsOptional()
     @IsString()

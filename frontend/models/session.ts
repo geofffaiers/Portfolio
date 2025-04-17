@@ -7,9 +7,9 @@ export class Session {
         id: number = 0;
 
     @IsOptional()
-    @IsString()
+    @IsNumber()
     @Expose({ name: 'userId' })
-        userId?: string;
+        userId?: number;
 
     @IsString()
     @Expose({ name: 'userAgent' })

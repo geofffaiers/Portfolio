@@ -28,8 +28,8 @@ export const logoutSession = async (req: Request): Promise<DefaultResponse<GetSe
         }
 
         await pool.query(
-            'UPDATE users_sessions SET is_active = 0 WHERE id = ?',
-            [req.params.sessionId]
+            'UPDATE users_sessions SET is_active = 0 WHERE id = ? AND user_id = ?',
+            [req.params.sessionId, userId]
         );
 
         return {
