@@ -185,7 +185,6 @@ export const useReactions = (): UseReactions => {
     useEffect(() => {
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
-        if (!canvas) return;
         canvas.addEventListener('mousemove', handleMove);
         canvas.addEventListener('touchmove', handleTouch);
         canvas.addEventListener('touchstart', handleTouch);
