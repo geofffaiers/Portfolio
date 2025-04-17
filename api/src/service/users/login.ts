@@ -1,14 +1,12 @@
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
-import { CookieOptions, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import { RowDataPacket } from 'mysql2';
 import { pool } from '../../helpers/db';
 import { DefaultResponse, User } from '../../models';
-import { delay, generateJwt } from './methods';
+import { delay, saveToUserSessions } from './methods';
 import { handleError } from '../../helpers';
-import { getLocationFromIp } from '../../helpers/geo-location';
 
 export const login = async (req: Request, res: Response): Promise<DefaultResponse<User>> => {
     try {
@@ -36,7 +34,8 @@ export const login = async (req: Request, res: Response): Promise<DefaultRespons
             };
         }
         user.password = '';
-        await saveToUserSessions(user, req, res);
+        await saveToUserSessions(user.id, req, res);
+
         return {
             code: 200,
             success: true,
@@ -45,34 +44,4 @@ export const login = async (req: Request, res: Response): Promise<DefaultRespons
     } catch (err: unknown) {
         return handleError<User>(err);
     }
-};
-
-const saveToUserSessions = async (user: User, req: Request, res: Response): Promise<void> => {
-    const accessToken = await generateJwt(user.id, '2h');
-    const refreshToken = await generateJwt(user.id, '7d');
-
-    const userAgent = req.headers['user-agent'] || '';
-    const ip = req.ip || req.socket.remoteAddress || '';
-    const location = await getLocationFromIp(ip);
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
-
-    const tokenHash = crypto
-        .createHash('sha256')
-        .update(refreshToken)
-        .digest('hex');
-
-    await pool.query(
-        `INSERT INTO users_sessions 
-        (user_id, refresh_token, user_agent, ip_address, location, is_active, expires_at) 
-        VALUES (?, ?, ?, ?, ?, 1, ?)`,
-        [user.id, tokenHash, userAgent, ip, location?.location ?? null, expiresAt]
-    );
-    const cookieOptions: CookieOptions = {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
-    };
-    res.cookie('token', accessToken, cookieOptions);
-    res.cookie('refreshToken', refreshToken, cookieOptions);
 };

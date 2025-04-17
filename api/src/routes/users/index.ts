@@ -14,7 +14,7 @@ router.get('/get-user-for-reset-token', controller.getUserForResetToken);
 router.get('/get-user-for-validate-token', controller.getUserForValidateToken);
 router.post('/login', limiter(50), controller.login);
 router.post('/reset-password', limiter(10), controller.resetPassword);
-router.post('/refresh-token', controller.refreshToken);
+router.post('/refresh-token', limiter(50), controller.refreshToken);
 router.post('/logout', authenticateToken, controller.logout);
 router.post('/update', limiter(50), authenticateToken, controller.update);
 router.delete('/delete', limiter(10), authenticateToken, controller.del);
