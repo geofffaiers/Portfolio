@@ -7,10 +7,10 @@ import { Typography } from './typography';
 type Props = {
     name: string;
     text: JSX.Element;
-    url?: string | undefined;
-    image?: JSX.Element | undefined;
-    imageSrc?: string | undefined;
-    buttonText?: string | undefined
+    url?: string;
+    image?: JSX.Element;
+    imageSrc?: string;
+    buttonText?: string;
 };
 
 export const Client: React.FC<Props> = ({ name, text, url, image, imageSrc, buttonText }) => {
@@ -21,12 +21,12 @@ export const Client: React.FC<Props> = ({ name, text, url, image, imageSrc, butt
         img = url ? (
             <Link href={url} target='_blank' className='flex flex-col gap-2'>
                 <picture>
-                    <img src={imageSrc} alt={name} className='rounded-lg h-[75px] w-auto'/>
+                    <img src={imageSrc} alt={name} className='rounded-lg h-[75px] max-w-full object-contain'/>
                 </picture>
             </Link>
         ) : (
             <picture>
-                <img src={imageSrc} alt={name} className='rounded-lg h-[75px] w-auto'/>
+                <img src={imageSrc} alt={name} className='rounded-lg h-[75px] max-w-full object-contain'/>
             </picture>
         );
     } else {
