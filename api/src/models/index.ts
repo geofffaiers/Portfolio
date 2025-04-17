@@ -7,6 +7,7 @@ export * from './error-check';
 export * from './message';
 export * from './project';
 export * from './score';
+export * from './session';
 export * from './sorted-word-array';
 export * from './user';
 export * from './word-with-data';
