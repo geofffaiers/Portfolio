@@ -3,7 +3,6 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback, useRef } from 'react';
 import { DefaultResponse, User } from '@/models';
 import { useConfigContext } from './config-provider';
-import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 
 type AuthContextProps = {
   authLoading: boolean;
@@ -14,7 +13,6 @@ type AuthContextProps = {
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const { displayError } = useToastWrapper();
     const { config } = useConfigContext();
     const [user, setUser] = useState<User | null | undefined>(undefined);
     const [authLoading, setAuthLoading] = useState<boolean>(true);
@@ -49,7 +47,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 } else {
                     localStorage.removeItem('loggedInUser');
                     setUser(null);
-                    displayError(refreshError);
                 }
             } else {
                 setUser(null);
@@ -60,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (user === undefined) {
             checkStorage();
         }
-    }, [user, setUser, displayError, refreshToken]);
+    }, [user, setUser, refreshToken]);
 
     return (
         <AuthContext.Provider value={{ authLoading, user, setUser }}>

@@ -1,7 +1,7 @@
 import crypto from 'crypto';
-import { CookieOptions, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { DefaultResponse } from '../../models';
-import { generateJwt, getUser } from './methods';
+import { getUser, saveToUserSessions } from './methods';
 import { handleError, pool } from '../../helpers';
 import { RowDataPacket } from 'mysql2';
 
@@ -42,26 +42,7 @@ export const refreshToken = async (req: Request, res: Response): Promise<Default
         const userId = session.user_id;
 
         await getUser(userId);
-
-        const cookieOptions: CookieOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
-        };
-        const newAccessToken = await generateJwt(userId, '2h');
-        const newRefreshToken = await generateJwt(userId, '7d');
-        const newTokenHash = crypto
-            .createHash('sha256')
-            .update(newRefreshToken)
-            .digest('hex');
-
-        await pool.query(
-            'UPDATE users_sessions SET refresh_token = ?, updated_at = NOW() WHERE refresh_token = ?',
-            [newTokenHash, tokenHash]
-        );
-
-        res.cookie('token', newAccessToken, cookieOptions);
-        res.cookie('refreshToken', newRefreshToken, cookieOptions);
+        await saveToUserSessions(userId, req, res, tokenHash);
 
         return {
             code: 200,
