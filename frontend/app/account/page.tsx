@@ -51,10 +51,10 @@ export default function Page(): JSX.Element {
                     </Breadcrumb>
                 </div>
             </header>
-            <div className='flex flex-col gap-4 p-4'>
+            <div className='flex flex-col gap-4 p-4 max-w-[100vw]'>
                 <Typography variant='h1'>Your account</Typography>
                 <div className='flex flex-col md:flex-row gap-4'>
-                    <Card className='flex-1'>
+                    <Card className='flex-1 w-full'>
                         <CardHeader>
                             <CardTitle>Account Details</CardTitle>
                         </CardHeader>
