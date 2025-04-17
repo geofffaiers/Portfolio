@@ -19,7 +19,7 @@ export function ActiveSessions(): JSX.Element | null {
     }
 
     return (
-        <Card className="flex-1 max-w-full">
+        <Card className='flex-1 max-w-full'>
             <CardHeader>
                 <CardTitle>Active Sessions</CardTitle>
             </CardHeader>
@@ -42,21 +42,21 @@ export function ActiveSessions(): JSX.Element | null {
 
 function SessionTable ({ sessions, handleLogOutSession }: { sessions: Session[]; handleLogOutSession: (session: Session) => void; }) {
     return (
-        <div className="w-full max-w-[calc(100vw-4rem)] overflow-x-auto">
+        <div className='w-full max-w-[calc(100vw-4rem)] overflow-x-auto'>
             <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead className='w-[130px]'>
-                            <span className="hidden md:inline">User Agent</span>
-                            <span className="md:hidden">Browser</span>
+                            <span className='hidden md:inline'>User Agent</span>
+                            <span className='md:hidden'>Browser</span>
                         </TableHead>
-                        <TableHead className="w-[80px]">
-                            <span className="hidden md:inline">IP Address</span>
-                            <span className="md:hidden">IP</span>
+                        <TableHead className='w-[80px]'>
+                            <span className='hidden md:inline'>IP Address</span>
+                            <span className='md:hidden'>IP</span>
                         </TableHead>
-                        <TableHead className="w-[80px]">Location</TableHead>
-                        <TableHead className="w-[50px]">
-                            <span className="sr-only">Action</span>
+                        <TableHead className='w-[80px]'>Location</TableHead>
+                        <TableHead className='w-[50px]'>
+                            <span className='sr-only'>Action</span>
                         </TableHead>
                     </TableRow>
                 </TableHeader>
@@ -73,7 +73,7 @@ function SessionRow ({ session, handleLogOutSession }: { session: Session; handl
 
     const truncateUserAgent = useCallback((userAgent: string) => {
         if (isMobile) {
-            const match = userAgent.match(/(Chrome|Firefox|Safari|Edge|Opera|MSIE)[\/\s](\d+)/);
+            const match = userAgent.match(/(Chrome|Firefox|Safari|Edge|Opera|MSIE)[/\s](\d+)/);
             return match ? match[0] : userAgent.substring(0, 20) + '...';
         }
         return userAgent;
