@@ -1,5 +1,5 @@
-import { Expose, Type } from "class-transformer";
-import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from "class-validator";
+import { Expose, Type } from 'class-transformer';
+import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class Session {
     @IsNumber()

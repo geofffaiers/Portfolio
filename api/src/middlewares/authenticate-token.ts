@@ -15,27 +15,27 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
         });
         return;
     }
-    
+
     try {
         const secret = new TextEncoder().encode(process.env.JWT_SECRET);
         const { payload }: { payload: JWTPayload } = await jwtVerify(token, secret);
         const userId = payload.userId as number;
-        
+
         const refreshToken = req.cookies.refreshToken;
-        
+
         if (refreshToken) {
             const tokenHash = crypto
                 .createHash('sha256')
                 .update(refreshToken)
                 .digest('hex');
-            
+
             const [sessions] = await pool.query<RowDataPacket[]>(
                 `SELECT id FROM users_sessions 
                  WHERE user_id = ? AND refresh_token = ? 
                  AND is_active = 1 AND expires_at > NOW()`,
                 [userId, tokenHash]
             );
-            
+
             if (sessions.length === 0) {
                 res.clearCookie('token');
                 res.clearCookie('refreshToken');
@@ -80,20 +80,20 @@ export const authenticateTokenForSocket = async (ws: WebSocket, req: Request): P
         const userId = payload.userId as number;
 
         const refreshToken = req.cookies?.refreshToken ?? req.headers?.cookie?.split(';')?.find(c => c.trim().startsWith('refreshToken='))?.split('=')[1];
-        
+
         if (refreshToken) {
             const tokenHash = crypto
                 .createHash('sha256')
                 .update(refreshToken)
                 .digest('hex');
-            
+
             const [sessions] = await pool.query<RowDataPacket[]>(
                 `SELECT id FROM users_sessions 
                  WHERE user_id = ? AND refresh_token = ? 
                  AND is_active = 1 AND expires_at > NOW()`,
                 [userId, tokenHash]
             );
-            
+
             if (sessions.length === 0) {
                 ws.close(1008, 'Invalid session');
                 return -1;
@@ -102,7 +102,7 @@ export const authenticateTokenForSocket = async (ws: WebSocket, req: Request): P
             ws.close(1008, 'Invalid session');
             return -1;
         }
-        
+
         return userId;
     } catch (err: unknown) {
         logError(err);

@@ -18,9 +18,9 @@ export async function getLocationFromIp(ip: string): Promise<GeoLocationData> {
 
         // Handle localhost and private networks
         if (
-            ip === '127.0.0.1' || 
-            ip === 'localhost' || 
-            ip.startsWith('192.168.') || 
+            ip === '127.0.0.1' ||
+            ip === 'localhost' ||
+            ip.startsWith('192.168.') ||
             ip.startsWith('10.') ||
             ip.match(/^172\.(1[6-9]|2[0-9]|3[0-1])\./) || // Private range
             ip.match(/^100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\./) || // CGNAT range
@@ -37,19 +37,19 @@ export async function getLocationFromIp(ip: string): Promise<GeoLocationData> {
         }
 
         const response: IPinfo = await ipinfoClient.lookupIp(ip);
-        
+
         // Handle bogon response
         if (response.bogon) {
             return { location: 'Private/Reserved IP' };
         }
-        
+
         return {
             city: response.city,
             region: response.region,
             country: response.country,
-            location: response.city && response.country 
-                     ? `${response.city}, ${response.country}` 
-                     : response.country || 'Unknown Location'
+            location: response.city && response.country
+                ? `${response.city}, ${response.country}`
+                : response.country || 'Unknown Location'
         };
     } catch (_error) {
         return { location: 'Location Lookup Failed' };

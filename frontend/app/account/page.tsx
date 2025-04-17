@@ -17,10 +17,8 @@ import Link from 'next/link';
 import { Typography } from '@/components/ui/typography';
 import { ActiveSessions } from './active-sessions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
 
 export default function Page(): JSX.Element {
-    const { isMobile } = useDeviceBreakpoints();
     const { authLoading, user } = useAuthContext();
     const router = useRouter();
 

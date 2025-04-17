@@ -1,9 +1,9 @@
 'use client';
 
-import { useConfigContext } from "@/components/providers/config-provider";
-import { useToastWrapper } from "@/hooks/use-toast-wrapper";
-import { DefaultResponse, Session } from "@/models"
-import { useCallback, useEffect, useState } from "react";
+import { useConfigContext } from '@/components/providers/config-provider';
+import { useToastWrapper } from '@/hooks/use-toast-wrapper';
+import { DefaultResponse, Session } from '@/models';
+import { useCallback, useEffect, useState } from 'react';
 
 type UseActiveSessions = {
     loading: boolean;
@@ -37,7 +37,6 @@ export function useActiveSessions(): UseActiveSessions {
                 displayError(error.message);
             } else {
                 displayError('An unexpected error occurred');
-                console.error(JSON.stringify(error));
             }
         } finally {
             setLoading(false);
@@ -68,7 +67,6 @@ export function useActiveSessions(): UseActiveSessions {
                 displayError(error.message);
             } else {
                 displayError('An unexpected error occurred');
-                console.error(JSON.stringify(error));
             }
         } finally {
             setLoading(false);

@@ -1,5 +1,4 @@
-import crypto from 'crypto';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { RowDataPacket } from 'mysql2';
 import { pool } from '../../helpers/db';
 import { DefaultResponse, GetSessions, User } from '../../models';
