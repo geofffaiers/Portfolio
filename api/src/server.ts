@@ -11,7 +11,7 @@ import { router } from './routes';
 import { zxcvbnOptions } from '@zxcvbn-ts/core';
 import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common';
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en';
-import { setupSwagger } from './helpers/spec';
+import { setupSwagger } from './helpers/api-specification';
 import { logError } from './helpers';
 import { limiter } from './helpers/rate-limiter';
 import helmet from 'helmet';
