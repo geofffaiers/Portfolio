@@ -16,7 +16,7 @@ export const contact = async (req: Request): Promise<DefaultResponse> => {
             'INSERT INTO contact_form (name, email, message) VALUES (?, ?, ?)',
             [name, email, message]
         );
-        await sendContactEmail(name, email, message);
+        await sendContactEmail(name, message);
         return {
             code: 200,
             success: true

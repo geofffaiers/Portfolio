@@ -3,7 +3,6 @@ import path from 'path';
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import { User } from '../models';
-import { handleError } from './errors';
 
 interface EmailParams {
   to: string
@@ -46,7 +45,7 @@ const sendEmail = async ({ to, subject, text, html }: EmailParams): Promise<void
     await transporter.sendMail(mailOptions);
 };
 
-const loadEmailTemplate = (): EmailTemplate => {
+const loadEmailTemplate = (): EmailTemplate | string => {
     if (emailTemplate.main === '') {
         try {
             const basePath = path.resolve(__dirname, '../../emails');
@@ -56,14 +55,17 @@ const loadEmailTemplate = (): EmailTemplate => {
             emailTemplate.footer = fs.readFileSync(path.join(basePath, 'footer.html'), 'utf8');
             emailTemplate.button = fs.readFileSync(path.join(basePath, 'button.html'), 'utf8');
         } catch (err: unknown) {
-            handleError(err);
+            return err instanceof Error ? err.message : 'Error loading email template';
         }
     }
     return structuredClone(emailTemplate);
 };
 
 export const sendValidateEmail = async (user: User): Promise<void> => {
-    const template: EmailTemplate = loadEmailTemplate();
+    const template: EmailTemplate | string = loadEmailTemplate();
+    if (typeof template === 'string') {
+        throw new Error(template);
+    }
     const validateButton: string = structuredClone(template.button)
         .replaceAll('{{TEXT}}', 'Validate Email')
         .replaceAll('{{URL}}', `${process.env.CLIENT_URL ?? ''}/validate/${user.validateToken ?? ''}`)
@@ -96,7 +98,10 @@ export const sendValidateEmail = async (user: User): Promise<void> => {
 };
 
 export const sendResetPasswordEmail = async (user: User): Promise<void> => {
-    const template: EmailTemplate = loadEmailTemplate();
+    const template: EmailTemplate | string = loadEmailTemplate();
+    if (typeof template === 'string') {
+        throw new Error(template);
+    }
     const resetButton: string = structuredClone(template.button)
         .replaceAll('{{TEXT}}', 'Reset Password')
         .replaceAll('{{URL}}', `${process.env.CLIENT_URL ?? ''}/reset-password/${user.resetToken ?? ''}`)
@@ -129,8 +134,11 @@ export const sendResetPasswordEmail = async (user: User): Promise<void> => {
     });
 };
 
-export const sendContactEmail = async (name: string, email: string, message: string): Promise<void> => {
-    const template: EmailTemplate = loadEmailTemplate();
+export const sendContactEmail = async (name: string, message: string): Promise<void> => {
+    const template: EmailTemplate | string = loadEmailTemplate();
+    if (typeof template === 'string') {
+        throw new Error(template);
+    }
     template.body = template.body
         .replace(
             '{{CONTENT}}',
