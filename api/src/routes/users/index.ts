@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import UsersController from '../../controllers/users';
-import { authenticateToken } from '../../middlewares';
-import { limiter } from '../../helpers/rate-limiter';
+import { authenticateToken, limiter } from '../../middlewares';
 
 const router: Router = Router();
 const controller: UsersController = new UsersController();

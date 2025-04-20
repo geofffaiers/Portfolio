@@ -42,13 +42,12 @@ export const getConfig = async (_req: Request): Promise<DefaultResponse<ConfigRe
                 isEnabled: true,
             },
         ];
-        const configResponse: ConfigResponse = {
-            projects,
-        };
         return {
             success: true,
             code: 200,
-            data: configResponse,
+            data: {
+                projects,
+            }
         };
     } catch (error: unknown) {
         return handleError(error);

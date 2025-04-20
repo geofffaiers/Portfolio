@@ -25,12 +25,12 @@ export class Message {
   @Type(() => Date)
   @Transform(({ value, obj }) => value ?? obj.created_at, { toClassOnly: true })
   @Expose({ name: 'createdAt' })
-      createdAt?: Date = new Date();
+      createdAt?: Date;
 
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   @Transform(({ value, obj }) => value ?? obj.read_at, { toClassOnly: true })
   @Expose({ name: 'readAt' })
-      readAt?: Date = new Date();
+      readAt?: Date;
 }

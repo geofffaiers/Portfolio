@@ -1,7 +1,7 @@
 import { WebSocket } from 'ws';
 import { NextFunction, Request, Response } from 'express';
 import { JWTPayload, jwtVerify } from 'jose';
-import { logError, pool } from '../helpers';
+import { logError, pool } from '@src/helpers';
 import { RowDataPacket } from 'mysql2';
 import crypto from 'crypto';
 
