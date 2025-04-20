@@ -13,7 +13,7 @@ import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common';
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en';
 import { setupSwagger } from './helpers/api-specification';
 import { logError } from './helpers';
-import { limiter } from './helpers/rate-limiter';
+import { limiter } from './middlewares';
 import helmet from 'helmet';
 
 declare module 'express' {

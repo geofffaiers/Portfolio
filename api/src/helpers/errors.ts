@@ -1,6 +1,6 @@
 import { NextFunction } from 'express';
 import { DefaultResponse } from '../models';
-import { pool } from './db';
+import { pool } from '@src/helpers/db';
 
 export const handleRoutingError = (err: unknown, next: NextFunction): void => {
     if (err instanceof Error) {
