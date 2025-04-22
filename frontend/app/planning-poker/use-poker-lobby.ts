@@ -13,9 +13,9 @@ type UsePokerLobby = {
     handleCreateRoom: (name: string, description: string) => Promise<void>;
 };
 
-export function usePokerLobby (): UsePokerLobby {
+export function usePokerLobby(): UsePokerLobby {
     const { config } = useConfigContext();
-    const { authLoading, user } = useAuthContext();
+    const { authReady } = useAuthContext();
     const router = useRouter();
     const { displayError } = useToastWrapper();
     const [loadingRooms, setLoadingRooms] = useState<boolean>(false);
@@ -99,10 +99,10 @@ export function usePokerLobby (): UsePokerLobby {
     }, [config.apiUrl, displayError, handleJoinRoom]);
 
     useEffect(() => {
-        if (!authLoading && user != null && !loadingRooms && rooms == null) {
+        if (authReady && !loadingRooms && rooms == null) {
             getRooms();
         }
-    }, [authLoading, user, loadingRooms, rooms, getRooms]);
+    }, [authReady, loadingRooms, rooms, getRooms]);
 
     return {
         loadingRooms,

@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuthContext } from '@/components/providers/auth-provider';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse, Session } from '@/models';
@@ -12,6 +13,7 @@ type UseActiveSessions = {
 };
 
 export function useActiveSessions(): UseActiveSessions {
+    const { authReady } = useAuthContext();
     const { config } = useConfigContext();
     const { displayError } = useToastWrapper();
     const [sessions, setSessions] = useState<Session[]>([]);
@@ -44,8 +46,10 @@ export function useActiveSessions(): UseActiveSessions {
     }, [config.apiUrl, displayError]);
 
     useEffect(() => {
-        fetchSessions();
-    }, [fetchSessions]);
+        if (authReady) {
+            fetchSessions();
+        }
+    }, [authReady, fetchSessions]);
 
     const handleLogOutSession = useCallback(async (session: Session) => {
         try {

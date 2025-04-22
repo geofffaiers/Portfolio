@@ -24,9 +24,9 @@ type UsePlanningPoker = {
     round: Round | null;
 };
 
-export function usePlanningPoker ({ roomId, setRoomName }: Props): UsePlanningPoker {
+export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPoker {
     const router = useRouter();
-    const { user } = useAuthContext();
+    const { authReady, user } = useAuthContext();
     const { config } = useConfigContext();
     const { displayError } = useToastWrapper();
     const { subscribe, unsubscribe } = useSocketContext();
@@ -128,8 +128,10 @@ export function usePlanningPoker ({ roomId, setRoomName }: Props): UsePlanningPo
     }, [config.apiUrl, roomId, joinRoom, displayError, populateState, router]);
 
     useEffect(() => {
-        fetchRoom();
-    }, [fetchRoom]);
+        if (authReady) {
+            fetchRoom();
+        }
+    }, [authReady, fetchRoom]);
 
     const handleUpdateRoom = useCallback(async (socketMessage: BaseMessage) => {
         try {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { DefaultResponse, User } from '@/models';
 import { useConfigContext } from './config-provider';
 
@@ -8,6 +8,7 @@ type AuthContextProps = {
   authLoading: boolean;
   user: User | null | undefined;
   setUser: (user: User | null | undefined) => void;
+  authReady: boolean;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -16,18 +17,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { config } = useConfigContext();
     const [user, setUser] = useState<User | null | undefined>(undefined);
     const [authLoading, setAuthLoading] = useState<boolean>(true);
-    const abortControllerRef = useRef<AbortController | null>(null);
 
     const refreshToken = useCallback(async (): Promise<string> => {
-        abortControllerRef.current = new AbortController();
-        const { signal } = abortControllerRef.current;
         const response = await fetch(`${config.apiUrl}/users/refresh-token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
-            signal
+            credentials: 'include'
         });
         const data: DefaultResponse = await response.json();
         if (data.success) {
@@ -56,11 +53,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (user === undefined) {
             checkStorage();
+        } else {
+            setAuthLoading(false);
         }
     }, [user, setUser, refreshToken]);
 
     return (
-        <AuthContext.Provider value={{ authLoading, user, setUser }}>
+        <AuthContext.Provider
+            value={{
+                authLoading,
+                user,
+                setUser,
+                authReady: !authLoading && user != null
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
