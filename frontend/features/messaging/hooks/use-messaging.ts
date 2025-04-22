@@ -10,7 +10,7 @@ import { Messaging } from '../types/messaging.type';
 
 export function useMessaging(): Messaging {
     const { config } = useConfigContext();
-    const { user } = useAuthContext();
+    const { authReady } = useAuthContext();
     const { displayError } = useToastWrapper();
     const [chatHeaders, setChatHeaders] = useState<ChatHeader[]>([]);
     const [openChats, setOpenChats] = useState<User[]>([]);
@@ -52,7 +52,7 @@ export function useMessaging(): Messaging {
     }, [config.apiUrl, displayError]);
 
     useEffect(() => {
-        if (initialLoadRef.current && user != null && config.apiUrl != null) {
+        if (initialLoadRef.current && authReady && config.apiUrl != null) {
             initialLoadRef.current = false;
             getConversations();
         }
@@ -62,7 +62,7 @@ export function useMessaging(): Messaging {
                 abortControllerRef.current.abort('Component unmounted');
             }
         };
-    }, [user, config.apiUrl, displayError, getConversations]);
+    }, [authReady, config.apiUrl, displayError, getConversations]);
 
     const handleOpenChat = useCallback((user: User): void => {
         setOpenChats((chats) => {
