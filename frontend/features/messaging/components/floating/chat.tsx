@@ -1,8 +1,8 @@
 'use client';
 
 import React, { JSX } from 'react';
-import { ChatHeader } from '../types/chat-header';
-import { useChat } from '../hooks/use-chat';
+import { ChatHeader } from '../../types/chat-header';
+import { useChat } from '../../hooks/use-chat';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ChevronUp, Loader2, Send, X } from 'lucide-react';
@@ -10,7 +10,7 @@ import { useAuthContext } from '@/components/providers/auth-provider';
 import { useCallback, useEffect } from 'react';
 import { useUserDetails } from '@/hooks/use-user-details';
 import { User } from '@/models';
-import { Message } from '../types/message';
+import { Message } from '../../types/message';
 import { Typography } from '@/components/ui/typography';
 
 type ChatProps = {
