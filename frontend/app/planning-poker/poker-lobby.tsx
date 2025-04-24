@@ -10,16 +10,16 @@ import { NewRoom } from './new-room';
 import { JoinRoom } from './join-room';
 
 export const PokerLobby: React.FC = () => {
-    const { authLoading, user } = useAuthContext();
+    const { authLoading, authReady } = useAuthContext();
     return (
         <>
             {authLoading && <Loader2 className='animate-spin' />}
-            {!authLoading && !user
+            {authReady
                 ? (
-                    <AccessRestricted message='To join the Planning Poker session, please sign in or register. A live connection is required to receive real-time updates.'/>
+                    <AccessGranted />
                 )
                 : (
-                    <AccessGranted />
+                    <AccessRestricted message='To join the Planning Poker session, please sign in or register. A live connection is required to receive real-time updates.'/>
                 )
             }
         </>

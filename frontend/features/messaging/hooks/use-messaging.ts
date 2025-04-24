@@ -6,36 +6,36 @@ import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse, User } from '@/models';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChatHeader } from '../types/chat-header';
-import { Messaging } from '../types/messaging.type';
+import { Messaging } from '../types/messaging.types';
 
 export function useMessaging(): Messaging {
     const { config } = useConfigContext();
     const { authReady } = useAuthContext();
     const { displayError } = useToastWrapper();
     const [chatHeaders, setChatHeaders] = useState<ChatHeader[]>([]);
+    const [floatingOpen, setFloatingOpen] = useState<boolean>(true);
     const [openChats, setOpenChats] = useState<User[]>([]);
+    const [pageChat, setPageChat] = useState<User | null>(null);
+    const [initialLoading, setInitialLoading] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(true);
     const initialLoadRef = useRef<boolean>(true);
-    const abortControllerRef = useRef<AbortController | null>(null);
 
     const getConversations = useCallback(async (): Promise<void> => {
         try {
-            abortControllerRef.current = new AbortController();
-            const { signal } = abortControllerRef.current;
             setLoading(true);
             const response = await fetch(`${config.apiUrl}/messaging/get-chat-headers`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
-                },
-                signal
+                }
             });
             const json: DefaultResponse<ChatHeader[]> = await response.json();
             if (json.success) {
                 setChatHeaders(json.data);
                 if (json.data.length === 1) {
-                    setOpenChats([json.data[0].user]);
+                    setOpenChats([]);
+                    setPageChat(json.data[0].user);
                 }
             } else {
                 displayError(json.message ?? 'Failed to get conversations');
@@ -48,20 +48,17 @@ export function useMessaging(): Messaging {
             }
         } finally {
             setLoading(false);
+            if (initialLoading) {
+                setInitialLoading(false);
+            }
         }
-    }, [config.apiUrl, displayError]);
+    }, [config.apiUrl, displayError, initialLoading]);
 
     useEffect(() => {
         if (initialLoadRef.current && authReady && config.apiUrl != null) {
             initialLoadRef.current = false;
             getConversations();
         }
-
-        return () => {
-            if (abortControllerRef.current != null) {
-                abortControllerRef.current.abort('Component unmounted');
-            }
-        };
     }, [authReady, config.apiUrl, displayError, getConversations]);
 
     const handleOpenChat = useCallback((user: User): void => {
@@ -74,24 +71,41 @@ export function useMessaging(): Messaging {
     }, []);
 
     const handleCloseChat = useCallback((user: User): void => {
-        setOpenChats((chats) => chats.filter((u) => u.id !== user.id));
-    }, []);
+        const closedChats = openChats.filter((u) => u.id !== user.id);
+        setOpenChats(closedChats);
+        if (closedChats.length === 0) {
+            setFloatingOpen(false);
+        }
+    }, [openChats]);
 
-    const handleOpenMessaging = useCallback((): void => {
-        if (chatHeaders.length > 0) {
+    const handleOpenFloatingMessaging = useCallback((): void => {
+        setFloatingOpen(true);
+        if (pageChat != null) {
+            handleOpenChat(pageChat);
+        } else if (chatHeaders.length === 1) {
             handleOpenChat(chatHeaders[0].user);
-        } else {
+        } else if (chatHeaders.length === 0) {
             getConversations();
         }
-    }, [chatHeaders, handleOpenChat, getConversations]);
+    }, [pageChat, chatHeaders, handleOpenChat, getConversations]);
+
+    const handleCloseFloatingMessaging = useCallback((): void => {
+        setFloatingOpen(false);
+        openChats.forEach((u) => handleCloseChat(u));
+    }, [openChats, handleCloseChat]);
 
     return {
+        floatingOpen,
+        initialLoading,
         loading,
         chatHeaders,
         openChats,
+        pageChat,
         displayConversations: chatHeaders.length > 1,
+        setPageChat,
         handleOpenChat,
         handleCloseChat,
-        handleOpenMessaging
+        handleOpenFloatingMessaging,
+        handleCloseFloatingMessaging
     };
 }

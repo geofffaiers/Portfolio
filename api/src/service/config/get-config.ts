@@ -33,11 +33,16 @@ export const getConfig = async (_req: Request): Promise<DefaultResponse<ConfigRe
             },
             {
                 id: 5,
+                name: 'Messaging',
+                isEnabled: true,
+            },
+            {
+                id: 6,
                 name: 'Storybook',
                 isEnabled: false,
             },
             {
-                id: 6,
+                id: 7,
                 name: 'API Docs',
                 isEnabled: true,
             },

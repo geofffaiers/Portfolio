@@ -10,23 +10,23 @@ const mockLimiter = (limit = 1000) => ({
 });
 
 describe('limiter', () => {
-  it('should call rateLimit with default limit when no argument is provided', () => {
-    (rateLimit as jest.Mock).mockReturnValue('mockedLimiter');
+    it('should call rateLimit with default limit when no argument is provided', () => {
+        (rateLimit as jest.Mock).mockReturnValue('mockedLimiter');
 
-    const result = limiter();
+        const result = limiter();
 
-    expect(rateLimit).toHaveBeenCalledWith(mockLimiter());
+        expect(rateLimit).toHaveBeenCalledWith(mockLimiter());
 
-    expect(result).toBe('mockedLimiter');
-  });
+        expect(result).toBe('mockedLimiter');
+    });
 
-  it('should call rateLimit with provided limit', () => {
-    (rateLimit as jest.Mock).mockReturnValue('mockedLimiter');
+    it('should call rateLimit with provided limit', () => {
+        (rateLimit as jest.Mock).mockReturnValue('mockedLimiter');
 
-    const result = limiter(42);
+        const result = limiter(42);
 
-    expect(rateLimit).toHaveBeenCalledWith(mockLimiter(42));
+        expect(rateLimit).toHaveBeenCalledWith(mockLimiter(42));
 
-    expect(result).toBe('mockedLimiter');
-  });
+        expect(result).toBe('mockedLimiter');
+    });
 });
