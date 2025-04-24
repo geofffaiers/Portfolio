@@ -13,10 +13,7 @@ import { useConfigContext } from '@/components/providers/config-provider';
 import { Project } from '@/models';
 import { useRouter } from 'next/navigation';
 import { PageLoading } from '@/components/ui/page-loading';
-import { Messaging } from '@/features/messaging';
-import { AccessRestricted } from '@/components/ui/access-restricted';
-import { Loader2 } from 'lucide-react';
-import { useAuthContext } from '@/components/providers/auth-provider';
+import { MessagingAuth } from './messaging-auth';
 
 export default function Page(): JSX.Element {
     const { configLoading, config: { projects } } = useConfigContext();
@@ -60,20 +57,3 @@ export default function Page(): JSX.Element {
         </SidebarInset>
     );
 }
-
-export const MessagingAuth: React.FC = () => {
-    const { authLoading, authReady } = useAuthContext();
-    return (
-        <>
-            {authLoading && <Loader2 className='animate-spin' />}
-            {authReady
-                ? (
-                    <Messaging type='page' />
-                )
-                : (
-                    <AccessRestricted message='To use Messaging, please sign in or register.'/>
-                )
-            }
-        </>
-    );
-};
