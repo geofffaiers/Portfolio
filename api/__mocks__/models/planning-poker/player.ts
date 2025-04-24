@@ -1,4 +1,4 @@
-import { mockUser1 } from "../user";
+import { mockUser1 } from '../user';
 
 export const mockOwner = (roomId: string) => {
     const user = mockUser1();

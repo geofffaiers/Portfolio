@@ -1,4 +1,4 @@
-import { pool, setPoolImpl } from '@mocks/helpers/db';
+import { setPoolImpl } from '@mocks/helpers/db';
 import { authenticateToken, authenticateTokenForSocket } from '@src/middlewares/authenticate-token';
 import { JWTPayload, jwtVerify } from 'jose';
 import { logError } from '@src/helpers';
@@ -10,7 +10,7 @@ jest.mock('jose');
 jest.mock('crypto');
 jest.mock('ws');
 jest.mock('@src/helpers/errors', () => ({
-  logError: jest.fn()
+    logError: jest.fn()
 }));
 
 const mockJwtVerify = jwtVerify as jest.Mock;
@@ -19,224 +19,224 @@ setPoolImpl({
     query
 });
 describe('authenticateToken', () => {
-  beforeEach(() => {
-    process.env.JWT_SECRET = 'testsecret';
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should return 401 when token is missing', async () => {
-    const req = createMockRequest();
-    req.cookies.token = undefined;
-    req.cookies.refreshToken = 'refresh';
-    const res = createMockResponse();
-    const next = createMockNext();
-
-    await authenticateToken(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      code: 401,
-      success: false,
-      message: 'Unauthorized'
+    beforeEach(() => {
+        process.env.JWT_SECRET = 'testsecret';
     });
-    expect(next).not.toHaveBeenCalled();
-  });
 
-  it('should return 401 when token is not a string', async () => {
-    const req = createMockRequest();
-    req.cookies.token = 123 as unknown as string;
-    req.cookies.refreshToken = 'refresh';
-    const res = createMockResponse();
-    const next = createMockNext();
-
-    await authenticateToken(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      code: 401,
-      success: false,
-      message: 'Unauthorized'
+    afterEach(() => {
+        jest.clearAllMocks();
     });
-    expect(next).not.toHaveBeenCalled();
-  });
 
-  it('should return 401 when refreshToken is missing', async () => {
-    mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
-    const req = createMockRequest();
-    req.cookies.token = 'token';
-    req.cookies.refreshToken = undefined;
-    const res = createMockResponse();
-    const next = createMockNext();
+    it('should return 401 when token is missing', async () => {
+        const req = createMockRequest();
+        req.cookies.token = undefined;
+        req.cookies.refreshToken = 'refresh';
+        const res = createMockResponse();
+        const next = createMockNext();
 
-    await authenticateToken(req, res, next);
+        await authenticateToken(req, res, next);
 
-    expect(res.clearCookie).toHaveBeenCalledWith('token');
-    expect(res.clearCookie).toHaveBeenCalledWith('refreshToken');
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      code: 401,
-      success: false,
-      message: 'Invalid session'
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            code: 401,
+            success: false,
+            message: 'Unauthorized'
+        });
+        expect(next).not.toHaveBeenCalled();
     });
-    expect(next).not.toHaveBeenCalled();
-  });
 
-  it('should return 401 when session is not found', async () => {
-    mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
-    (crypto.createHash as jest.Mock).mockReturnValue({
-      update: jest.fn().mockReturnThis(),
-      digest: jest.fn().mockReturnValue('hashed')
+    it('should return 401 when token is not a string', async () => {
+        const req = createMockRequest();
+        req.cookies.token = 123 as unknown as string;
+        req.cookies.refreshToken = 'refresh';
+        const res = createMockResponse();
+        const next = createMockNext();
+
+        await authenticateToken(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            code: 401,
+            success: false,
+            message: 'Unauthorized'
+        });
+        expect(next).not.toHaveBeenCalled();
     });
-    query.mockResolvedValue([[]]);
 
-    const req = createMockRequest();
-    req.cookies.token = 'token';
-    req.cookies.refreshToken = 'refresh';
-    const res = createMockResponse();
-    const next = createMockNext();
+    it('should return 401 when refreshToken is missing', async () => {
+        mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
+        const req = createMockRequest();
+        req.cookies.token = 'token';
+        req.cookies.refreshToken = undefined;
+        const res = createMockResponse();
+        const next = createMockNext();
 
-    await authenticateToken(req, res, next);
+        await authenticateToken(req, res, next);
 
-    expect(query).toHaveBeenCalled();
-    expect(res.clearCookie).toHaveBeenCalledWith('token');
-    expect(res.clearCookie).toHaveBeenCalledWith('refreshToken');
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      code: 401,
-      success: false,
-      message: 'Invalid session'
+        expect(res.clearCookie).toHaveBeenCalledWith('token');
+        expect(res.clearCookie).toHaveBeenCalledWith('refreshToken');
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            code: 401,
+            success: false,
+            message: 'Invalid session'
+        });
+        expect(next).not.toHaveBeenCalled();
     });
-    expect(next).not.toHaveBeenCalled();
-  });
 
-  it('should set req.userId and call next when session is valid', async () => {
-    mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
-    (crypto.createHash as jest.Mock).mockReturnValue({
-      update: jest.fn().mockReturnThis(),
-      digest: jest.fn().mockReturnValue('hashed')
+    it('should return 401 when session is not found', async () => {
+        mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
+        (crypto.createHash as jest.Mock).mockReturnValue({
+            update: jest.fn().mockReturnThis(),
+            digest: jest.fn().mockReturnValue('hashed')
+        });
+        query.mockResolvedValue([[]]);
+
+        const req = createMockRequest();
+        req.cookies.token = 'token';
+        req.cookies.refreshToken = 'refresh';
+        const res = createMockResponse();
+        const next = createMockNext();
+
+        await authenticateToken(req, res, next);
+
+        expect(query).toHaveBeenCalled();
+        expect(res.clearCookie).toHaveBeenCalledWith('token');
+        expect(res.clearCookie).toHaveBeenCalledWith('refreshToken');
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            code: 401,
+            success: false,
+            message: 'Invalid session'
+        });
+        expect(next).not.toHaveBeenCalled();
     });
-    query.mockResolvedValue([[{ id: 1 }]]);
 
-    const req = createMockRequest();
-    req.cookies.token = 'token';
-    req.cookies.refreshToken = 'refresh';
-    const res = createMockResponse();
-    const next = createMockNext();
+    it('should set req.userId and call next when session is valid', async () => {
+        mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
+        (crypto.createHash as jest.Mock).mockReturnValue({
+            update: jest.fn().mockReturnThis(),
+            digest: jest.fn().mockReturnValue('hashed')
+        });
+        query.mockResolvedValue([[{ id: 1 }]]);
 
-    await authenticateToken(req, res, next);
+        const req = createMockRequest();
+        req.cookies.token = 'token';
+        req.cookies.refreshToken = 'refresh';
+        const res = createMockResponse();
+        const next = createMockNext();
 
-    expect(req.userId).toBe(1);
-    expect(next).toHaveBeenCalled();
-  });
+        await authenticateToken(req, res, next);
 
-  it('should return 403 when jwtVerify throws', async () => {
-    mockJwtVerify.mockRejectedValue(new Error('fail'));
-    const req = createMockRequest();
-    req.cookies.token = 'token';
-    req.cookies.refreshToken = 'refresh';
-    const res = createMockResponse();
-    const next = createMockNext();
-
-    await authenticateToken(req, res, next);
-
-    expect(logError).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({
-      code: 403,
-      success: false,
-      message: 'Forbidden'
+        expect(req.userId).toBe(1);
+        expect(next).toHaveBeenCalled();
     });
-    expect(next).not.toHaveBeenCalled();
-  });
+
+    it('should return 403 when jwtVerify throws', async () => {
+        mockJwtVerify.mockRejectedValue(new Error('fail'));
+        const req = createMockRequest();
+        req.cookies.token = 'token';
+        req.cookies.refreshToken = 'refresh';
+        const res = createMockResponse();
+        const next = createMockNext();
+
+        await authenticateToken(req, res, next);
+
+        expect(logError).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith({
+            code: 403,
+            success: false,
+            message: 'Forbidden'
+        });
+        expect(next).not.toHaveBeenCalled();
+    });
 });
 
 describe('authenticateTokenForSocket', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    process.env.JWT_SECRET = 'testsecret';
-  });
-
-  const createMockWs = () => {
-    const ws = {} as WebSocket;
-    ws.close = jest.fn();
-    return ws;
-  };
-
-  it('should close ws with 1008 when token is missing', async () => {
-    const ws = createMockWs();
-    const req = createMockRequest();
-    req.cookies.token = undefined;
-
-    const result = await authenticateTokenForSocket(ws, req);
-
-    expect(ws.close).toHaveBeenCalledWith(1008, 'Unauthorized');
-    expect(result).toBe(-1);
-  });
-
-  it('should close ws with 1008 when refreshToken is missing', async () => {
-    mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
-    const ws = createMockWs();
-    const req = createMockRequest();
-    req.cookies.token = 'token';
-    req.cookies.refreshToken = undefined;
-
-    const result = await authenticateTokenForSocket(ws, req);
-
-    expect(ws.close).toHaveBeenCalledWith(1008, 'Invalid session');
-    expect(result).toBe(-1);
-  });
-
-  it('should close ws with 1008 when session is not found', async () => {
-    mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
-    (crypto.createHash as jest.Mock).mockReturnValue({
-      update: jest.fn().mockReturnThis(),
-      digest: jest.fn().mockReturnValue('hashed')
+    beforeEach(() => {
+        jest.clearAllMocks();
+        process.env.JWT_SECRET = 'testsecret';
     });
-    query.mockResolvedValue([[]]);
 
-    const ws = createMockWs();
-    const req = createMockRequest();
-    req.cookies.token = 'token';
-    req.cookies.refreshToken = 'refresh';
+    const createMockWs = () => {
+        const ws = {} as WebSocket;
+        ws.close = jest.fn();
+        return ws;
+    };
 
-    const result = await authenticateTokenForSocket(ws, req);
+    it('should close ws with 1008 when token is missing', async () => {
+        const ws = createMockWs();
+        const req = createMockRequest();
+        req.cookies.token = undefined;
 
-    expect(ws.close).toHaveBeenCalledWith(1008, 'Invalid session');
-    expect(result).toBe(-1);
-  });
+        const result = await authenticateTokenForSocket(ws, req);
 
-  it('should return userId when session is valid', async () => {
-    mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
-    (crypto.createHash as jest.Mock).mockReturnValue({
-      update: jest.fn().mockReturnThis(),
-      digest: jest.fn().mockReturnValue('hashed')
+        expect(ws.close).toHaveBeenCalledWith(1008, 'Unauthorized');
+        expect(result).toBe(-1);
     });
-    query.mockResolvedValue([[{ id: 1 }]]);
 
-    const ws = createMockWs();
-    const req = createMockRequest();
-    req.cookies.token = 'token';
-    req.cookies.refreshToken = 'refresh';
+    it('should close ws with 1008 when refreshToken is missing', async () => {
+        mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
+        const ws = createMockWs();
+        const req = createMockRequest();
+        req.cookies.token = 'token';
+        req.cookies.refreshToken = undefined;
 
-    const result = await authenticateTokenForSocket(ws, req);
+        const result = await authenticateTokenForSocket(ws, req);
 
-    expect(result).toBe(1);
-  });
+        expect(ws.close).toHaveBeenCalledWith(1008, 'Invalid session');
+        expect(result).toBe(-1);
+    });
 
-  it('should close ws with 1008 and return -1 when jwtVerify throws', async () => {
-    mockJwtVerify.mockRejectedValue(new Error('fail'));
-    const ws = createMockWs();
-    const req = createMockRequest();
-    req.cookies.token = 'token';
-    req.cookies.refreshToken = 'refresh';
+    it('should close ws with 1008 when session is not found', async () => {
+        mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
+        (crypto.createHash as jest.Mock).mockReturnValue({
+            update: jest.fn().mockReturnThis(),
+            digest: jest.fn().mockReturnValue('hashed')
+        });
+        query.mockResolvedValue([[]]);
 
-    const result = await authenticateTokenForSocket(ws, req);
+        const ws = createMockWs();
+        const req = createMockRequest();
+        req.cookies.token = 'token';
+        req.cookies.refreshToken = 'refresh';
 
-    expect(logError).toHaveBeenCalled();
-    expect(ws.close).toHaveBeenCalledWith(1008, 'Forbidden');
-    expect(result).toBe(-1);
-  });
+        const result = await authenticateTokenForSocket(ws, req);
+
+        expect(ws.close).toHaveBeenCalledWith(1008, 'Invalid session');
+        expect(result).toBe(-1);
+    });
+
+    it('should return userId when session is valid', async () => {
+        mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
+        (crypto.createHash as jest.Mock).mockReturnValue({
+            update: jest.fn().mockReturnThis(),
+            digest: jest.fn().mockReturnValue('hashed')
+        });
+        query.mockResolvedValue([[{ id: 1 }]]);
+
+        const ws = createMockWs();
+        const req = createMockRequest();
+        req.cookies.token = 'token';
+        req.cookies.refreshToken = 'refresh';
+
+        const result = await authenticateTokenForSocket(ws, req);
+
+        expect(result).toBe(1);
+    });
+
+    it('should close ws with 1008 and return -1 when jwtVerify throws', async () => {
+        mockJwtVerify.mockRejectedValue(new Error('fail'));
+        const ws = createMockWs();
+        const req = createMockRequest();
+        req.cookies.token = 'token';
+        req.cookies.refreshToken = 'refresh';
+
+        const result = await authenticateTokenForSocket(ws, req);
+
+        expect(logError).toHaveBeenCalled();
+        expect(ws.close).toHaveBeenCalledWith(1008, 'Forbidden');
+        expect(result).toBe(-1);
+    });
 });

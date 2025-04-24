@@ -1,7 +1,7 @@
-import IPinfoWrapper from "node-ipinfo";
+import IPinfoWrapper from 'node-ipinfo';
 
 export interface MockIPinfoWrapperStatic extends IPinfoWrapper {
-    lookupIpImpl: (ip: string) => Promise<any>;
+    lookupIpImpl: (ip: string) => Promise<unknown>;
 }
 
 class MockIPinfoWrapper {

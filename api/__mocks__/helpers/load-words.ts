@@ -1,4 +1,4 @@
-import { Words } from "@src/helpers/load-words";
+import { Words } from '@src/helpers/load-words';
 
 export const mockWords = ['apple', 'banana', 'date', 'egg'];
 
@@ -14,16 +14,16 @@ export interface WordsStatics {
 }
 
 export const resetWordsStatics = (): void => {
-  const statics = Words as unknown as WordsStatics;
-  if (statics.saveTimeout) {
-    clearTimeout(statics.saveTimeout);
-    statics.saveTimeout = null;
-  }
-  statics.wordsLoaded = false;
-  statics._words = [];
-  statics._wordIndex = {};
-  statics._lengthIndex = {};
-  statics._validationCache = {};
-  statics.loadPromise = null;
-  statics.wordsListChanged = false;
+    const statics = Words as unknown as WordsStatics;
+    if (statics.saveTimeout) {
+        clearTimeout(statics.saveTimeout);
+        statics.saveTimeout = null;
+    }
+    statics.wordsLoaded = false;
+    statics._words = [];
+    statics._wordIndex = {};
+    statics._lengthIndex = {};
+    statics._validationCache = {};
+    statics.loadPromise = null;
+    statics.wordsListChanged = false;
 };
