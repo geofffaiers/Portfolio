@@ -1,9 +1,11 @@
 'use client';
 
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse, WordData, WordWithData } from '@/models';
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+
 import { KeyboardLayout } from './types';
 
 interface UseHangman {

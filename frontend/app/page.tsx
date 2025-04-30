@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { JSX } from 'react';
+
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
     SidebarInset,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { JSX } from 'react';
 import { SocialIcons } from '@/components/ui/social-icons';
 import { Client } from '@/components/ui/client';
 import { Typography } from '@/components/ui/typography';

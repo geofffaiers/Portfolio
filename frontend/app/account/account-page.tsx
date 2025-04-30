@@ -1,6 +1,8 @@
-import React, { JSX } from 'react';
-import { Metadata } from 'next';
+'use client';
+
+import React, { JSX, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
@@ -8,18 +10,25 @@ import {
     SidebarInset,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { useAuthContext } from '@/components/providers/auth-provider';
 import { Typography } from '@/components/ui/typography';
-import { ContactForm } from '@/features/contact-form';
-import { Footer } from '@/components/ui/footer';
-import { SocialIcons } from '@/components/ui/social-icons';
-import { OpenMessaging } from '@/features/messaging';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export const metadata: Metadata = {
-    title: 'Contact Geoff',
-    description: 'Contact details for Geoff Faiers'
-};
+import { Account } from './account';
+import { ActiveSessions } from './active-sessions';
+import { ChangePassword } from './change-password';
+import { DeleteAccount } from './delete-account';
 
-export default function Page(): JSX.Element {
+export default function AccountPage(): JSX.Element {
+    const { authLoading, user } = useAuthContext();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!authLoading && user == null) {
+            router.push('/login');
+        }
+    }, [authLoading, user, router]);
+
     return (
         <SidebarInset>
             <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
@@ -37,22 +46,28 @@ export default function Page(): JSX.Element {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className='hidden md:block' />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Contact</BreadcrumbPage>
+                                <BreadcrumbPage>Account</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
             </header>
-            <div className='flex flex-1 flex-col gap-4 p-4'>
-                <div className='flex justify-between items-center'>
-                    <Typography variant='h1'>Contact Me</Typography>
-                    <SocialIcons/>
+            <div className='flex flex-col gap-4 p-4 max-w-[100vw]'>
+                <Typography variant='h1'>Your account</Typography>
+                <div className='flex flex-col md:flex-row gap-4'>
+                    <Card className='flex-1 w-full'>
+                        <CardHeader>
+                            <CardTitle>Account Details</CardTitle>
+                        </CardHeader>
+                        <CardContent className='flex flex-col gap-4'>
+                            <Account/>
+                            <ChangePassword/>
+                            <DeleteAccount/>
+                        </CardContent>
+                    </Card>
+                    <ActiveSessions/>
                 </div>
-                <Typography variant='p'>If you have any questions, suggestions, or just want to say hello, feel free to reach out using messaging, or the form below. I look forward to hearing from you!</Typography>
-                <OpenMessaging />
-                <ContactForm />
             </div>
-            <Footer />
         </SidebarInset>
     );
 }

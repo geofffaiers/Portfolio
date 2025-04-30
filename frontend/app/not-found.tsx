@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
 import { Typography } from '@/components/ui/typography';
 
 export default function NotFound() {

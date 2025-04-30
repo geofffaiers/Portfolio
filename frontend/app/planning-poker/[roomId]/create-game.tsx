@@ -1,14 +1,16 @@
 import React from 'react';
-import { Player, Room } from '@/models';
-import { useCreateGame } from './use-create-game';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { Loader2 } from 'lucide-react';
+
+import { Player, Room } from '@/models';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+
+import { useCreateGame } from './use-create-game';
 
 type Props = {
     player: Player;

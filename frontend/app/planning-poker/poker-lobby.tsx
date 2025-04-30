@@ -2,10 +2,12 @@
 
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { AccessRestricted } from '@/components/ui/access-restricted';
-import { usePokerLobby } from './use-poker-lobby';
 import { Separator } from '@/components/ui/separator';
+
+import { usePokerLobby } from './use-poker-lobby';
 import { NewRoom } from './new-room';
 import { JoinRoom } from './join-room';
 

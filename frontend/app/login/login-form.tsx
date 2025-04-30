@@ -4,6 +4,8 @@ import React, { JSX } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import Link from 'next/link';
+import { LogIn } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -16,9 +18,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { LogIn } from 'lucide-react';
 import { useLogin } from '@/hooks/use-login';
-import Link from 'next/link';
+
 import { ForgotPassword } from './forgot-password';
 
 const FormSchema = z.object({

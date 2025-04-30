@@ -1,13 +1,15 @@
 'use client';
 
 import React from 'react';
-import { useHangman } from './use-hangman';
 import { Loader2 } from 'lucide-react';
+
+import { Typography } from '@/components/ui/typography';
+
+import { useHangman } from './use-hangman';
+import { DefinitionDialog } from './definition-dialog/definition-dialog';
 import { SelectWordLength } from './select-word-length';
 import { DisplayedWord } from './displayed-word';
 import { Keyboard } from './keyboard';
-import { Typography } from '@/components/ui/typography';
-import { DefinitionDialog } from './definition-dialog/definition-dialog';
 
 export const Hangman: React.FC = () => {
     const {

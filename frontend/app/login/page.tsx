@@ -1,75 +1,29 @@
-'use client';
+import React, { JSX } from 'react';
+import { Metadata } from 'next';
 
-import React, { Suspense } from 'react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { Separator } from '@/components/ui/separator';
-import {
-    SidebarInset,
-    SidebarTrigger,
-} from '@/components/ui/sidebar';
-import { LoginForm } from './login-form';
-import { useAuthContext } from '@/components/providers/auth-provider';
-import { Loader2 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { JSX, useEffect } from 'react';
-import Link from 'next/link';
-import { User } from '@/models';
+import { LoginPage } from './login-page';
 
-function Login({ user }: { user: User | null | undefined }): JSX.Element {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-
-    useEffect(() => {
-        if (user) {
-            const returnUrl = searchParams.get('returnUrl') || '/account';
-            router.push(returnUrl === '/' ? '/account' : returnUrl);
-        }
-    }, [user, searchParams, router]);
-    return (
-        <>
-            {(user || user === undefined) && (
-                <div className='flex items-center justify-center'>
-                    <Loader2 className='animate-spin' />
-                </div>
-            )}
-            {user === null && <LoginForm />}
-        </>
-    );
-}
+export const metadata: Metadata = {
+    title: 'Login',
+    description: 'Login to your account',
+    openGraph: {
+        title: 'Login',
+        description: 'Login to your account',
+        url: '/login',
+        siteName: 'Geoff Faiers',
+        images: [
+            {
+                url: '/images/login.png',
+                width: 1200,
+                height: 630,
+                alt: 'Login',
+            },
+        ],
+    }
+};
 
 export default function Page(): JSX.Element {
-    const { user } = useAuthContext();
-
     return (
-        <SidebarInset>
-            <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
-                <div className='flex items-center gap-2 px-4'>
-                    <SidebarTrigger className='-ml-1' />
-                    <Separator orientation='vertical' className='mr-2 h-4' />
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            <BreadcrumbItem className='hidden md:block'>
-                                <BreadcrumbLink asChild>
-                                    <Link href='/'>
-                                        Home
-                                    </Link>
-                                </BreadcrumbLink>
-                            </BreadcrumbItem>
-                            <BreadcrumbSeparator className='hidden md:block' />
-                            <BreadcrumbItem>
-                                <BreadcrumbPage>Login</BreadcrumbPage>
-                            </BreadcrumbItem>
-                        </BreadcrumbList>
-                    </Breadcrumb>
-                </div>
-            </header>
-            <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
-                <div className='w-full max-w-sm'>
-                    <Suspense fallback={<Loader2 className='animate-spin' />}>
-                        <Login user={user}/>
-                    </Suspense>
-                </div>
-            </div>
-        </SidebarInset>
+        <LoginPage />
     );
 }

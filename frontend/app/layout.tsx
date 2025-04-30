@@ -1,7 +1,9 @@
 import 'reflect-metadata';
+import './globals.css';
+
 import React, { JSX } from 'react';
 import type { Metadata } from 'next';
-import './globals.css';
+
 import { zxcvbnOptions } from '@zxcvbn-ts/core';
 import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common';
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en';
@@ -18,7 +20,13 @@ import { AppSidebar } from '@/features/nav/app-sidebar';
 export const metadata: Metadata = {
     title: 'Geoff Faiers',
     description: 'The personal portfolio of Geoff Faiers',
-    metadataBase: new URL('https://gfaiers.com/'),
+    metadataBase: new URL('https://gfaiers.com'),
+    alternates: {
+        canonical: '/',
+        languages: {
+            'en-GB': '/en-GB',
+        },
+    },
     openGraph: {
         title: 'Geoff Faiers',
         description: 'The personal portfolio of Geoff Faiers',
