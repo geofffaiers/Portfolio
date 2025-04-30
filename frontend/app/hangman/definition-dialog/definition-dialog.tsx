@@ -36,7 +36,7 @@ export const DefinitionDialog: React.FC<Props> = ({ wordData }) => {
                 <DialogHeader>
                     <DialogTitle>{titleCaseWord}</DialogTitle>
                 </DialogHeader>
-                <DialogDescription className="sr-only">
+                <DialogDescription className='sr-only'>
                     {`Definitions, synonyms, and antonyms for the word "${titleCaseWord}".`}
                 </DialogDescription>
                 {meanings.length > 0 && (
