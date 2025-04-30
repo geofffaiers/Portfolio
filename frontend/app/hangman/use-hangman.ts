@@ -107,7 +107,13 @@ export function useHangman(): UseHangman {
 
         const handleKeydown = (e: KeyboardEvent) => {
             const letter = e.key;
-            if (/^[a-zA-Z]$/.test(letter)) {
+            if (
+                !e.ctrlKey &&
+                !e.altKey &&
+                !e.metaKey &&
+                !e.shiftKey &&
+                /^[a-zA-Z]$/.test(letter)
+            ) {
                 e.preventDefault();
                 guessLetter(letter.toLowerCase());
             }

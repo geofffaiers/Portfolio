@@ -1,6 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Typography } from '@/components/ui/typography';
 import { Definition, Meaning, WordData } from '@/models';
 import React, { JSX, useMemo, useState } from 'react';
@@ -36,6 +36,9 @@ export const DefinitionDialog: React.FC<Props> = ({ wordData }) => {
                 <DialogHeader>
                     <DialogTitle>{titleCaseWord}</DialogTitle>
                 </DialogHeader>
+                <DialogDescription className="sr-only">
+                    {`Definitions, synonyms, and antonyms for the word "${titleCaseWord}".`}
+                </DialogDescription>
                 {meanings.length > 0 && (
                     <Accordion type='single' collapsible className='w-full'>
                         {meanings.map((meaning, index) => (
