@@ -1,10 +1,11 @@
 'use client';
 
+import { useCallback, useEffect, useState } from 'react';
+
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse, Session } from '@/models';
-import { useCallback, useEffect, useState } from 'react';
 
 type UseActiveSessions = {
     loading: boolean;

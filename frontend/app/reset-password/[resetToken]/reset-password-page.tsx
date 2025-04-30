@@ -1,6 +1,8 @@
+'use client';
+
 import React, { JSX } from 'react';
-import { Metadata } from 'next';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
@@ -9,17 +11,12 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Typography } from '@/components/ui/typography';
-import { ContactForm } from '@/features/contact-form';
-import { Footer } from '@/components/ui/footer';
-import { SocialIcons } from '@/components/ui/social-icons';
-import { OpenMessaging } from '@/features/messaging';
 
-export const metadata: Metadata = {
-    title: 'Contact Geoff',
-    description: 'Contact details for Geoff Faiers'
-};
+import { ResetPassword } from './reset-password';
 
-export default function Page(): JSX.Element {
+export const ResetPasswordPage = (): JSX.Element => {
+    const { resetToken } = useParams();
+    const token = Array.isArray(resetToken) ? resetToken[0] : resetToken;
     return (
         <SidebarInset>
             <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
@@ -37,22 +34,20 @@ export default function Page(): JSX.Element {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className='hidden md:block' />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Contact</BreadcrumbPage>
+                                <BreadcrumbPage>Reset Password</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
-                <div className='flex justify-between items-center'>
-                    <Typography variant='h1'>Contact Me</Typography>
-                    <SocialIcons/>
-                </div>
-                <Typography variant='p'>If you have any questions, suggestions, or just want to say hello, feel free to reach out using messaging, or the form below. I look forward to hearing from you!</Typography>
-                <OpenMessaging />
-                <ContactForm />
+                <Typography variant='h1'>Reset Password</Typography>
+                {token == null ? (
+                    <p>Token is undefined</p>
+                ) : (
+                    <ResetPassword resetToken={token}/>
+                )}
             </div>
-            <Footer />
         </SidebarInset>
     );
-}
+};

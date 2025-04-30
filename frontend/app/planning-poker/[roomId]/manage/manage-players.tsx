@@ -1,14 +1,16 @@
 'use client';
 
+import React from 'react';
+import { Trash2 } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trash2 } from 'lucide-react';
-import React from 'react';
-import { useManagePlayers } from './use-manage-players';
-import { PlayerWrapper } from './player-wrapper';
 import { useUserDetails } from '@/hooks/use-user-details';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Role } from '@/models/planning-poker/role';
+
+import { useManagePlayers } from './use-manage-players';
+import { PlayerWrapper } from './player-wrapper';
 
 type Props = {
     tempPlayers: PlayerWrapper[];

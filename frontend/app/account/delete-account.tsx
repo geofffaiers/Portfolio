@@ -1,16 +1,17 @@
 'use client';
 
-import React, { JSX } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { useDeleteAccount } from './use-delete-account';
-import { useAuthContext } from '@/components/providers/auth-provider';
+import React, { JSX, useMemo } from 'react';
 import { z } from 'zod';
-import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { useAuthContext } from '@/components/providers/auth-provider';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+
+import { useDeleteAccount } from './use-delete-account';
 
 export function DeleteAccount(): JSX.Element | null {
     const { user } = useAuthContext();

@@ -1,17 +1,18 @@
 'use client';
 
-import React, { JSX } from 'react';
+import React, { JSX, useEffect, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useChangePassword } from './use-change-password';
-import { useEffect, useMemo } from 'react';
 import { PasswordStrength } from '@/components/ui/password-strength';
 import { useAuthContext } from '@/components/providers/auth-provider';
+
+import { useChangePassword } from './use-change-password';
 
 export function ChangePassword(): JSX.Element | null {
     const { user } = useAuthContext();

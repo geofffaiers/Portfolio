@@ -1,17 +1,18 @@
 'use client';
 import { useState, useCallback, useRef } from 'react';
+
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { DefaultResponse, User } from '@/models';
 import { useAuthContext } from '@/components/providers/auth-provider';
 
 type UseChangePassword = {
-  open: boolean
-  setOpen: (value: boolean) => void
-  loading: boolean
-  handleChangePassword: (oldPassword: string, newPassword: string) => Promise<void>
-  passwordScore: number
-  setPasswordScore: (value: number) => void
+    open: boolean
+    setOpen: (value: boolean) => void
+    loading: boolean
+    handleChangePassword: (oldPassword: string, newPassword: string) => Promise<void>
+    passwordScore: number
+    setPasswordScore: (value: number) => void
 }
 
 export function useChangePassword(): UseChangePassword {

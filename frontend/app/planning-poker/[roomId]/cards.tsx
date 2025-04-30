@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { Round } from '@/models';
-import { useCards } from './use-cards';
-import { Card } from './card';
 import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
 import { cn } from '@/lib/utils';
+
+import { useCards } from './use-cards';
+import { Card } from './card';
 
 type CardsProps = {
     round: Round;

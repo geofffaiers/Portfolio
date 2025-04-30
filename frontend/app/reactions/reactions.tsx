@@ -1,6 +1,7 @@
 'use client';
 
 import React, { JSX } from 'react';
+
 import { DEFAULT_TIME, useReactions } from './use-reactions';
 import { ScoreBoard } from './score-board';
 

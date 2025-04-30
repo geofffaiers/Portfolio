@@ -1,62 +1,29 @@
-'use client';
+import React, { JSX } from 'react';
+import { Metadata } from 'next';
 
-import React from 'react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { Separator } from '@/components/ui/separator';
-import {
-    SidebarInset,
-    SidebarTrigger,
-} from '@/components/ui/sidebar';
-import { JSX } from 'react';
-import { PokerLobby } from './poker-lobby';
-import { useConfigContext } from '@/components/providers/config-provider';
-import { Project } from '@/models';
-import { useRouter } from 'next/navigation';
-import { PageLoading } from '@/components/ui/page-loading';
-import Link from 'next/link';
+import { PlanningPokerPage } from './planning-poker-page';
+
+export const metadata: Metadata = {
+    title: 'Planning Poker',
+    description: 'Plan your next sprint with this fun game',
+    openGraph: {
+        title: 'Planning Poker',
+        description: 'Plan your next sprint with this fun game',
+        url: '/planning-poker',
+        siteName: 'Geoff Faiers',
+        images: [
+            {
+                url: '/images/planning-poker.png',
+                width: 1200,
+                height: 630,
+                alt: 'Planning Poker Game',
+            },
+        ],
+    }
+};
 
 export default function Page(): JSX.Element {
-    const { configLoading, config: { projects } } = useConfigContext();
-
-    const project: Project | undefined = projects.find((project) => project.id === 2 && project.isEnabled);
-
-    const router = useRouter();
-
-    if (configLoading) {
-        return <PageLoading />;
-    }
-
-    if (!project) {
-        router.replace('/page-not-found');
-        return <></>;
-    }
-
     return (
-        <SidebarInset>
-            <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
-                <div className='flex items-center gap-2 px-4'>
-                    <SidebarTrigger className='-ml-1' />
-                    <Separator orientation='vertical' className='mr-2 h-4' />
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            <BreadcrumbItem className='hidden md:block'>
-                                <BreadcrumbLink asChild>
-                                    <Link href='/'>
-                                        Home
-                                    </Link>
-                                </BreadcrumbLink>
-                            </BreadcrumbItem>
-                            <BreadcrumbSeparator className='hidden md:block' />
-                            <BreadcrumbItem>
-                                <BreadcrumbPage>{project.name}</BreadcrumbPage>
-                            </BreadcrumbItem>
-                        </BreadcrumbList>
-                    </Breadcrumb>
-                </div>
-            </header>
-            <div className='flex flex-1 flex-col gap-4 p-4'>
-                <PokerLobby />
-            </div>
-        </SidebarInset>
+        <PlanningPokerPage />
     );
 }

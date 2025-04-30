@@ -1,18 +1,19 @@
 'use client';
 
-import React, { JSX } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, { JSX, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/components/providers/auth-provider';
-import { useAccount } from './use-account';
-import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { Loader2 } from 'lucide-react';
+
+import { useAccount } from './use-account';
 
 const FormSchema = z.object({
     username: z.string({

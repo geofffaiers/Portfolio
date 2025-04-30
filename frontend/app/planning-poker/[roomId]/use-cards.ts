@@ -1,9 +1,11 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { Round, SubmitMessage, Vote } from '@/models';
-import { useCallback, useEffect, useState } from 'react';
-import { useOptions } from '../use-options';
 import { useSocketContext } from '@/components/providers/socket-provider';
+
+import { useOptions } from '../use-options';
 
 type Props = {
     round: Round;

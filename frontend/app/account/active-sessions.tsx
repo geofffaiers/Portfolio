@@ -1,14 +1,16 @@
 'use client';
 
 import React, { JSX, useCallback } from 'react';
+import { Loader2, LogOut } from 'lucide-react';
+
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useActiveSessions } from './use-active-sessions';
 import { Session } from '@/models';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Loader2, LogOut } from 'lucide-react';
 import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
+
+import { useActiveSessions } from './use-active-sessions';
 
 export function ActiveSessions(): JSX.Element | null {
     const { user, authLoading } = useAuthContext();

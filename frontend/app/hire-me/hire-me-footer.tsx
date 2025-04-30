@@ -1,9 +1,11 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ContactDialog } from './contact-dialog';
+
+import { Button } from '@/components/ui/button';
 import { User } from '@/models';
 import { Typography } from '@/components/ui/typography';
+
+import { ContactDialog } from './contact-dialog';
 
 type Props = {
     user?: User | null;

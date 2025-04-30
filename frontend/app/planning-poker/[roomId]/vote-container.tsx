@@ -1,9 +1,10 @@
 import React from 'react';
+
 import { useUserDetails } from '@/hooks/use-user-details';
-import { Card } from './card';
 import { Player, Round } from '@/models';
 import { cn } from '@/lib/utils';
 
+import { Card } from './card';
 
 type Props = {
     round: Round;

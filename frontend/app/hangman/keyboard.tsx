@@ -1,11 +1,12 @@
 'use client';
 
 import React from 'react';
+
 import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
-import { KeyboardLayout } from './types';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
+import { KeyboardLayout } from './types';
 
 type Props = {
     letters: KeyboardLayout;

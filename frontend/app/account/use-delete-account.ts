@@ -1,16 +1,17 @@
 'use client';
 
+import { useState, useCallback, useRef } from 'react';
+
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse } from '@/models';
-import { useState, useCallback, useRef } from 'react';
 
 type UseDeleteAccount = {
-  loading: boolean
-  typedConfirmation: string
-  setTypedConfirmation: (value: string) => void
-  handleDeleteAccount: () => Promise<void>
+    loading: boolean
+    typedConfirmation: string
+    setTypedConfirmation: (value: string) => void
+    handleDeleteAccount: () => Promise<void>
 }
 
 export function useDeleteAccount(): UseDeleteAccount {

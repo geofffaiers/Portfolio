@@ -1,26 +1,28 @@
 'use client';
 
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bubble } from './bubble';
+
 import { useSidebar } from '@/components/ui/sidebar';
 
+import { Bubble } from './bubble';
+
 type UseReactions = {
-  componentRef: RefObject<HTMLDivElement | null>
-  canvasRef: RefObject<HTMLCanvasElement | null>
-  playing: boolean
-  displayGame: boolean
-  counter: number
-  score:  number
-  timeLeft: number
-  animateScore: boolean
-  newGame: () => void
+    componentRef: RefObject<HTMLDivElement | null>
+    canvasRef: RefObject<HTMLCanvasElement | null>
+    playing: boolean
+    displayGame: boolean
+    counter: number
+    score: number
+    timeLeft: number
+    animateScore: boolean
+    newGame: () => void
 }
 
 type Dimensions = {
-  left: number
-  top: number
-  width: number
-  height: number
+    left: number
+    top: number
+    width: number
+    height: number
 }
 
 export const DEFAULT_TIME: number = 15;

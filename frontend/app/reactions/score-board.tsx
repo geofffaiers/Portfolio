@@ -1,10 +1,12 @@
 'use client';
 
 import React, { JSX, useMemo, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { useScoreBoard } from './use-score-board';
-import { Score } from '@/models';
 import { Loader2 } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Score } from '@/models';
+
+import { useScoreBoard } from './use-score-board';
 
 type Props = {
     counter: number;

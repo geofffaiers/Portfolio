@@ -1,7 +1,8 @@
+import { useCallback, useState } from 'react';
+
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse, Room } from '@/models';
-import { useCallback, useState } from 'react';
 
 type Props = {
     room: Room;

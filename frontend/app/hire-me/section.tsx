@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
-import { CvHeader } from './types';
-import { JSX, useMemo } from 'react';
+import React, { JSX, useMemo } from 'react';
+
 import { Typography } from '@/components/ui/typography';
+
+import { CvHeader } from './types';
 
 type Props = {
   section: CvHeader;

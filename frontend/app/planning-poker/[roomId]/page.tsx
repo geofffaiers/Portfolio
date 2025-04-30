@@ -1,22 +1,23 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { JSX, useCallback, useState } from 'react';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { Share2 } from 'lucide-react';
+
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
     SidebarInset,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { JSX } from 'react';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { Project } from '@/models';
-import { useParams, useRouter } from 'next/navigation';
 import { PageLoading } from '@/components/ui/page-loading';
-import Link from 'next/link';
-import { PlanningPoker } from './planning-poker';
 import { Button } from '@/components/ui/button';
-import { Share2 } from 'lucide-react';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
+
+import { PlanningPoker } from './planning-poker';
 
 export default function Page(): JSX.Element {
     const { roomId } = useParams();

@@ -1,6 +1,9 @@
+'use client';
+
 import React, { JSX } from 'react';
-import { Metadata } from 'next';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
@@ -9,17 +12,14 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Typography } from '@/components/ui/typography';
-import { ContactForm } from '@/features/contact-form';
-import { Footer } from '@/components/ui/footer';
-import { SocialIcons } from '@/components/ui/social-icons';
-import { OpenMessaging } from '@/features/messaging';
 
-export const metadata: Metadata = {
-    title: 'Contact Geoff',
-    description: 'Contact details for Geoff Faiers'
-};
+import { useValidate } from './use-validate';
 
-export default function Page(): JSX.Element {
+export const ValidatePage = (): JSX.Element => {
+    const { validateToken } = useParams();
+    const token = Array.isArray(validateToken) ? validateToken[0] : validateToken;
+    const { error } = useValidate({ validateToken: token as string });
+
     return (
         <SidebarInset>
             <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
@@ -37,22 +37,25 @@ export default function Page(): JSX.Element {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className='hidden md:block' />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Contact</BreadcrumbPage>
+                                <BreadcrumbPage>Validate Email Account</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
-                <div className='flex justify-between items-center'>
-                    <Typography variant='h1'>Contact Me</Typography>
-                    <SocialIcons/>
-                </div>
-                <Typography variant='p'>If you have any questions, suggestions, or just want to say hello, feel free to reach out using messaging, or the form below. I look forward to hearing from you!</Typography>
-                <OpenMessaging />
-                <ContactForm />
+                {error !== '' ? (
+                    <>
+                        <Typography variant='h1'>Validate email error</Typography>
+                        <Typography variant='p'>{error}</Typography>
+                    </>
+                ) : (
+                    <>
+                        <Typography variant='h1'>Validate email account</Typography>
+                        <Loader2 className='w-10 h-10 animate-spin' />
+                    </>
+                )}
             </div>
-            <Footer />
         </SidebarInset>
     );
-}
+};

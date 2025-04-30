@@ -1,17 +1,18 @@
 'use client';
 
-import React, { JSX } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, { JSX, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useMemo } from 'react';
-import { useRegister } from './use-register';
 import { PasswordStrength } from '@/components/ui/password-strength';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+
+import { useRegister } from './use-register';
 
 export function RegisterForm({
     className,

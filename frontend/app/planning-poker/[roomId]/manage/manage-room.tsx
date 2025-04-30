@@ -1,18 +1,20 @@
 'use client';
 
 import React from 'react';
-import { Room } from '@/models';
-import { useManageRoom } from './use-manage-room';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit } from 'lucide-react';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
+import { Edit } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Room } from '@/models';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+
 import { ManagePlayers } from './manage-players';
+import { useManageRoom } from './use-manage-room';
 
 type Props = {
     room: Room;

@@ -1,9 +1,11 @@
+import React, { JSX } from 'react';
+import { Binoculars, Coffee, Loader2, UserX } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 import { Player, Vote } from '@/models';
-import { Binoculars, Coffee, Loader2, UserX } from 'lucide-react';
-import React, { JSX } from 'react';
-import { useCard } from './use-card';
 import { Typography } from '@/components/ui/typography';
+
+import { useCard } from './use-card';
 
 type CardProps = {
     value: JSX.Element | string;

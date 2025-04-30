@@ -1,24 +1,25 @@
 'use client';
 
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse, User } from '@/models';
-import { useCallback, useEffect, useRef, useState } from 'react';
 
 type UseAccount = {
-  saveLoading: boolean
-  handleSaveChanges: (data: Data) => Promise<void>
-  verifyLoading: boolean
-  handleVerify: () => Promise<void>
-  timeLeftTillResendEnabled: number
+    saveLoading: boolean
+    handleSaveChanges: (data: Data) => Promise<void>
+    verifyLoading: boolean
+    handleVerify: () => Promise<void>
+    timeLeftTillResendEnabled: number
 }
 
 type Data = {
-  email: string
-  username: string
-  firstName: string
-  lastName: string
+    email: string
+    username: string
+    firstName: string
+    lastName: string
 }
 
 export function useAccount(): UseAccount {

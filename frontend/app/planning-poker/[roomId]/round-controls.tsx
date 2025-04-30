@@ -1,9 +1,11 @@
+import React from 'react';
+
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Game, Player, Round } from '@/models';
-import React from 'react';
-import { useRoundControls } from './use-round-controls';
 import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
-import { cn } from '@/lib/utils';
+
+import { useRoundControls } from './use-round-controls';
 
 type Props = {
     player: Player;

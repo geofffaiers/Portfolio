@@ -1,6 +1,8 @@
+'use client';
+
 import React, { JSX } from 'react';
-import { Metadata } from 'next';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
@@ -8,18 +10,33 @@ import {
     SidebarInset,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { Typography } from '@/components/ui/typography';
-import { ContactForm } from '@/features/contact-form';
-import { Footer } from '@/components/ui/footer';
-import { SocialIcons } from '@/components/ui/social-icons';
-import { OpenMessaging } from '@/features/messaging';
+import { useAuthContext } from '@/components/providers/auth-provider';
+import { useConfigContext } from '@/components/providers/config-provider';
+import { Project } from '@/models';
+import { PageLoading } from '@/components/ui/page-loading';
 
-export const metadata: Metadata = {
-    title: 'Contact Geoff',
-    description: 'Contact details for Geoff Faiers'
-};
+import { Details } from './details';
+import { Section } from './section';
+import { HireMeFooter } from './hire-me-footer';
+import { cv } from './cv';
 
-export default function Page(): JSX.Element {
+export const HireMePage = (): JSX.Element => {
+    const { user } = useAuthContext();
+    const { configLoading, config: { projects } } = useConfigContext();
+
+    const project: Project | undefined = projects.find((project) => project.id === 1 && project.isEnabled);
+
+    const router = useRouter();
+
+    if (configLoading) {
+        return <PageLoading />;
+    }
+
+    if (!project) {
+        router.replace('/page-not-found');
+        return <></>;
+    }
+
     return (
         <SidebarInset>
             <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
@@ -37,22 +54,19 @@ export default function Page(): JSX.Element {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className='hidden md:block' />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Contact</BreadcrumbPage>
+                                <BreadcrumbPage>{project.name}</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
-                <div className='flex justify-between items-center'>
-                    <Typography variant='h1'>Contact Me</Typography>
-                    <SocialIcons/>
-                </div>
-                <Typography variant='p'>If you have any questions, suggestions, or just want to say hello, feel free to reach out using messaging, or the form below. I look forward to hearing from you!</Typography>
-                <OpenMessaging />
-                <ContactForm />
+                <Details user={user}/>
+                {cv.map((section, index) => (
+                    <Section section={section} key={index}/>
+                ))}
             </div>
-            <Footer />
+            <HireMeFooter user={user}/>
         </SidebarInset>
     );
-}
+};
