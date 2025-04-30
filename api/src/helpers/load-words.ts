@@ -30,37 +30,27 @@ export class Words {
     private static wordsListChanged: boolean = false;
     private static saveTimeout: NodeJS.Timeout | null = null;
 
-    private static async loadWords() {
-        if (!this.wordsLoaded) {
-            try {
-                const data = await fs.readFile(__dirname + '/../../data/words.txt', 'utf8');
-                const allWords = data.split('\n');
-                allWords.forEach(rawWord => {
-                    const word = rawWord.trim();
-                    if (word) { // Only add non-empty words.
-                        const idx = this._words.length;
-                        this._words.push(word);
-                        this.createIndexes(word, idx);
-                    }
-                });
-                this.wordsLoaded = true;
-            } catch (err) {
-                logError(err);
+    public static async getWord(firstLetter?: string, length?: number): Promise<WordWithData> {
+        let words: string[] = await this.getWords(firstLetter, length);
+        let word: string;
+        let isValid: boolean;
+        let data: unknown;
+        do {
+            word = words[Math.floor(Math.random() * words.length)];
+            const check: ValidityCheck = await Words.isWordValid(word);
+            isValid = check.isValid;
+            data = check.data;
+            if (!isValid) {
+                words = await Words.getWords(firstLetter, length);
+                if (words.length === 0) {
+                    throw new Error(`No words found for the given combination: ${firstLetter ?? 'no first letter filter'}, ${length ?? 'no length filter'}`);
+                }
             }
-        }
-    }
-
-    private static createIndexes(word: string, index: number) {
-        const firstLetter = word.charAt(0).toLowerCase();
-        if (!this._wordIndex[firstLetter]) {
-            this._wordIndex[firstLetter] = [];
-        }
-        this._wordIndex[firstLetter].push(index);
-        const length = word.length;
-        if (!this._lengthIndex[length]) {
-            this._lengthIndex[length] = [];
-        }
-        this._lengthIndex[length].push(index);
+        } while (!isValid);
+        return {
+            word,
+            data
+        };
     }
 
     private static async getWords(firstLetter?: string, length?: number): Promise<string[]> {
@@ -92,27 +82,38 @@ export class Words {
         }
     }
 
-    public static async getWord(firstLetter?: string, length?: number): Promise<WordWithData> {
-        let words: string[] = await this.getWords(firstLetter, length);
-        let word: string;
-        let isValid: boolean;
-        let data: unknown;
-        do {
-            word = words[Math.floor(Math.random() * words.length)];
-            const check: ValidityCheck = await Words.isWordValid(word);
-            isValid = check.isValid;
-            data = check.data;
-            if (!isValid) {
-                words = await Words.getWords(firstLetter, length);
-                if (words.length === 0) {
-                    throw new Error(`No words found for the given combination: ${firstLetter ?? 'no first letter filter'}, ${length ?? 'no length filter'}`);
-                }
+    private static async loadWords() {
+        if (!this.wordsLoaded) {
+            try {
+                const data = await fs.readFile(__dirname + '/../../data/words.txt', 'utf8');
+                const allWords = data.split('\n');
+                allWords.forEach(rawWord => {
+                    const word = rawWord.trim();
+                    if (word) { // Only add non-empty words.
+                        const idx = this._words.length;
+                        this._words.push(word);
+                        this.createIndexes(word, idx);
+                    }
+                });
+                this.wordsLoaded = true;
+            } catch (err: unknown) {
+                logError(err);
+                throw err;
             }
-        } while (!isValid);
-        return {
-            word,
-            data
-        };
+        }
+    }
+
+    private static createIndexes(word: string, index: number) {
+        const firstLetter = word.charAt(0).toLowerCase();
+        if (!this._wordIndex[firstLetter]) {
+            this._wordIndex[firstLetter] = [];
+        }
+        this._wordIndex[firstLetter].push(index);
+        const length = word.length;
+        if (!this._lengthIndex[length]) {
+            this._lengthIndex[length] = [];
+        }
+        this._lengthIndex[length].push(index);
     }
 
     private static async isWordValid(word: string): Promise<ValidityCheck> {

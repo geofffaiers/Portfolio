@@ -2,9 +2,7 @@
 
 import React, { createContext, useContext } from 'react';
 import { useMessaging } from '../hooks/use-messaging';
-import { Messaging } from '../types/messaging.type';
-
-
+import { Messaging } from '../types/messaging.types';
 
 const MessagingContext = createContext<Messaging | undefined>(undefined);
 

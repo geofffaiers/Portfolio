@@ -6,6 +6,7 @@ export * from './default-response';
 export * from './definition';
 export * from './error-check';
 export * from '../features/messaging/types/message';
+export * from './session';
 export * from './license';
 export * from './meaning';
 export * from './phonetic';

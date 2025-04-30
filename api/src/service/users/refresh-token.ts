@@ -1,27 +1,49 @@
-import { CookieOptions, Request, Response } from 'express';
-import { jwtVerify } from 'jose';
-import { DefaultResponse, ErrorCheck } from '../../models';
-import { generateJwt, getUser } from './methods';
-import { handleError } from '../../helpers';
-
+import crypto from 'crypto';
+import { Request, Response } from 'express';
+import { DefaultResponse } from '../../models';
+import { getUser, saveToUserSessions } from './methods';
+import { handleError, pool } from '../../helpers';
+import { RowDataPacket } from 'mysql2';
 
 export const refreshToken = async (req: Request, res: Response): Promise<DefaultResponse> => {
     try {
-        const [error, userId]: ErrorCheck<number> = await getUserId(req);
-        if (error != null) {
+        const refreshToken: string | undefined = req.cookies.refreshToken;
+        if (refreshToken == null || typeof refreshToken !== 'string') {
             return {
-                code: 400,
+                code: 401,
                 success: false,
-                message: error
+                message: 'Invalid refresh token'
             };
         }
+
+        const tokenHash = crypto
+            .createHash('sha256')
+            .update(refreshToken)
+            .digest('hex');
+
+        const [sessions] = await pool.query<RowDataPacket[]>(
+            `SELECT user_id, is_active, expires_at 
+             FROM users_sessions 
+             WHERE refresh_token = ? AND is_active = 1 AND expires_at > NOW()`,
+            [tokenHash]
+        );
+
+        if (sessions.length === 0) {
+            res.clearCookie('token');
+            res.clearCookie('refreshToken');
+            return {
+                code: 401,
+                success: false,
+                message: 'Invalid or expired session'
+            };
+        }
+
+        const session = sessions[0];
+        const userId = session.user_id;
+
         await getUser(userId);
-        const cookieOptions: CookieOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
-        };
-        res.cookie('token', await generateJwt(userId, '2h'), cookieOptions);
+        await saveToUserSessions(userId, req, res, tokenHash);
+
         return {
             code: 200,
             success: true
@@ -29,18 +51,4 @@ export const refreshToken = async (req: Request, res: Response): Promise<Default
     } catch (err: unknown) {
         return handleError(err);
     }
-};
-
-const getUserId = async (req: Request): Promise<ErrorCheck<number>> => {
-    const refreshToken: string | undefined = req.cookies.refreshToken;
-    if (refreshToken == null || typeof refreshToken !== 'string') {
-        return ['Invalid refresh token', null];
-    }
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    const { payload } = await jwtVerify(refreshToken, secret);
-    if (typeof payload.userId !== 'number') {
-        return ['Invalid refresh token', null];
-    }
-    const userId: number = payload.userId;
-    return [null, userId];
 };

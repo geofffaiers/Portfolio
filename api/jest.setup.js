@@ -1,5 +1,6 @@
-import dotenv from 'dotenv'
-import 'reflect-metadata'
+require('reflect-metadata');
 
-const envPath = process.env.NODE_ENV == null ? '../.env' : `../.env.${process.env.NODE_ENV}`
-dotenv.config({ path: envPath })
+jest.mock('jose');
+jest.mock('swagger-ui-express');
+jest.mock('node-ipinfo');
+jest.mock('express-rate-limit');

@@ -7,6 +7,7 @@ import {
     FileUser,
     House,
     Library,
+    MessagesSquare,
     PencilRuler,
     Spade,
 } from 'lucide-react';
@@ -76,6 +77,14 @@ const projects: readonly Project[] = Object.freeze([
     },
     {
         id: 5,
+        name: 'Messaging',
+        url: '/messaging',
+        icon: MessagesSquare,
+        isActive: false,
+        isEnabled: false,
+    },
+    {
+        id: 6,
         name: 'Storybook',
         url: 'https://www.gfaiers.com/storybook',
         icon: Library,
@@ -84,7 +93,7 @@ const projects: readonly Project[] = Object.freeze([
         isEnabled: false,
     },
     {
-        id: 6,
+        id: 7,
         name: 'API Docs',
         url: 'https://www.gfaiers.com/api-docs',
         icon: PencilRuler,

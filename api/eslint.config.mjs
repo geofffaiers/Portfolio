@@ -44,7 +44,14 @@ export default tseslint.config(
                 tsconfigRootDir: import.meta.dirname,
             },
         },
-
+        settings: {
+            'import/resolver': {
+                typescript: {}, // This uses the paths from tsconfig.json
+                node: {
+                extensions: ['.js', '.jsx', '.ts', '.tsx']
+                }
+            }
+        },
         rules: {
             "@typescript-eslint/no-unused-vars": ["error", {
                 argsIgnorePattern: "^_",

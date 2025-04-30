@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
-import { CookieOptions, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import { RowDataPacket } from 'mysql2';
 import { pool } from '../../helpers/db';
 import { DefaultResponse, User } from '../../models';
-import { delay, generateJwt } from './methods';
+import { delay, saveToUserSessions } from './methods';
 import { handleError } from '../../helpers';
 
 export const login = async (req: Request, res: Response): Promise<DefaultResponse<User>> => {
@@ -34,13 +34,8 @@ export const login = async (req: Request, res: Response): Promise<DefaultRespons
             };
         }
         user.password = '';
-        const cookieOptions: CookieOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
-        };
-        res.cookie('token', await generateJwt(user.id, '2h'), cookieOptions);
-        res.cookie('refreshToken', await generateJwt(user.id, '7d'), cookieOptions);
+        await saveToUserSessions(user.id, req, res);
+
         return {
             code: 200,
             success: true,

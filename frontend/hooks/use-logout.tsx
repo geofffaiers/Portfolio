@@ -22,7 +22,7 @@ export function useLogout(): UseLogout {
             }
             router.push('/');
         }
-    }, [setUser, pathname, router]);
+    }, [setUser, pathname, router, isMobile, setOpenMobile]);
 
     return {
         handleLogout

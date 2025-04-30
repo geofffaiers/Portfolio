@@ -124,7 +124,7 @@ export const useReactions = (): UseReactions => {
         };
     }, [animate, createBubbles, newGame, dimensions, state]);
 
-    const handleMouseMove = useCallback((event: Partial<MouseEvent>): void => {
+    const handleMove = useCallback((event: Partial<MouseEvent | Touch>): void => {
         const { clientX, clientY } = event;
         const { left, top } = dimensions;
         const mouseTop = (clientY ?? 0) - top;
@@ -146,15 +146,16 @@ export const useReactions = (): UseReactions => {
         }
     }, [dimensions, playing, setPlaying, setScore, setAnimateScore, createBubble]);
 
-    const handleTouchMove = useCallback((event: TouchEvent): void => {
+    const handleTouch = useCallback((event: TouchEvent): void => {
+        event.preventDefault();
         const touch = event.touches[0];
         if (touch) {
-            handleMouseMove({
+            handleMove({
                 clientX: touch.clientX,
                 clientY: touch.clientY,
             });
         }
-    }, [handleMouseMove]);
+    }, [handleMove]);
 
     useEffect(() => {
         if (!playing) {
@@ -182,14 +183,18 @@ export const useReactions = (): UseReactions => {
     }, [playing]);
 
     useEffect(() => {
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('touchmove', handleTouchMove);
+        if (!canvasRef.current) return;
+        const canvas = canvasRef.current;
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchstart', handleTouch);
 
         return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('touchmove', handleTouchMove);
+            canvas.removeEventListener('mousemove', handleMove);
+            canvas.removeEventListener('touchmove', handleTouch);
+            canvas.removeEventListener('touchstart', handleTouch);
         };
-    }, [handleMouseMove, handleTouchMove]);
+    }, [handleMove, handleTouch]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {

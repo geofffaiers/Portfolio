@@ -4,12 +4,14 @@ import { useAuthContext } from '@/components/providers/auth-provider';
 import React from 'react';
 import { useMessagingContext } from '../context/messaging-provider';
 import { Button } from '@/components/ui/button';
+import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
 
 export const OpenMessaging: React.FC = () => {
     const { user, authLoading } = useAuthContext();
-    const { openChats, handleOpenMessaging } = useMessagingContext();
+    const { isMobile } = useDeviceBreakpoints();
+    const { floatingOpen, openChats, handleOpenFloatingMessaging } = useMessagingContext();
 
-    if (user == null || authLoading || openChats.length > 0) {
+    if (isMobile || user == null || authLoading || (floatingOpen || openChats.length > 0)) {
         return null;
     }
 
@@ -17,7 +19,7 @@ export const OpenMessaging: React.FC = () => {
         <div>
             <Button
                 variant='outline'
-                onClick={handleOpenMessaging}
+                onClick={handleOpenFloatingMessaging}
             >
                 Open Messaging
             </Button>

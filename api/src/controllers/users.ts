@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { create, del, generateResetToken, getUserForResetToken, getUserForValidateToken, login, logout, refreshToken, resendVerification, resetPassword, update, validateEmail } from '../service/users';
-import { DefaultResponse, User } from '../models';
+import { create, del, generateResetToken, getSessions, getUserForResetToken, getUserForValidateToken, login, logout, logoutSession, refreshToken, resendVerification, resetPassword, update, validateEmail } from '../service/users';
+import { DefaultResponse, GetSessions, User } from '../models';
 import { handleRoutingError } from '../helpers';
 
 export default class UsersController {
@@ -106,6 +106,24 @@ export default class UsersController {
     async resendVerification (req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const response: DefaultResponse = await resendVerification(req);
+            res.status(response.code).json(response);
+        } catch (err: unknown) {
+            handleRoutingError(err, next);
+        }
+    }
+
+    async getSessions (req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const response: DefaultResponse<GetSessions> = await getSessions(req);
+            res.status(response.code).json(response);
+        } catch (err: unknown) {
+            handleRoutingError(err, next);
+        }
+    }
+
+    async logoutSession (req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const response: DefaultResponse<GetSessions> = await logoutSession(req);
             res.status(response.code).json(response);
         } catch (err: unknown) {
             handleRoutingError(err, next);

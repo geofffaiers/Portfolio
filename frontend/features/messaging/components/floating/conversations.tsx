@@ -1,22 +1,24 @@
 'use client';
 
 import React, { JSX } from 'react';
-import { ChatHeader } from '../types/chat-header';
-import { useConversation } from '../hooks/use-conversation';
+import { ChatHeader } from '../../types/chat-header';
+import { useConversation } from '../../hooks/use-conversation';
 import { Button } from '@/components/ui/button';
 import { User } from '@/models';
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUserDetails } from '@/hooks/use-user-details';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, X } from 'lucide-react';
+import { Conversation } from '../shared/conversation';
 
 type Props = {
-  chatHeaders: ChatHeader[]
-  displayConversations: boolean
-  handleOpenChat: (user: User) => void
-}
+    chatHeaders: ChatHeader[];
+    displayConversations: boolean;
+    handleOpenChat: (user: User) => void;
+    handleCloseFloatingMessaging: () => void;
+};
 
-export function Conversations({ chatHeaders, displayConversations, handleOpenChat }: Props): JSX.Element | null {
+export function Conversations({ chatHeaders, displayConversations, handleOpenChat, handleCloseFloatingMessaging }: Props): JSX.Element | null {
     const { user } = useAuthContext();
     const { userName, initials } = useUserDetails({ user });
     const { sortedHeaders, expanded, setExpanded } = useConversation({ chatHeaders });
@@ -36,6 +38,13 @@ export function Conversations({ chatHeaders, displayConversations, handleOpenCha
                 <Button className='ml-auto' onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }} variant='ghost' size='icon'>
                     <ChevronUp className={`h-4 w-4 transform transition-transform duration-300 ${expanded ? 'rotate-180' : 'rotate-360'}`} />
                 </Button>
+                <Button
+                    onClick={() => handleCloseFloatingMessaging()}
+                    variant='ghost'
+                    size='icon'
+                >
+                    <X className='h-4 w-4' />
+                </Button>
             </div>
             <div className={`flex flex-col overflow-y-auto transition-all duration-300 border border-[foreground] border-y-0 ${expanded ? 'max-h-64' : 'max-h-0'}`}>
                 {sortedHeaders.length > 0 ? (
@@ -45,23 +54,6 @@ export function Conversations({ chatHeaders, displayConversations, handleOpenCha
                 ) : (
                     <span className='p-2 text-white'>No conversations</span>
                 )}
-            </div>
-        </div>
-    );
-}
-
-function Conversation({ chatHeader, handleOpenChat }: { chatHeader: ChatHeader, handleOpenChat: (user: User) => void }) {
-    const { userName, initials } = useUserDetails({ user: chatHeader.user });
-
-    return (
-        <div className='flex items-center px-2 py-1 cursor-pointer hover:bg-gray-600' onClick={() => handleOpenChat(chatHeader.user)}>
-            <Avatar className='h-8 w-8 rounded-lg'>
-                <AvatarImage src={chatHeader.user.profilePicture} alt={userName} />
-                <AvatarFallback className='rounded-lg text-xs'>{initials}</AvatarFallback>
-            </Avatar>
-            <div className='ml-2'>
-                <div className='text-white'>{userName}</div>
-                <div className='text-gray-400 text-sm'>{chatHeader.lastMessage?.content}</div>
             </div>
         </div>
     );

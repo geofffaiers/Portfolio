@@ -15,6 +15,8 @@ import { ChangePassword } from './change-password';
 import { DeleteAccount } from './delete-account';
 import Link from 'next/link';
 import { Typography } from '@/components/ui/typography';
+import { ActiveSessions } from './active-sessions';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Page(): JSX.Element {
     const { authLoading, user } = useAuthContext();
@@ -49,11 +51,21 @@ export default function Page(): JSX.Element {
                     </Breadcrumb>
                 </div>
             </header>
-            <div className='flex flex-1 flex-col gap-4 p-4'>
+            <div className='flex flex-col gap-4 p-4 max-w-[100vw]'>
                 <Typography variant='h1'>Your account</Typography>
-                <Account />
-                <ChangePassword />
-                <DeleteAccount />
+                <div className='flex flex-col md:flex-row gap-4'>
+                    <Card className='flex-1 w-full'>
+                        <CardHeader>
+                            <CardTitle>Account Details</CardTitle>
+                        </CardHeader>
+                        <CardContent className='flex flex-col gap-4'>
+                            <Account/>
+                            <ChangePassword/>
+                            <DeleteAccount/>
+                        </CardContent>
+                    </Card>
+                    <ActiveSessions/>
+                </div>
             </div>
         </SidebarInset>
     );
