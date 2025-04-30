@@ -54,7 +54,7 @@ export const ManageRoom: React.FC<Props> = ({ room }) => {
                     <DialogTitle>Edit Planning Poker room</DialogTitle>
                 </DialogHeader>
                 <DialogDescription className='sr-only'>
-                    'Edit the room name and description. You can also remove players from the room.'
+                    Edit the room name and description. You can also remove players from the room.
                 </DialogDescription>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
