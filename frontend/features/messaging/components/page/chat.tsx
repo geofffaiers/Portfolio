@@ -7,18 +7,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Send, X } from 'lucide-react';
 import { useAuthContext } from '@/components/providers/auth-provider';
-import { useCallback, useEffect } from 'react';
 import { useUserDetails } from '@/hooks/use-user-details';
-import { User } from '@/models';
-import { Message } from '../../types/message';
-import { Typography } from '@/components/ui/typography';
 import { useMessagingContext } from '../../context/messaging-provider';
+import { SingleMessage } from '../shared/single-message';
 
-type ChatProps = {
+type Props = {
   chatHeader: ChatHeader
 }
 
-export function Chat({ chatHeader }: ChatProps): JSX.Element {
+export function Chat({ chatHeader }: Props): JSX.Element {
     const { user } = useAuthContext();
     const {
         newMessage,
@@ -97,51 +94,3 @@ export function Chat({ chatHeader }: ChatProps): JSX.Element {
         </div>
     );
 }
-
-type SingleMessageProps = {
-    message: Message
-    isOwnMessage: boolean
-    sender: User | null
-    createdAt: Date
-    showDate: boolean
-    readMessage: (messageId: number) => void
-}
-
-const SingleMessage = ({ message, isOwnMessage, sender, createdAt, showDate, readMessage }: SingleMessageProps) => {
-    const { userName } = useUserDetails({ user: sender });
-
-    const getTitle = useCallback((): string => {
-        let title = '';
-        if (message.isError) {
-            title = `Error issued: ${message.createdAt.toLocaleString()}`;
-        } else if (message.readAt) {
-            title = `Read: ${message.readAt.toLocaleString()}`;
-        } else {
-            title = 'Unread';
-        }
-        return title;
-    }, [message]);
-
-    useEffect(() => {
-        if (!isOwnMessage && !message.readAt) {
-            readMessage(message.id);
-        }
-    }, [isOwnMessage, message.readAt, message.id, readMessage]);
-
-    return (
-        <>
-            {showDate && (
-                <div className='flex justify-center'>
-                    <Typography variant='p' className='text-xs font-bold text-center mb-1'>{createdAt.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</Typography>
-                </div>
-            )}
-            <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-2 text-sm`}>
-                <div title={getTitle()} className={`p-2 rounded-lg ${isOwnMessage ? 'bg-blue-500 text-white ml-4' : 'bg-gray-200 text-black mr-4'} ${message.isError ? 'bg-red-800 text-white' : ''}`}>
-                    {message.isError && (<Typography variant='p'>Error:</Typography>)}
-                    {userName && (<Typography variant='p'>{isOwnMessage ? 'You' : userName} - {createdAt?.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</Typography>)}
-                    <Typography variant='p'>{message.content}</Typography>
-                </div>
-            </div>
-        </>
-    );
-};

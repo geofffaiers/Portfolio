@@ -26,9 +26,9 @@ export function Conversation({ chatHeader, handleOpenChat, selected = false }: P
                 <AvatarImage src={chatHeader.user.profilePicture} alt={userName} />
                 <AvatarFallback className='rounded-lg text-xs'>{initials}</AvatarFallback>
             </Avatar>
-            <div className='ml-2'>
-                <div>{userName}</div>
-                <div className='text-sm'>{chatHeader.lastMessage?.content}</div>
+            <div className='ml-2 max-w-[calc(100%-3rem)] whitespace-pre'>
+                <div className='overflow-hidden text-ellipsis'>{userName}</div>
+                <div className='text-sm overflow-hidden text-ellipsis'>{chatHeader.lastMessage?.content}</div>
             </div>
         </div>
     );
