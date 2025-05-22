@@ -17,8 +17,8 @@ export function Conversation({ chatHeader, handleOpenChat, selected = false }: P
     return (
         <div
             className={clsx(
-                'flex items-center px-2 py-1 cursor-pointer hover:bg-gray-600',
-                selected ? 'bg-gray-700' : ''
+                'flex items-center px-2 py-1 cursor-pointer',
+                selected ? 'bg-secondary text-secondary-foreground' : 'hover:bg-accent hover:text-secondary-foreground',
             )}
             onClick={() => handleOpenChat(chatHeader.user)}
         >
@@ -27,8 +27,8 @@ export function Conversation({ chatHeader, handleOpenChat, selected = false }: P
                 <AvatarFallback className='rounded-lg text-xs'>{initials}</AvatarFallback>
             </Avatar>
             <div className='ml-2'>
-                <div className='text-white'>{userName}</div>
-                <div className='text-gray-400 text-sm'>{chatHeader.lastMessage?.content}</div>
+                <div>{userName}</div>
+                <div className='text-sm'>{chatHeader.lastMessage?.content}</div>
             </div>
         </div>
     );

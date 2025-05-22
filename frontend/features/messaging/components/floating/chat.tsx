@@ -95,6 +95,7 @@ export function Chat({ chatHeader, allowClose, handleCloseChat }: ChatProps): JS
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder='Type a message...'
+                        autoComplete='new-password' // This is to prevent auto complete
                         className='flex-1 border border-[foreground] rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500'
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {

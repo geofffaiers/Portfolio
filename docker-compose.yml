@@ -26,7 +26,7 @@ services:
         condition: service_healthy
     volumes:
       - /usr/src/app/node_modules
-      - ./api:/usr/src/app
+      - ./api:/usr/src/app:cached
     ports:
       - ${STAGING_API_PORT}:${STAGING_API_PORT}
     restart: unless-stopped
@@ -40,7 +40,7 @@ services:
         condition: service_started
     volumes:
       - /usr/src/app/node_modules
-      - ./frontend:/app
+      - ./frontend:/app:cached
     ports:
       - ${STAGING_CLIENT_PORT}:${STAGING_CLIENT_PORT}
     restart: unless-stopped
