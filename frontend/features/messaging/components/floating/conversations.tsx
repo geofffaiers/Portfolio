@@ -29,30 +29,31 @@ export function Conversations({ chatHeaders, displayConversations, handleOpenCha
 
     return (
         <div className='flex flex-col w-72 bg-[background] h-full'>
-            <div className='flex items-center px-2 py-1 text-white cursor-pointer hover:bg-gray-600 border border-[foreground] border-b-0 rounded-t-lg' onClick={() => setExpanded(!expanded)}>
+            <div className='flex items-center px-2 py-1 cursor-pointer hover:bg-muted border border-[foreground] border-b-0 rounded-t-lg' onClick={() => setExpanded(!expanded)}>
                 <Avatar className='h-8 w-8 rounded-lg'>
                     <AvatarImage src={user?.profilePicture} alt={userName} />
                     <AvatarFallback className='rounded-lg text-xs'>{initials}</AvatarFallback>
                 </Avatar>
                 <span className='ml-2'>Messaging</span>
-                <Button className='ml-auto' onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }} variant='ghost' size='icon'>
+                <Button className='ml-auto hover:bg-secondary' onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }} variant='ghost' size='icon'>
                     <ChevronUp className={`h-4 w-4 transform transition-transform duration-300 ${expanded ? 'rotate-180' : 'rotate-360'}`} />
                 </Button>
                 <Button
                     onClick={() => handleCloseFloatingMessaging()}
                     variant='ghost'
                     size='icon'
+                    className='hover:bg-secondary'
                 >
                     <X className='h-4 w-4' />
                 </Button>
             </div>
-            <div className={`flex flex-col overflow-y-auto transition-all duration-300 border border-[foreground] border-y-0 ${expanded ? 'max-h-64' : 'max-h-0'}`}>
+            <div className={`flex flex-col overflow-y-auto overflow-x-hidden transition-all duration-300 border border-[foreground] border-y-0 ${expanded ? 'max-h-64' : 'max-h-0'}`}>
                 {sortedHeaders.length > 0 ? (
                     sortedHeaders.map((chatHeader) => (
                         <Conversation key={chatHeader.user.id} chatHeader={chatHeader} handleOpenChat={handleOpenChat} />
                     ))
                 ) : (
-                    <span className='p-2 text-white'>No conversations</span>
+                    <span className='p-2'>No conversations</span>
                 )}
             </div>
         </div>

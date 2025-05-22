@@ -17,13 +17,13 @@ export function Conversations({ chatHeaders, openChat, setPageChat }: Props): JS
 
     return (
         <div className='flex flex-col h-full border border-[foreground] border-y-0 border-l-0 w-full md:w-72'>
-            <div className={'flex flex-col overflow-y-auto'}>
+            <div className={'flex flex-col overflow-y-auto overflow-x-hidden'}>
                 {sortedHeaders.length > 0 ? (
                     sortedHeaders.map((chatHeader) => (
                         <Conversation key={chatHeader.user.id} chatHeader={chatHeader} handleOpenChat={setPageChat} selected={chatHeader.user.id === openChat?.user?.id} />
                     ))
                 ) : (
-                    <span className='p-2 text-white'>No conversations</span>
+                    <span className='p-2'>No conversations</span>
                 )}
             </div>
         </div>
