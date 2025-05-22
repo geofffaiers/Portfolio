@@ -22,7 +22,7 @@ export function ScoreBoard({ counter, score, newGame }: Props): JSX.Element {
 
     return (
         <>
-            <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center text-white text-shadow-lg z-20'>
+            <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center text-shadow-lg z-20'>
                 <div className='text-2xl mb-4'>Game Over</div>
                 <div className='text-2xl mb-4'>Score: {score}</div>
                 <Button onClick={newGame} variant='default' size='lg'>
