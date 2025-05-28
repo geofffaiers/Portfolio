@@ -32,11 +32,11 @@ export const Client: React.FC<Props> = ({
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     let img: JSX.Element | undefined;
-    
+
     if (!mounted) {
         img = (
             <Skeleton className='h-[75px] w-full rounded-lg' />
-        )
+        );
     } else if (image != null) {
         img = image;
     } else if (imageSrc || imageSrcLight || imageSrcDark) {
