@@ -1,13 +1,12 @@
 'use client';
 
 import React, { JSX } from 'react';
-import { useTheme } from 'next-themes';
+
 import { Client } from '@/components/ui/client';
 import { SocialIcons } from '@/components/ui/social-icons';
 import { Typography } from '@/components/ui/typography';
 
 export function HomeContent(): JSX.Element {
-    const { resolvedTheme } = useTheme();
 
     return (
         <div className='flex flex-1 flex-col gap-4 p-4'>
@@ -21,11 +20,8 @@ export function HomeContent(): JSX.Element {
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <Client
                     name='BatteryBasics'
-                    imageSrc={
-                        resolvedTheme === 'dark'
-                            ? '/logos/battery-basics-white.png'
-                            : '/logos/battery-basics-black.png'
-                    }
+                    imageSrcLight='/logos/battery-basics-black.png'
+                    imageSrcDark='/logos/battery-basics-white.png'
                     url='https://batterybasics.com'
                     text={
                         <>
