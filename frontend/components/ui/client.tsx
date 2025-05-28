@@ -65,7 +65,7 @@ export const Client: React.FC<Props> = ({
     }, []);
 
     return (
-        <Card className='p-4 w-[calc(50% - 1rem)]]'>
+        <Card className='p-4 w-[calc(50% - 1rem)]'>
             <div className='flex flex-col gap-4 h-full'>
                 {img}
                 {text}
