@@ -20,6 +20,6 @@ process.on('uncaughtException', (err: Error) => {
     reportError(err).catch(console.error);
 });
 process.on('unhandledRejection', (err: Error) => {
-    console.error('Unhandled rejection:', err);
+    console.error("Unhandled rejection:", err);
     reportError(err).catch(console.error);
 });
