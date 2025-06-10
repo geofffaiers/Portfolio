@@ -11,6 +11,7 @@ import { ContactForm } from '@/features/contact-form';
 import { Footer } from '@/components/ui/footer';
 import { SocialIcons } from '@/components/ui/social-icons';
 import { OpenMessaging } from '@/features/messaging';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default function Page(): JSX.Element {
     return (
@@ -35,6 +36,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
                 <div className='flex justify-between items-center'>

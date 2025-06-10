@@ -17,6 +17,7 @@ import { Project } from '@/models';
 import { useRouter } from 'next/navigation';
 import { PageLoading } from '@/components/ui/page-loading';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default function Page(): JSX.Element {
     const { user } = useAuthContext();
@@ -57,6 +58,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
                 <Details user={user}/>

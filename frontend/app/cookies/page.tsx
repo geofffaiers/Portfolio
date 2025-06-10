@@ -8,6 +8,7 @@ import {
 import Link from 'next/link';
 import { Typography } from '@/components/ui/typography';
 import { Footer } from '@/components/ui/footer';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default function Page(): JSX.Element {
     const date = new Date();
@@ -33,6 +34,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4 max-w-4xl'>
                 <Typography variant='h1'>Cookie Policy</Typography>

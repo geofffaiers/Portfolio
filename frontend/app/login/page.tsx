@@ -14,6 +14,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { JSX, useEffect } from 'react';
 import Link from 'next/link';
 import { User } from '@/models';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 function Login({ user }: { user: User | null | undefined }): JSX.Element {
     const router = useRouter();
@@ -62,6 +63,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
                 <div className='w-full max-w-sm'>

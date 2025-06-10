@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Footer } from '@/components/ui/footer';
 import { HomeContent } from './home-content';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default function Page(): JSX.Element {
     return (
@@ -23,6 +24,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <HomeContent />
             <Footer />

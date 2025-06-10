@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { Typography } from '@/components/ui/typography';
 import { ActiveSessions } from './active-sessions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default function Page(): JSX.Element {
     const { authLoading, user } = useAuthContext();
@@ -50,6 +51,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex flex-col gap-4 p-4 max-w-[100vw]'>
                 <Typography variant='h1'>Your account</Typography>
