@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useTheme } from 'next-themes';
 import { Button } from './button';
 import { useEffect, useState } from 'react';
@@ -19,7 +20,7 @@ export const ThemeToggle = ({ isWrapped = true }: { isWrapped?: boolean }) => {
         <Button
             variant='outline'
             size='icon'
-            aria-label="Toggle theme"
+            aria-label='Toggle theme'
             className='h-7 w-7 border-none'
             title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
