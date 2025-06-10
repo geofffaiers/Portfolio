@@ -13,6 +13,7 @@ import { Project } from '@/models';
 import { useRouter } from 'next/navigation';
 import { PageLoading } from '@/components/ui/page-loading';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default function Page(): JSX.Element {
     const { configLoading, config: { projects } } = useConfigContext();
@@ -52,6 +53,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <Reactions />
         </SidebarInset>

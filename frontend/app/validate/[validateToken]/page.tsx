@@ -12,6 +12,7 @@ import { useParams } from 'next/navigation';
 import { useValidate } from './use-validate';
 import Link from 'next/link';
 import { Typography } from '@/components/ui/typography';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default function Page(): JSX.Element {
     const { validateToken } = useParams();
@@ -39,6 +40,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
                 {error !== '' ? (
