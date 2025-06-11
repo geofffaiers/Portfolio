@@ -31,20 +31,24 @@ paths:
                   type: string
                 email:
                   type: string
+              required:
+                - username
+                - password
+                - email
       responses:
-        '201':
+        "201":
           description: User created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                $ref: "#/components/schemas/UserResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/generate-reset-token:
     post:
@@ -60,20 +64,22 @@ paths:
               properties:
                 email:
                   type: string
+              required:
+                - email
       responses:
-        '200':
+        "200":
           description: Reset token generated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/get-user-for-reset-token:
     get:
@@ -87,19 +93,19 @@ paths:
             type: string
           required: true
       responses:
-        '200':
+        "200":
           description: User retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                $ref: "#/components/schemas/UserResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/get-user-for-validate-token:
     get:
@@ -113,19 +119,19 @@ paths:
             type: string
           required: true
       responses:
-        '200':
+        "200":
           description: User retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                $ref: "#/components/schemas/UserResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/login:
     post:
@@ -143,20 +149,23 @@ paths:
                   type: string
                 password:
                   type: string
+              required:
+                - username
+                - password
       responses:
-        '200':
+        "200":
           description: User logged in successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                $ref: "#/components/schemas/UserResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/reset-password:
     post:
@@ -174,20 +183,23 @@ paths:
                   type: string
                 newPassword:
                   type: string
+              required:
+                - token
+                - newPassword
       responses:
-        '200':
+        "200":
           description: Password reset successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/refresh-token:
     post:
@@ -203,20 +215,22 @@ paths:
               properties:
                 refreshToken:
                   type: string
+              required:
+                - refreshToken
       responses:
-        '200':
+        "200":
           description: Token refreshed successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/logout:
     post:
@@ -226,19 +240,19 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: User logged out successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/update:
     post:
@@ -259,19 +273,19 @@ paths:
                 email:
                   type: string
       responses:
-        '200':
+        "200":
           description: User updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                $ref: "#/components/schemas/UserResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/delete:
     delete:
@@ -281,19 +295,19 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: User deleted successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/validate-email:
     post:
@@ -309,20 +323,22 @@ paths:
               properties:
                 token:
                   type: string
+              required:
+                - token
       responses:
-        '200':
+        "200":
           description: Email validated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/resend-verification:
     post:
@@ -332,19 +348,19 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Verification email resent successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
 
   # Scores section
@@ -364,39 +380,41 @@ paths:
               properties:
                 score:
                   type: number
+              required:
+                - score
       responses:
-        '200':
+        "200":
           description: Scores saved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ScoresSavedResponse'
-        '400':
+                $ref: "#/components/schemas/ScoresSavedResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
     get:
       tags:
         - Scores
       summary: Get global scores
       responses:
-        '200':
+        "200":
           description: Scores retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ScoresRetrievedResponse'
-        '400':
+                $ref: "#/components/schemas/ScoresRetrievedResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
 
   # Messaging section
@@ -418,20 +436,24 @@ paths:
                   type: string
                 message:
                   type: string
+              required:
+                - name
+                - email
+                - message
       responses:
-        '200':
+        "200":
           description: Contact form submitted successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContactFormSubmittedResponse'
-        '400':
+                $ref: "#/components/schemas/ContactFormSubmittedResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/messaging/get-chat-headers:
     get:
@@ -441,19 +463,19 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Chat headers retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChatHeadersRetrievedResponse'
-        '400':
+                $ref: "#/components/schemas/ChatHeadersRetrievedResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/messaging/get-messages-for-page:
     get:
@@ -469,19 +491,19 @@ paths:
             type: number
           required: true
       responses:
-        '200':
+        "200":
           description: Messages retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessagesRetrievedResponse'
-        '400':
+                $ref: "#/components/schemas/MessagesRetrievedResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
 components:
   schemas:
@@ -577,13 +599,13 @@ components:
             globalScores:
               type: array
               items:
-                $ref: '#/components/schemas/Score'
+                $ref: "#/components/schemas/Score"
             userScores:
               type: array
               items:
-                $ref: '#/components/schemas/Score'
+                $ref: "#/components/schemas/Score"
             thisScore:
-              $ref: '#/components/schemas/Score'
+              $ref: "#/components/schemas/Score"
     ScoresRetrievedResponse:
       type: object
       properties:
@@ -686,7 +708,7 @@ components:
                     example: false
                   code:
                     type: number
-                    example: 401                    
+                    example: 401
     Forbidden:
       description: Forbidden
       content:

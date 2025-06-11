@@ -15,12 +15,13 @@ import { setupSwagger } from './helpers/api-specification';
 import { logError } from './helpers';
 import { limiter } from './middlewares';
 import helmet from 'helmet';
+import { RequestError } from './models/request-error';
 
 declare module 'express' {
-  interface Request {
-    server?: Server
-    userId?: number
-  }
+    interface Request {
+        server?: Server
+        userId?: number
+    }
 }
 
 export class Server {
@@ -28,19 +29,19 @@ export class Server {
     #serverInstance: HttpServer | undefined;
     #wss: WebSocketServer | undefined;
 
-    constructor (app: Application) {
+    constructor(app: Application) {
         if (process.env.MYSQL_ROOT_USER == null || process.env.MYSQL_ROOT_PASSWORD == null) {
             throw new Error('Add .env file with values: MYSQL_ROOT_USER and MYSQL_ROOT_PASSWORD');
         }
         this.#app = app;
         this.#app.set('trust proxy', 1);
         this.#config();
-        router(app);
         setupSwagger(app);
+        router(app);
         this.#errorHandler();
     }
 
-    #config (): void {
+    #config(): void {
         const allowedOrigins: string[] = ['http://gfaiers.com', 'https://gfaiers.com', 'http://www.gfaiers.com', 'https://www.gfaiers.com'];
         if (process.env.CLIENT_URL != null && !allowedOrigins.includes(process.env.CLIENT_URL)) {
             allowedOrigins.push(process.env.CLIENT_URL);
@@ -115,9 +116,9 @@ export class Server {
         });
     }
 
-    #errorHandler (): void {
-        this.#app.use((err: Error, _: ExpressRequest, res: Response, __: NextFunction): void => {
-            res.status(500).send(defaultError(err));
+    #errorHandler(): void {
+        this.#app.use((err: RequestError, _: ExpressRequest, res: Response, __: NextFunction): void => {
+            res.status(err.status || 500).send(defaultError(err));
         });
     }
 
@@ -128,7 +129,7 @@ export class Server {
                 console.log(`Server is listening on port ${p}`); // eslint-disable-line no-console
             })
             .on('error', (err: unknown) => {
-                if (err && typeof err  === 'object' && 'code' in err && typeof err.code === 'string' && err.code === 'EADDRINUSE') {
+                if (err && typeof err === 'object' && 'code' in err && typeof err.code === 'string' && err.code === 'EADDRINUSE') {
                     console.error('Error: Port is already in use'); // eslint-disable-line no-console
                 } else {
                     logError(err);
