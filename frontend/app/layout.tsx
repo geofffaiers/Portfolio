@@ -35,6 +35,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>): JSX.Element {
+    // Using both NODE_ENV and NEXT_PUBLIC_APP_ENV ensures flexibility in distinguishing production environments,
+    // allowing finer control for staging and development setups.
+    // both should be undefined in production.
     const isProd = process.env.NODE_ENV !== 'development' && process.env.NEXT_PUBLIC_APP_ENV !== 'staging';
     const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
