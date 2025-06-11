@@ -35,7 +35,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>): JSX.Element {
-    const isProd = process.env.NODE_ENV === 'production';
+    const isProd = process.env.NODE_ENV !== 'development' && process.env.NEXT_PUBLIC_APP_ENV !== 'staging';
     const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
     return (
