@@ -524,7 +524,6 @@ paths:
             type: number
           required: true
       requestBody:
-        required: true
         content:
           application/json:
             schema:
@@ -581,7 +580,7 @@ paths:
                 - removedPlayers
               properties:
                 roomId:
-                  type: number
+                  type: string
                 name:
                   type: string
                 description:
