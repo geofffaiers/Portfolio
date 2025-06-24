@@ -8,6 +8,7 @@ export const defaultError = (error: RequestError): DefaultResponse => {
         code: error.status || 500,
         success: false,
         message: error.message.replaceAll('Error: ', ''),
-        stack: error.stack
+        stack: error.stack,
+        errors: error.errors || []
     };
 };
