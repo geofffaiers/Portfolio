@@ -20,6 +20,10 @@ BEGIN
     IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
                    WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'verified_email') THEN
         ALTER TABLE `users` ADD COLUMN `verified_email` BOOLEAN DEFAULT FALSE;
+        
+        UPDATE `users` SET `verified_email` = FALSE WHERE `email` IS NOT NULL AND `email` != '';
+        
+        UPDATE `users` SET `verified_email` = TRUE WHERE `email` = 'geoff@gfaiers.com';
     END IF;
 END //
 
