@@ -117,11 +117,18 @@ export class Server {
     }
 
     #errorHandler(): void {
-        this.#app.use((err: RequestError, _: ExpressRequest, res: Response, __: NextFunction): void => {
-            res.status(err.status || 500).send(defaultError(err));
+        this.#app.use((err: unknown, _: ExpressRequest, res: Response, __: NextFunction): void => {
+            if (this.#isRequestError(err)) {
+                res.status(err.status || 500).send(defaultError(err));
+            } else {
+                res.status(500).send({ message: 'An unexpected error occurred.' });
+            }
         });
     }
 
+    #isRequestError(err: unknown): err is RequestError {
+        return typeof err === 'object' && err !== null && 'status' in err && 'message' in err;
+    }
     start = (port: string | undefined): void => {
         const p: string = port ?? '3000';
         this.#serverInstance = this.#app
