@@ -7,396 +7,93 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local server on port 3000
-  - url: http://localhost:4000
-    description: Local server on port 4000
+  - url: http://localhost
+    description: Local server running in a docker container
   - url: https://gfaiers.com
     description: Production server
 paths:
-  # Users section
-  /api/users/create:
-    post:
-      tags:
-        - Users
-      summary: Create a new user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                email:
-                  type: string
-      responses:
-        '201':
-          description: User created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/generate-reset-token:
-    post:
-      tags:
-        - Users
-      summary: Generate a reset token for a user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-      responses:
-        '200':
-          description: Reset token generated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/get-user-for-reset-token:
+  # Config section
+  /api/config:
     get:
       tags:
-        - Users
-      summary: Get user for reset token
-      parameters:
-        - in: query
-          name: token
-          schema:
-            type: string
-          required: true
+        - Config
+      summary: Get configuration
       responses:
-        '200':
-          description: User retrieved successfully
+        "200":
+          description: Configuration received successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          projects:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Project"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/get-user-for-validate-token:
-    get:
-      tags:
-        - Users
-      summary: Get user for validate token
-      parameters:
-        - in: query
-          name: token
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: User retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/login:
-    post:
-      tags:
-        - Users
-      summary: Login a user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-      responses:
-        '200':
-          description: User logged in successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/reset-password:
-    post:
-      tags:
-        - Users
-      summary: Reset user password
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                token:
-                  type: string
-                newPassword:
-                  type: string
-      responses:
-        '200':
-          description: Password reset successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/refresh-token:
-    post:
-      tags:
-        - Users
-      summary: Refresh user token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                refreshToken:
-                  type: string
-      responses:
-        '200':
-          description: Token refreshed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/logout:
-    post:
-      tags:
-        - Users
-      summary: Logout a user
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: User logged out successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/update:
-    post:
-      tags:
-        - Users
-      summary: Update user details
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                email:
-                  type: string
-      responses:
-        '200':
-          description: User updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/delete:
-    delete:
-      tags:
-        - Users
-      summary: Delete a user
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: User deleted successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/validate-email:
-    post:
-      tags:
-        - Users
-      summary: Validate user email
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                token:
-                  type: string
-      responses:
-        '200':
-          description: Email validated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-  /api/users/resend-verification:
-    post:
-      tags:
-        - Users
-      summary: Resend email verification
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Verification email resent successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DefaultResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
 
-  # Scores section
-  /api/scores:
-    post:
-      tags:
-        - Scores
-      summary: Save user scores
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                score:
-                  type: number
-      responses:
-        '200':
-          description: Scores saved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScoresSavedResponse'
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '403':
-          $ref: "#/components/responses/Forbidden"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
+  # Hangman section
+  /api/hangman/word:
     get:
       tags:
-        - Scores
-      summary: Get global scores
+        - Hangman
+      summary: Get a random word for hangman
+      parameters:
+        - in: query
+          name: firstLetter
+          schema:
+            type: string
+          required: false
+          description: The first letter of the word to filter by
+        - in: query
+          name: length
+          schema:
+            type: integer
+          required: false
+          description: The length of the word to filter by
       responses:
-        '200':
-          description: Scores retrieved successfully
+        "200":
+          description: Word retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ScoresRetrievedResponse'
-        '400':
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          word:
+                            type: string
+                          data:
+                            type: array
+                            nullable: true
+                        required:
+                          - word
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
 
   # Messaging section
@@ -418,20 +115,32 @@ paths:
                   type: string
                 message:
                   type: string
+              required:
+                - name
+                - email
+                - message
       responses:
-        '200':
+        "200":
           description: Contact form submitted successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContactFormSubmittedResponse'
-        '400':
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - success
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/messaging/get-chat-headers:
     get:
@@ -439,21 +148,32 @@ paths:
         - Messaging
       summary: Get chat headers
       security:
-        - bearerAuth: []
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
       responses:
-        '200':
+        "200":
           description: Chat headers retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChatHeadersRetrievedResponse'
-        '400':
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/ChatHeader"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /api/messaging/get-messages-for-page:
     get:
@@ -461,201 +181,1006 @@ paths:
         - Messaging
       summary: Get messages for a page
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+        - in: query
+          name: userId
+          schema:
+            type: number
+          required: true
         - in: query
           name: page
           schema:
             type: number
           required: true
       responses:
-        '200':
+        "200":
           description: Messages retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessagesRetrievedResponse'
-        '400':
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Message"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '403':
+        "403":
           $ref: "#/components/responses/Forbidden"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
-components:
-  schemas:
-    DefaultResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-        message:
-          type: string
-        stack:
-          type: string
-        data:
-          type: object
-        code:
-          type: number
-          example: 200
-    User:
-      type: object
-      properties:
-        id:
-          type: number
-        username:
-          type: string
-        password:
-          type: string
-        email:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        lastLogin:
-          type: string
-          format: date-time
-        active:
-          type: boolean
-        profilePicture:
-          type: string
-        resetToken:
-          type: string
-        resetTokenExpires:
-          type: string
-          format: date-time
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        verifiedEmail:
-          type: boolean
-        validateToken:
-          type: string
-        validateTokenExpires:
-          type: string
-          format: date-time
-    UserResponse:
-      allOf:
-        - $ref: "#/components/schemas/DefaultResponse"
-        - type: object
-          properties:
-            data:
+
+  # Planning poker section
+  /api/planning-poker/rooms:
+    get:
+      tags:
+        - Planning Poker
+      summary: Get all rooms user is registered to
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      responses:
+        "200":
+          description: Rooms retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: object
+                        required:
+                          - rooms
+                        properties:
+                          rooms:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Room"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+        - Planning Poker
+      summary: Create a new room
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - description
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        "200":
+          description: Room created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: object
+                        required:
+                          - room
+                        properties:
+                          room:
+                            $ref: "#/components/schemas/Room"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/planning-poker/room:
+    get:
+      tags:
+        - Planning Poker
+      summary: Get a specific room
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+        - in: query
+          name: roomId
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Room retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: object
+                        required:
+                          - room
+                        properties:
+                          room:
+                            $ref: "#/components/schemas/Room"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/planning-poker/join-room:
+    post:
+      tags:
+        - Planning Poker
+      summary: Join a room
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+        - in: query
+          name: roomId
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Room joined successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: object
+                        required:
+                          - room
+                        properties:
+                          room:
+                            $ref: "#/components/schemas/Room"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/planning-poker/create-game:
+    post:
+      tags:
+        - Planning Poker
+      summary: Create a new game for a room
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - roomId
+                - name
+              properties:
+                roomId:
+                  type: string
+                name:
+                  type: string
+      responses:
+        "200":
+          description: Game created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - success
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/planning-poker/end-round:
+    post:
+      tags:
+        - Planning Poker
+      summary: End a round in a game
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+        - in: query
+          name: roundId
+          schema:
+            type: number
+          required: true
+      responses:
+        "200":
+          description: Round ended successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - success
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/planning-poker/new-round:
+    post:
+      tags:
+        - Planning Poker
+      summary: Start a new round in a game
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+        - in: query
+          name: gameId
+          schema:
+            type: number
+          required: true
+      responses:
+        "200":
+          description: New round started successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - success
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/planning-poker/end-game:
+    post:
+      tags:
+        - Planning Poker
+      summary: End a game
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+        - in: query
+          name: gameId
+          schema:
+            type: number
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - success
+              properties:
+                success:
+                  type: boolean
+                  example: true
+      responses:
+        "200":
+          description: Game ended successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - success
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/planning-poker/update-room:
+    post:
+      tags:
+        - Planning Poker
+      summary: Update rom
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - roomId
+                - name
+                - description
+                - updatedPlayers
+                - removedPlayers
+              properties:
+                roomId:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                updatedPlayers:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Player"
+                removedPlayers:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Player"
+      responses:
+        "200":
+          description: Room updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - success
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/planning-poker/disconnect:
+    post:
+      tags:
+        - Planning Poker
+      summary: Disconnect from a room
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - roomId
+              properties:
+                userId:
+                  type: number
+                roomId:
+                  type: string
+      responses:
+        "200":
+          description: Disconnected successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - success
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  # Scores section
+  /api/scores:
+    post:
+      tags:
+        - Scores
+      summary: Save user scores
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                user:
-                  $ref: "#/components/schemas/User"
-    Score:
-      type: object
-      properties:
-        id:
-          type: number
-        name:
-          type: string
-        score:
-          type: number
-        createdAt:
-          type: string
-        ranking:
-          type: number
-    ScoresSavedResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-        code:
-          type: number
-        message:
-          type: string
-        data:
-          type: object
-          properties:
-            globalScores:
-              type: array
-              items:
-                $ref: '#/components/schemas/Score'
-            userScores:
-              type: array
-              items:
-                $ref: '#/components/schemas/Score'
-            thisScore:
-              $ref: '#/components/schemas/Score'
-    ScoresRetrievedResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-        code:
-          type: number
-        message:
-          type: string
-        data:
-          type: object
-          properties:
-            scores:
-              type: array
-              items:
+                score:
+                  type: number
+              required:
+                - score
+      responses:
+        "200":
+          description: Scores saved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          globalScores:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Score"
+                          userScores:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Score"
+                          thisScore:
+                            $ref: "#/components/schemas/Score"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    get:
+      tags:
+        - Scores
+      summary: Get global scores
+      responses:
+        "200":
+          description: Scores retrieved successfully
+          content:
+            application/json:
+              schema:
                 type: object
                 properties:
-                  userId:
+                  success:
+                    type: boolean
+                  code:
                     type: number
-                  score:
-                    type: number
-    ContactFormSubmittedResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-        code:
-          type: number
-        message:
-          type: string
-    ChatHeadersRetrievedResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-        code:
-          type: number
-        message:
-          type: string
-        data:
-          type: object
-          properties:
-            chatHeaders:
-              type: array
-              items:
-                type: object
-                properties:
-                  chatId:
-                    type: number
-                  lastMessage:
+                  message:
                     type: string
-    MessagesRetrievedResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-        code:
-          type: number
-        message:
-          type: string
-        data:
-          type: object
-          properties:
-            messages:
-              type: array
-              items:
-                type: object
-                properties:
-                  messageId:
-                    type: number
-                  content:
-                    type: string
+                  data:
+                    type: object
+                    properties:
+                      scores:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            userId:
+                              type: number
+                            score:
+                              type: number
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  # Users section
+  /api/users/create:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+              required:
+                - username
+                - password
+                - email
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/generate-reset-token:
+    post:
+      tags:
+        - Users
+      summary: Generate a reset token for a user
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+                - email
+      responses:
+        "200":
+          description: Reset token generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/sessions:
+    get:
+      tags:
+        - Users
+      summary: Get user sessions
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      responses:
+        "200":
+          description: User sessions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/sessions/{sessionId}:
+    post:
+      tags:
+        - Users
+      summary: Logout of a session
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Session logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/get-user-for-reset-token:
+    get:
+      tags:
+        - Users
+      summary: Get user for reset token
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/get-user-for-validate-token:
+    get:
+      tags:
+        - Users
+      summary: Get user for validate token
+      parameters:
+        - in: query
+          name: validateToken
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/login:
+    post:
+      tags:
+        - Users
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        "200":
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/reset-password:
+    post:
+      tags:
+        - Users
+      summary: Reset user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                newPassword:
+                  type: string
+              required:
+                - token
+                - newPassword
+      responses:
+        "200":
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/refresh-token:
+    post:
+      tags:
+        - Users
+      summary: Refresh user token
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      responses:
+        "200":
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/logout:
+    post:
+      tags:
+        - Users
+      summary: Logout a user
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      responses:
+        "200":
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/update:
+    post:
+      tags:
+        - Users
+      summary: Update user details
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/delete:
+    delete:
+      tags:
+        - Users
+      summary: Delete a user
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      responses:
+        "200":
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/validate-email:
+    post:
+      tags:
+        - Users
+      summary: Validate user email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - validateToken
+              properties:
+                userId:
+                  type: number
+                validateToken:
+                  type: string
+      responses:
+        "200":
+          description: Email validated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/users/resend-verification:
+    post:
+      tags:
+        - Users
+      summary: Resend email verification
+      security:
+        - CookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthCookie"
+      responses:
+        "200":
+          description: Verification email resent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+      description: >
+        Authentication requires the following cookies:
+        - `token`: A JWT for accessing protected resources.
+        - `refreshToken`: A JWT for renewing the session.
+        These cookies must be included in requests for authorized access.
+  parameters:
+    AuthCookie:
+      name: Cookie
+      in: header
+      required: true
+      schema:
+        type: string
+        example: "token=eyJhbGciOiJI...; refreshToken=eyJhbGciOiJI..."
+      description: >
+        Authentication requires the Cookie header to contain:
+        - `token`: A JWT for accessing protected resources.
+        - `refreshToken`: A JWT for renewing the session.
   responses:
     BadRequest:
       description: Bad request
@@ -686,7 +1211,7 @@ components:
                     example: false
                   code:
                     type: number
-                    example: 401                    
+                    example: 401
     Forbidden:
       description: Forbidden
       content:
@@ -717,3 +1242,302 @@ components:
                   code:
                     type: number
                     example: 500
+  schemas:
+    DefaultResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          nullable: true
+        stack:
+          type: string
+          nullable: true
+        errors:
+          type: array
+          nullable: true
+        data:
+          type: [object, array, "null"]
+        code:
+          type: number
+          example: 200
+    UserResponse:
+      allOf:
+        - $ref: "#/components/schemas/DefaultResponse"
+        - type: object
+          required:
+            - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            data:
+              type: object
+              properties:
+                user:
+                  $ref: "#/components/schemas/User"
+    Project:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        isEnabled:
+          type: boolean
+      required:
+        - id
+        - name
+        - isEnabled
+    User:
+      type: object
+      required:
+        - id
+        - username
+        - password
+        - email
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        lastLogin:
+          type: string
+          format: date-time
+          nullable: true
+        active:
+          type: boolean
+        profilePicture:
+          type: string
+          nullable: true
+        resetToken:
+          type: string
+          nullable: true
+        resetTokenExpires:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        verifiedEmail:
+          type: boolean
+        validateToken:
+          type: string
+          nullable: true
+        validateTokenExpires:
+          type: string
+          format: date-time
+          nullable: true
+    Score:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        score:
+          type: number
+        createdAt:
+          type: string
+        ranking:
+          type: number
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        players:
+          type: array
+          items:
+            $ref: "#/components/schemas/Player"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        games:
+          type: array
+          items:
+            $ref: "#/components/schemas/Game"
+    Player:
+      allOf:
+        - $ref: "#/components/schemas/User"
+        - type: object
+          required:
+            - roomId
+            - online
+          properties:
+            roomId:
+              type: string
+            online:
+              type: boolean
+              example: true
+    Game:
+      type: object
+      required:
+        - id
+        - roomId
+        - name
+        - inProgress
+        - createdAt
+        - updatedAt
+        - rounds
+      properties:
+        id:
+          type: number
+        roomId:
+          type: string
+        name:
+          type: string
+        inProgress:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        rounds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Round"
+    Round:
+      type: object
+      required:
+        - id
+        - roomId
+        - gameId
+        - inProgress
+        - roundSuccess
+        - totalScore
+        - medianScore
+        - meanScore
+        - modeScore
+        - lowestScore
+        - highestScore
+        - countOfDifferentScores
+        - createdAt
+        - updatedAt
+        - votes
+      properties:
+        id:
+          type: number
+        roomId:
+          type: string
+        gameId:
+          type: number
+        inProgress:
+          type: boolean
+        roundSuccess:
+          type: boolean
+        totalScore:
+          type: string
+        medianScore:
+          type: string
+        meanScore:
+          type: string
+        modeScore:
+          type: string
+        lowestScore:
+          type: string
+        highestScore:
+          type: string
+        countOfDifferentScores:
+          type: number
+        finalEstimate:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        votes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Vote"
+    Vote:
+      type: object
+      required:
+        - id
+        - roomId
+        - roundId
+        - userId
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: number
+        roomId:
+          type: string
+        roundId:
+          type: number
+        userId:
+          type: number
+        value:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ChatHeader:
+      type: object
+      required:
+        - user
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        lastMessage:
+          type: [object, "null"]
+          allOf:
+            - $ref: "#/components/schemas/Message"
+        lastReceivedMessage:
+          type: [object, "null"]
+          allOf:
+            - $ref: "#/components/schemas/Message"
+    Message:
+      type: object
+      required:
+        - id
+        - senderId
+        - receiverId
+        - content
+      properties:
+        id:
+          type: number
+        senderId:
+          type: number
+        receiverId:
+          type: number
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        readAt:
+          type: string
+          format: date-time
+          nullable: true

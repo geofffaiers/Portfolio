@@ -10,9 +10,6 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/api",
             "command": "npm run dev",
-            "presentation": {
-                "hidden": true
-            }
         },
         {
             "name": "Debug Next.js server side",
@@ -20,9 +17,6 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/frontend",
             "command": "npm run dev",
-            "presentation": {
-                "hidden": true
-            }
         },
         {
             "name": "Launch Chrome with Next.js",
@@ -30,9 +24,6 @@
             "request": "launch",
             "url": "http://localhost:3001",
             "webRoot": "${workspaceFolder}/frontend",
-            "presentation": {
-                "hidden": true
-            }
         },
         {
             "name": "Debug Next.js in Edge",
@@ -42,9 +33,6 @@
             "webRoot": "${workspaceFolder}/frontend",
             "sourceMaps": true,
             "preLaunchTask": "npm: dev",
-            "presentation": {
-                "hidden": true
-            }
         },
         {
             "name": "Debug Storybook",
@@ -52,9 +40,6 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/frontend",
             "command": "npm run storybook",
-            "presentation": {
-                "hidden": true
-            }
         },
         {
             "type": "node",
