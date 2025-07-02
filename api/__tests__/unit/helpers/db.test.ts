@@ -2,7 +2,6 @@ import mysql from 'mysql2/promise';
 import { pool, closePool } from '@src/helpers/db';
 
 jest.mock('mysql2/promise', () => ({
-    ...jest.requireActual('mysql2/promise'),
     createPool: jest.fn().mockImplementation((config: mysql.PoolOptions) => {
         return {
             end: jest.fn(),
