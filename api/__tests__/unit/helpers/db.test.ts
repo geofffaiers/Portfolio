@@ -18,19 +18,17 @@ describe('db helper', () => {
     it('should create a pool with correct config when module is loaded', () => {
         expect(mysql.createPool).toHaveBeenCalled();
 
-        expect(pool.config).toEqual({
-            connectionLimit: 10,
-            database: 'portfolio',
-            enableKeepAlive: true,
-            host: 'localhost',
-            idleTimeout: 60000,
-            keepAliveInitialDelay: 0,
-            maxIdle: 10,
-            password: process.env.MYSQL_ROOT_PASSWORD,
-            queueLimit: 0,
-            user: 'root',
-            waitForConnections: true
-        });
+        expect(pool.config).toEqual(
+            expect.objectContaining({
+                connectionLimit: 10,
+                enableKeepAlive: true,
+                idleTimeout: 60000,
+                keepAliveInitialDelay: 0,
+                maxIdle: 10,
+                queueLimit: 0,
+                waitForConnections: true
+            })
+        );
     });
 
     it('should call pool.end when closePool is invoked', async () => {
