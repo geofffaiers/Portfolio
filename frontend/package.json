@@ -6,10 +6,9 @@
     "scripts": {
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
-        "dev": "next dev -p 3001",
-        "staging": "next dev -p 4001",
+        "dev": "next dev -p ${CLIENT_PORT}",
         "build": "next build",
-        "start": "next start -p 5001",
+        "start": "next start -p ${CLIENT_PORT}",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build"
     },

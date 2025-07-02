@@ -86,6 +86,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./api
+          file: ./api/Dockerfile
+          target: production
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/portfolio-api:${{ env.IMAGE_TAG }}

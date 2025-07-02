@@ -7,7 +7,7 @@ RUN npm ci
 RUN npm install -g typescript
 COPY . .
 EXPOSE ${API_PORT}
-CMD ["npm", "run", "staging"]
+CMD ["npm", "run", "dev"]
 
 FROM base AS production
 RUN npm ci --only=production

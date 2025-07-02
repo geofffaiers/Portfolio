@@ -82,6 +82,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
+          file: ./frontend/Dockerfile
+          target: production
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:${{ env.IMAGE_TAG }}
