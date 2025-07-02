@@ -1,41 +1,41 @@
+import mysql from 'mysql2/promise';
+import { pool, closePool } from '@src/helpers/db';
+
+jest.mock('mysql2/promise', () => ({
+    createPool: jest.fn().mockImplementation((config: mysql.PoolOptions) => {
+        return {
+            end: jest.fn(),
+            config
+        };
+    })
+}));
+
 describe('db helper', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
 
     it('should create a pool with correct config when module is loaded', () => {
-        jest.resetModules();
-
-        jest.doMock('mysql2/promise', () => ({
-            createPool: jest.fn(() => ({
-                end: jest.fn().mockResolvedValue(undefined)
-            }))
-        }));
-
-        require('@src/helpers/db');
-        const mysql = require('mysql2/promise');
-
         expect(mysql.createPool).toHaveBeenCalled();
-        const config = mysql.createPool.mock.calls[0][0];
-        expect(config).toHaveProperty('host');
-        expect(config).toHaveProperty('user');
-        expect(config).toHaveProperty('password');
-        expect(config).toHaveProperty('database');
+
+        expect(pool.config).toEqual({
+            connectionLimit: 10,
+            database: 'portfolio',
+            enableKeepAlive: true,
+            host: 'localhost',
+            idleTimeout: 60000,
+            keepAliveInitialDelay: 0,
+            maxIdle: 10,
+            password: process.env.MYSQL_ROOT_PASSWORD,
+            queueLimit: 0,
+            user: 'root',
+            waitForConnections: true
+        });
     });
 
     it('should call pool.end when closePool is invoked', async () => {
-        jest.resetModules();
+        await closePool();
 
-        jest.doMock('mysql2/promise', () => ({
-            createPool: jest.fn(() => ({
-                end: jest.fn().mockResolvedValue(undefined)
-            }))
-        }));
-
-        const dbHelper = require('@src/helpers/db');
-
-        await dbHelper.closePool();
-
-        expect(dbHelper.pool.end).toHaveBeenCalled();
+        expect(pool.end).toHaveBeenCalled();
     });
 });
