@@ -1,50 +1,78 @@
 services:
   mysql-db:
-    image: mysql:latest
+    image: mysql:8.1
     container_name: portfolio-mysql-db
-    env_file: 
-      - .env.development
+    env_file:
+      - .env.staging
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
     restart: unless-stopped
     volumes:
-      - ./mysql-db:/docker-entrypoint-initdb.d
-      - mysql-data:/var/lib/mysql
-    entrypoint: /docker-entrypoint-initdb.d/run.sh
+      - ./mysql-db:/docker-entrypoint-initdb.d/
+      - portfolio-mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mysql -p${MYSQL_ROOT_PASSWORD} -e 'select 1'"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=$$MYSQL_ROOT_PASSWORD"]
       interval: 5s
       retries: 50
+      timeout: 10s
+      start_period: 30s
 
-  api:
-    build: ./api
-    container_name: portfolio-api
+  flyway:
+    image: flyway/flyway:11.10.0
+    container_name: portfolio-flyway
     env_file:
-      - .env.development
+      - .env.staging
     depends_on:
       mysql-db:
         condition: service_healthy
     volumes:
-      - /usr/src/app/node_modules
+      - ./migrations:/flyway/sql:ro
+      - ./flyway/conf:/flyway/conf:ro
+    command: [
+      "-url=jdbc:mysql://mysql-db:${MYSQL_PORT}/${MYSQL_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+      "-user=${MYSQL_ROOT_USER}",
+      "-password=${MYSQL_ROOT_PASSWORD}",
+      "-connectRetries=60",
+      "migrate"
+    ]
+    restart: "no"
+
+  api:
+    build:
+      context: ./api
+      target: staging
+    container_name: portfolio-api
+    env_file:
+      - .env.staging
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    volumes:
+      - api-node-modules:/usr/src/app/node_modules
       - ./api:/usr/src/app:cached
     ports:
-      - ${STAGING_API_PORT}:${STAGING_API_PORT}
+      - ${API_PORT}:${API_PORT}
     restart: unless-stopped
     command: npm run staging
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: staging
     container_name: portfolio-frontend
+    env_file:
+      - .env.staging
     depends_on:
       api:
         condition: service_started
     volumes:
-      - /usr/src/app/node_modules
+      - frontend-node-modules:/app/node_modules
       - ./frontend:/app:cached
     ports:
-      - ${STAGING_CLIENT_PORT}:${STAGING_CLIENT_PORT}
+      - ${CLIENT_PORT}:${CLIENT_PORT}
     restart: unless-stopped
-    command: npm run staging
 
   nginx:
     image: nginx:latest
@@ -59,4 +87,12 @@ services:
     restart: unless-stopped
 
 volumes:
-  mysql-data:
+  portfolio-mysql-data:
+    name: portfolio_mysql_data
+    driver: local
+  api-node-modules:
+    name: portfolio_api_node_modules
+    driver: local
+  frontend-node-modules:
+    name: portfolio_frontend_node_modules
+    driver: local
