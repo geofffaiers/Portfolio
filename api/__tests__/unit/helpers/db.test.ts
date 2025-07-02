@@ -35,7 +35,7 @@ describe('db helper', () => {
     });
 
     it('should call pool.end when closePool is invoked', async () => {
-        closePool();
+        await closePool();
 
         expect(pool.end).toHaveBeenCalled();
     });
