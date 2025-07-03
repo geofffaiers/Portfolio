@@ -11,7 +11,6 @@ CMD ["npm", "run", "dev"]
 FROM base AS production
 RUN npm ci
 COPY . .
-RUN npm run build
-RUN npm prune --omit=dev && npm cache clean --force
+RUN npm run build && npm prune --omit=dev
 EXPOSE ${API_PORT}
 CMD ["node", "build/index.js"]
