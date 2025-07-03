@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { JWTPayload, jwtVerify } from 'jose';
 import { logError, pool } from '@src/helpers';
 import { RowDataPacket } from 'mysql2';
-import crypto from 'crypto';
+import crypto from 'node:crypto'
 
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const token: string | undefined = req.cookies.token;
