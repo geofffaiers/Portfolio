@@ -8,10 +8,9 @@ COPY . .
 EXPOSE ${CLIENT_PORT}
 CMD ["npm", "run", "dev"]
 
-FROM base AS production  
-RUN npm ci --only=production
+FROM base AS production
+RUN npm ci
 COPY . .
-RUN rm -rf .next
-RUN npm run build
+RUN rm -rf .next && npm run build && npm prune --omit=dev
 EXPOSE ${CLIENT_PORT}
 CMD ["npm", "start"]
