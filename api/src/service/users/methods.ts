@@ -9,7 +9,7 @@ import { CookieOptions, Request, Response } from 'express';
 import { getLocationFromIp } from '../../helpers/geo-location';
 
 if (!globalThis.crypto) {
-  globalThis.crypto = crypto.webcrypto as Crypto;
+    globalThis.crypto = crypto.webcrypto as Crypto;
 }
 
 export const delay = async (ms: number): Promise<void> => await new Promise(resolve => setTimeout(resolve, ms));

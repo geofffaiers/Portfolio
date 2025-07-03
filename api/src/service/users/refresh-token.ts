@@ -1,4 +1,4 @@
-import crypto from 'node:crypto'
+import crypto from 'node:crypto';
 import { Request, Response } from 'express';
 import { DefaultResponse } from '../../models';
 import { getUser, saveToUserSessions } from './methods';
