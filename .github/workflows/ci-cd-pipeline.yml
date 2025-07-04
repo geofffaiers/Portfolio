@@ -116,10 +116,6 @@ jobs:
             echo "Running database migrations..."
             if docker compose -f docker-compose.prod.yml up flyway; then
               echo "Migrations completed successfully"
-              
-              # Check migration status
-              echo "Current migration status:"
-              docker compose -f docker-compose.prod.yml run --rm flyway info
             else
               echo "Migration failed! Stopping deployment."
               exit 1
