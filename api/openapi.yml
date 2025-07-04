@@ -12,6 +12,56 @@ servers:
   - url: https://gfaiers.com
     description: Production server
 paths:
+  # Health check section
+  /api/health:
+    get:
+      tags:
+        - Health
+      summary: Health check endpoint
+      description: Returns the health status of the API service
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - timestamp
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2025-07-04T18:30:00.000Z"
+                  uptime:
+                    type: number
+                    description: "Server uptime in seconds"
+                    example: 3600
+        "503":
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - timestamp
+                properties:
+                  status:
+                    type: string
+                    example: "unhealthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2025-07-04T18:30:00.000Z"
+                  error:
+                    type: string
+                    example: "Database connection failed"
+
   # Config section
   /api/config:
     get:
