@@ -131,10 +131,13 @@ jobs:
           script: |
             cd /home/ci-deploy/Portfolio
             
+            # Stop application services (keep MySQL running)
+            docker compose -f docker-compose.prod.yml stop api frontend nginx
+            
             # Pull latest images
             docker compose -f docker-compose.prod.yml pull api frontend nginx
             
-            # Start remaining services
+            # Start all application services together
             docker compose -f docker-compose.prod.yml up -d api frontend nginx
             
             echo "Application deployment complete"

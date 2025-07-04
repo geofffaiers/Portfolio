@@ -54,6 +54,8 @@ services:
   frontend:
     image: gfaiers/portfolio-frontend:latest
     container_name: portfolio-frontend
+    env_file:
+      - .env
     depends_on:
       api:
         condition: service_started
