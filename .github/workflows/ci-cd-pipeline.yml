@@ -36,19 +36,18 @@ jobs:
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
           script: |
             # Create persistent directories
-            sudo mkdir -p /opt/portfolio/{mysql-data,ssl}
-            sudo mkdir -p /var/log/portfolio
+            sudo mkdir -p /opt/portfolio/{mysql-data,ssl} || { echo "Failed to create directories"; exit 1; }
+            sudo mkdir -p /var/log/portfolio || { echo "Failed to create log directory"; exit 1; }
 
             # Set ownership
-            sudo chown -R root:root /opt/portfolio
-            sudo chown -R 101:101 /var/log/portfolio  # nginx UID
+            sudo chown -R root:root /opt/portfolio || { echo "Failed to set ownership"; exit 1; }
+            sudo chown -R 101:101 /var/log/portfolio || { echo "Failed to set log ownership"; exit 1; }
 
             # Set permissions
-            sudo chmod -R 755 /opt/portfolio
-            sudo chmod -R 755 /var/log/portfolio
+            sudo chmod -R 755 /opt/portfolio || { echo "Failed to set permissions"; exit 1; }
+            sudo chmod -R 755 /var/log/portfolio || { echo "Failed to set log permissions"; exit 1; }
 
-            echo "Persistent directories created and configured"
-
+            echo "Persistent directories created and configured successfully"
       - name: Create a new .env file on Droplet
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -157,14 +156,30 @@ jobs:
             # Check all services are running
             docker compose -f docker-compose.prod.yml ps
             
-            # Check API health (adjust URL as needed)
-            sleep 10
-            if curl -f http://localhost:${API_PORT}/health > /dev/null 2>&1; then
+            # Wait for services to be ready
+            sleep 15
+            
+            # Check API health through nginx (port 80)
+            if curl -f http://localhost/api/health > /dev/null 2>&1; then
               echo "API health check passed"
             else
-              echo "API health check failed"
+              echo "API health check failed - checking logs"
+              docker compose -f docker-compose.prod.yml logs api --tail=50
+              docker compose -f docker-compose.prod.yml logs nginx --tail=20
               exit 1
             fi
+            
+            # Check frontend through nginx
+            if curl -f http://localhost/ > /dev/null 2>&1; then
+              echo "Frontend health check passed"
+            else
+              echo "Frontend health check failed - checking logs"
+              docker compose -f docker-compose.prod.yml logs frontend --tail=50
+              docker compose -f docker-compose.prod.yml logs nginx --tail=20
+              exit 1
+            fi
+            
+            echo "All services are responding correctly"
 
       - name: Clean Up Docker Resources
         uses: appleboy/ssh-action@v1.2.0
