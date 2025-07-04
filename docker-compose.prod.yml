@@ -111,7 +111,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /opt/portfolio/ssl
+      device: /etc/letsencrypt
 
   nginx-logs:
     name: portfolio_nginx_logs  
