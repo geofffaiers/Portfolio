@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS portfolio CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE portfolio;
 
 CREATE TABLE IF NOT EXISTS `errors` (
