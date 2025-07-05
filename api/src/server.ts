@@ -129,6 +129,7 @@ export class Server {
     #isRequestError(err: unknown): err is RequestError {
         return typeof err === 'object' && err !== null && 'status' in err && 'message' in err;
     }
+
     start = (port: string | undefined): void => {
         const p: string = port ?? '3000';
         this.#serverInstance = this.#app
