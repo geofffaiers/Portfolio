@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS portfolio;
 USE portfolio;
 
 CREATE TABLE IF NOT EXISTS `errors` (
