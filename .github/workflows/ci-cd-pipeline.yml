@@ -47,7 +47,7 @@ jobs:
             sudo chown -R root:root /etc/letsencrypt || { echo "Failed to set letsencrypt ownership"; exit 1; }
 
             # Set permissions
-            sudo chmod -R 755 /opt/portfolio/mysql-data || { echo "Failed to set mysql permissions"; exit 1; }
+            sudo chmod -R 700 /opt/portfolio/mysql-data || { echo "Failed to set mysql permissions"; exit 1; }
             sudo chmod -R 755 /opt/portfolio || { echo "Failed to set permissions"; exit 1; }
             sudo chmod -R 755 /var/log/portfolio || { echo "Failed to set log permissions"; exit 1; }
             sudo chmod -R 755 /etc/letsencrypt || { echo "Failed to set letsencrypt permissions"; exit 1; }
