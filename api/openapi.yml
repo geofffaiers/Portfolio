@@ -845,10 +845,6 @@ paths:
       tags:
         - Users
       summary: Generate a reset token for a user
-      security:
-        - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         required: true
         content:
@@ -935,7 +931,7 @@ paths:
       summary: Get user for reset token
       parameters:
         - in: query
-          name: token
+          name: resetToken
           schema:
             type: string
           required: true
@@ -1026,12 +1022,15 @@ paths:
             schema:
               type: object
               properties:
-                token:
+                userId:
+                  type: number
+                resetToken:
                   type: string
                 newPassword:
                   type: string
               required:
-                - token
+                - userId
+                - resetToken
                 - newPassword
       responses:
         "200":
@@ -1358,8 +1357,10 @@ components:
           type: string
         firstName:
           type: string
+          nullable: true
         lastName:
           type: string
+          nullable: true
         lastLogin:
           type: string
           format: date-time
@@ -1379,9 +1380,11 @@ components:
         createdAt:
           type: string
           format: date-time
+          nullable: true
         updatedAt:
           type: string
           format: date-time
+          nullable: true
         verifiedEmail:
           type: boolean
         validateToken:
@@ -1402,6 +1405,7 @@ components:
           type: number
         createdAt:
           type: string
+          format: date-time
         ranking:
           type: number
     Room:
