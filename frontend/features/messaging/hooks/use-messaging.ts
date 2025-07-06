@@ -61,24 +61,24 @@ export function useMessaging(): Messaging {
         }
     }, [authReady, config.apiUrl, displayError, getConversations]);
 
-    const handleOpenChat = useCallback((user: User): void => {
+    const handleOpenChat = (user: User): void => {
         setOpenChats((chats) => {
             if (chats.find((u: User) => u.id === user.id)) {
                 return chats;
             }
             return [...chats, user];
         });
-    }, []);
+    };
 
-    const handleCloseChat = useCallback((user: User): void => {
-        const closedChats = openChats.filter((u) => u.id !== user.id);
-        setOpenChats(closedChats);
-        if (closedChats.length === 0) {
+    const handleCloseChat = (user: User): void => {
+        const remainingOpenChats = openChats.filter((u) => u.id !== user.id);
+        setOpenChats(remainingOpenChats);
+        if (chatHeaders.length === 1 && remainingOpenChats.length === 0) {
             setFloatingOpen(false);
-        }
-    }, [openChats]);
+        };
+    };
 
-    const handleOpenFloatingMessaging = useCallback((): void => {
+    const handleOpenFloatingMessaging = (): void => {
         setFloatingOpen(true);
         if (pageChat != null) {
             handleOpenChat(pageChat);
@@ -86,13 +86,13 @@ export function useMessaging(): Messaging {
             handleOpenChat(chatHeaders[0].user);
         } else if (chatHeaders.length === 0) {
             getConversations();
-        }
-    }, [pageChat, chatHeaders, handleOpenChat, getConversations]);
+        };
+    };
 
-    const handleCloseFloatingMessaging = useCallback((): void => {
+    const handleCloseFloatingMessaging = (): void => {
         setFloatingOpen(false);
         openChats.forEach((u) => handleCloseChat(u));
-    }, [openChats, handleCloseChat]);
+    };
 
     return {
         floatingOpen,
