@@ -1,6 +1,6 @@
 'use client';
 
-import React, { JSX } from 'react';
+import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -12,7 +12,7 @@ type Props = {
     cancelLogout: () => void;
 }
 
-export function ConfirmLogout({ open, setOpen, confirmLogout, cancelLogout }: Props): JSX.Element {
+export function ConfirmLogout({ open, setOpen, confirmLogout, cancelLogout }: Props) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>

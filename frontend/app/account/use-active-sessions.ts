@@ -102,6 +102,7 @@ export function useActiveSessions(): UseActiveSessions {
             return;
         }
         await logoutSession(sessionToLogout);
+        setSessionToLogout(null);
         setOpenConfirmLogout(false);
     };
 
