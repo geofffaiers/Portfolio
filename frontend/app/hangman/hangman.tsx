@@ -9,8 +9,11 @@ import { SelectWordLength } from './select-word-length';
 import { DisplayedWord } from './displayed-word';
 import { Keyboard } from './keyboard';
 import { DefinitionDialog } from './definition-dialog/definition-dialog';
+import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
+import { cn } from '@/lib/utils';
 
 export const Hangman: React.FC = () => {
+    const { isMobile, isTablet } = useDeviceBreakpoints();
     const {
         wordLength,
         setWordLength,
@@ -27,7 +30,10 @@ export const Hangman: React.FC = () => {
     } = useHangman();
 
     return (
-        <div className='w-full h-full flex flex-col items-center p-4 justify-start'>
+        <div className={cn(
+            'w-full h-full flex flex-col items-center',
+            isMobile || isTablet ? 'p-0' : 'p-4'
+        )}>
             {loading ? (
                 <Loader2 className='animate-spin my-auto' />
             ) : !word ? (
