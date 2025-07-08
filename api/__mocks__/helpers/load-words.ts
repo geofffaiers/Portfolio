@@ -1,4 +1,4 @@
-import { Words } from '@src/helpers/load-words';
+import { Words } from '@src/service/hangman/methods';
 
 export const mockWords = ['apple', 'banana', 'date', 'egg'];
 
