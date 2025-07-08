@@ -1,10 +1,12 @@
 'use client';
 
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useTheme } from 'next-themes';
+
+import type { DefaultResponse, WordData, WordWithData } from '@/models';
+import type { KeyboardLayout } from './types';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
-import { DefaultResponse, WordData, WordWithData } from '@/models';
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { KeyboardLayout } from './types';
 
 interface UseHangman {
     wordLength: number;
@@ -25,6 +27,8 @@ interface UseHangman {
 export function useHangman(): UseHangman {
     const { config } = useConfigContext();
     const { displayError } = useToastWrapper();
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
     const [wordLength, setWordLength] = useState<number>(5);
     const [word, setWord] = useState<string>('');
     const [wordData, setWordData] = useState<WordData | null>(null);
@@ -129,94 +133,104 @@ export function useHangman(): UseHangman {
         };
     }, [guessLetter]);
 
+    useEffect(() => setMounted(true), []);
+
     useEffect(() => {
+        if (!mounted) return;
+
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        const computedStyles = getComputedStyle(canvas);
-        const foregroundValue = computedStyles.getPropertyValue('--foreground')?.trim() || '0, 0%, 0%';
-        const backgroundValue = computedStyles.getPropertyValue('--background')?.trim() || '0, 0%, 100%';
-        const foregroundColor = `hsl(${foregroundValue})`;
-        const backgroundColor = `hsl(${backgroundValue})`;
+        const updateCanvas = () => {
+            const computedStyles = getComputedStyle(document.documentElement);
+            const foregroundValue = computedStyles.getPropertyValue('--foreground')?.trim() || '0, 0%, 0%';
+            const backgroundValue = computedStyles.getPropertyValue('--background')?.trim() || '0, 0%, 100%';
+            const foregroundColor = `hsl(${foregroundValue})`;
+            const backgroundColor = `hsl(${backgroundValue})`;
 
-        // Fill the canvas with the background color.
-        ctx.fillStyle = backgroundColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Fill the canvas with the background color.
+            ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.strokeStyle = foregroundColor;
-        ctx.lineWidth = 4;
+            ctx.strokeStyle = foregroundColor;
+            ctx.lineWidth = 4;
 
-        // Draw gallows:
-        // Base line:
-        ctx.beginPath();
-        ctx.moveTo(10, canvas.height - 10);
-        ctx.lineTo(canvas.width - 10, canvas.height - 10);
-        ctx.stroke();
-
-        // Vertical pole:
-        ctx.beginPath();
-        ctx.moveTo(30, canvas.height - 10);
-        ctx.lineTo(30, 10);
-        ctx.stroke();
-
-        // Horizontal beam:
-        ctx.beginPath();
-        ctx.moveTo(30, 10);
-        ctx.lineTo(canvas.width / 2, 10);
-        ctx.stroke();
-
-        // Rope:
-        ctx.beginPath();
-        ctx.moveTo(canvas.width / 2, 10);
-        ctx.lineTo(canvas.width / 2, 30);
-        ctx.stroke();
-
-        // Draw hangman parts based on wrong letters:
-        const wrongCount = wrongLetters.length;
-        // Head:
-        if (wrongCount > 0) {
+            // Draw gallows:
+            // Base line:
             ctx.beginPath();
-            ctx.arc(canvas.width / 2, 45, 15, 0, Math.PI * 2);
+            ctx.moveTo(10, canvas.height - 10);
+            ctx.lineTo(canvas.width - 10, canvas.height - 10);
             ctx.stroke();
-        }
-        // Body:
-        if (wrongCount > 1) {
+
+            // Vertical pole:
             ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 60);
-            ctx.lineTo(canvas.width / 2, 100);
+            ctx.moveTo(30, canvas.height - 10);
+            ctx.lineTo(30, 10);
             ctx.stroke();
-        }
-        // Left arm:
-        if (wrongCount > 2) {
+
+            // Horizontal beam:
             ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 70);
-            ctx.lineTo(canvas.width / 2 - 20, 85);
+            ctx.moveTo(30, 10);
+            ctx.lineTo(canvas.width / 2, 10);
             ctx.stroke();
-        }
-        // Right arm:
-        if (wrongCount > 3) {
+
+            // Rope:
             ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 70);
-            ctx.lineTo(canvas.width / 2 + 20, 85);
+            ctx.moveTo(canvas.width / 2, 10);
+            ctx.lineTo(canvas.width / 2, 30);
             ctx.stroke();
-        }
-        // Left leg:
-        if (wrongCount > 4) {
-            ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 100);
-            ctx.lineTo(canvas.width / 2 - 20, 125);
-            ctx.stroke();
-        }
-        // Right leg:
-        if (wrongCount > 5) {
-            ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 100);
-            ctx.lineTo(canvas.width / 2 + 20, 125);
-            ctx.stroke();
-        }
-    }, [wrongLetters]);
+
+            // Draw hangman parts based on wrong letters:
+            const wrongCount = wrongLetters.length;
+            // Head:
+            if (wrongCount > 0) {
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, 45, 15, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            // Body:
+            if (wrongCount > 1) {
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2, 60);
+                ctx.lineTo(canvas.width / 2, 100);
+                ctx.stroke();
+            }
+            // Left arm:
+            if (wrongCount > 2) {
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2, 70);
+                ctx.lineTo(canvas.width / 2 - 20, 85);
+                ctx.stroke();
+            }
+            // Right arm:
+            if (wrongCount > 3) {
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2, 70);
+                ctx.lineTo(canvas.width / 2 + 20, 85);
+                ctx.stroke();
+            }
+            // Left leg:
+            if (wrongCount > 4) {
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2, 100);
+                ctx.lineTo(canvas.width / 2 - 20, 125);
+                ctx.stroke();
+            }
+            // Right leg:
+            if (wrongCount > 5) {
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2, 100);
+                ctx.lineTo(canvas.width / 2 + 20, 125);
+                ctx.stroke();
+            }
+        };
+
+        const rafId = requestAnimationFrame(updateCanvas);
+
+        return () => cancelAnimationFrame(rafId);
+    }, [wrongLetters, resolvedTheme, mounted]);
 
     const isGameWon = word.length > 0 && word.split('').every((letter) => correctLetters.find((l) => l === letter));
     const isGameLost = wrongLetters.length >= maxWrong;
