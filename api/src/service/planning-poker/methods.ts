@@ -44,7 +44,6 @@ export const getRoomsFromDbForUser = async (userId: number): Promise<Room[]> => 
         [roomIds]
     );
     const rooms = await convertResultToRooms(result);
-    await validateOrReject(rooms);
     return rooms;
 };
 
@@ -305,7 +304,6 @@ export const getRoomDetails = async (roomId: string): Promise<Room | undefined> 
         return undefined;
     }
     const room = await convertResultToRooms(result);
-    await validateOrReject(room);
     return room[0];
 };
 
@@ -333,7 +331,7 @@ const convertResultToRooms = async (result: Room[]): Promise<Room[]> => {
         room.games = await getGamesForRoom(room.id);
         return room;
     }));
-    await validateOrReject(rooms);
+    await Promise.all(rooms.map(room => validateOrReject(room)));
     return rooms;
 };
 
@@ -376,48 +374,53 @@ const getPlayersForRoom = async (roomId?: string, gameId?: number, roundId?: num
         sql += ' WHERE ' + conditions.join(' AND ');
     }
 
-    const [players] = await pool.query<Player[] & RowDataPacket[]>(sql, params);
+    const [result] = await pool.query<Player[] & RowDataPacket[]>(sql, params);
 
-    return Promise.all(players.map(async (row: Player) => {
+    const players = result.map((row: Player) => {
         const player: Player = plainToInstance(Player, row, { excludeExtraneousValues: true });
         player.password = '';
         return player;
-    }));
+    });
+    await Promise.all(players.map(player => validateOrReject(player)));
+    return players;
 };
 
 const getGamesForRoom = async (roomId: string): Promise<Game[]> => {
-    const [games] = await pool.query<Game[] & RowDataPacket[]>(
+    const [result] = await pool.query<Game[] & RowDataPacket[]>(
         'SELECT * FROM pp_games WHERE room_id = ?',
         [roomId]
     );
-    return await Promise.all(games.map(async (row: Game) => {
+    const games = await Promise.all(result.map(async (row: Game) => {
         const game = plainToInstance(Game, row, { excludeExtraneousValues: true });
         game.rounds = await getRoundsForGame(game.id);
         return game;
     }));
+    await Promise.all(games.map(game => validateOrReject(game)));
+    return games;
 };
 
 const getRoundsForGame = async (gameId: number): Promise<Round[]> => {
-    const [rounds] = await pool.query<Round[] & RowDataPacket[]>(
+    const [result] = await pool.query<Round[] & RowDataPacket[]>(
         'SELECT * FROM pp_rounds WHERE game_id = ?',
         [gameId]
     );
-    return await Promise.all(rounds.map(async (row: Round) => {
+    const rounds = await Promise.all(result.map(async (row: Round) => {
         const round = plainToInstance(Round, row, { excludeExtraneousValues: true });
         round.votes = await getVotesForRound(round.id);
         return round;
     }));
+    await Promise.all(rounds.map(round => validateOrReject(round)));
+    return rounds;
 };
 
 const getVotesForRound = async (roundId: number): Promise<Vote[]> => {
-    const [votes] = await pool.query<Vote[] & RowDataPacket[]>(
+    const [result] = await pool.query<Vote[] & RowDataPacket[]>(
         'SELECT * FROM pp_votes WHERE round_id = ?',
         [roundId]
     );
-    return await Promise.all(votes.map(async (row: Vote) => {
-        const vote = plainToInstance(Vote, row, { excludeExtraneousValues: true });
-        return vote;
-    }));
+    const votes = result.map((row: Vote) => plainToInstance(Vote, row, { excludeExtraneousValues: true }));
+    await Promise.all(votes.map(vote => validateOrReject(vote)));
+    return votes;
 };
 
 export const connectToRoom = async (roomId: string, userId: number): Promise<void> => {

@@ -1417,6 +1417,7 @@ components:
           type: string
         description:
           type: string
+          nullable: true
         players:
           type: array
           items:
