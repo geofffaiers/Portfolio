@@ -1,7 +1,7 @@
 import { Request } from 'express';
-import { Words } from '../../helpers/load-words';
 import { DefaultResponse, WordWithData } from '../../models';
 import { handleError } from '../../helpers';
+import { getWordFromDatabase } from './methods';
 
 export const getWord = async (req: Request): Promise<DefaultResponse<WordWithData>> => {
     try {
@@ -11,7 +11,7 @@ export const getWord = async (req: Request): Promise<DefaultResponse<WordWithDat
         const length: number | undefined = req.query.length
             ? parseInt(req.query.length as string)
             : undefined;
-        const { word, data }: WordWithData = await Words.getWord(firstLetter, length);
+        const { word, data }: WordWithData = await getWordFromDatabase(firstLetter, length);
         return {
             success: true,
             code: 200,
