@@ -1,7 +1,8 @@
 import axios, { AxiosError } from 'axios';
+
 import { getWordFromDatabase } from '@src/service/hangman/methods';
 import { pool } from '@src/helpers/db';
-import { RowDataPacket } from 'mysql2';
+import { FieldPacket, ResultSetHeader, RowDataPacket } from 'mysql2';
 
 jest.mock('axios');
 jest.mock('@src/helpers/db', () => ({
@@ -13,19 +14,50 @@ jest.mock('@src/helpers/db', () => ({
 const mockAxios = axios as jest.Mocked<typeof axios>;
 const mockPool = pool as jest.Mocked<typeof pool>;
 
+const createCountResult = (count: number): [RowDataPacket[], FieldPacket[]] => [
+    [{ count }] as RowDataPacket[],
+    [] as FieldPacket[]
+];
+
+const createWordResult = (word?: string): [RowDataPacket[], FieldPacket[]] => {
+    if (word) {
+        return [
+            [{ word }] as RowDataPacket[],
+            [] as FieldPacket[]
+        ];
+    }
+    return [[] as RowDataPacket[], [] as FieldPacket[]];
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createValidationResult = (isValid?: boolean, data?: any): [RowDataPacket[], FieldPacket[]] => {
+    if (isValid === undefined) {
+        return [[] as RowDataPacket[], [] as FieldPacket[]];
+    }
+    return [
+        [{ is_valid: isValid, validation_data: data }] as RowDataPacket[],
+        [] as FieldPacket[]
+    ];
+};
+
+const createUpdateResult = (): [ResultSetHeader, FieldPacket[]] => [
+    { affectedRows: 1 } as ResultSetHeader,
+    [] as FieldPacket[]
+];
+
 describe('getWord', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     describe('successful word retrieval', () => {
         it('should return a valid word with data when API validates successfully', async () => {
             // Mock database queries
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 5 }]] as any) // COUNT query
-                .mockResolvedValueOnce([[{ word: 'apple' }]] as any) // Word selection
-                .mockResolvedValueOnce([[]] as any) // Validation cache check (empty)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any); // UPDATE query
+                .mockResolvedValueOnce(createCountResult(5))
+                .mockResolvedValueOnce(createWordResult('apple'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult());
 
             // Mock API response
             mockAxios.get.mockResolvedValue({
@@ -44,12 +76,9 @@ describe('getWord', () => {
         it('should return cached valid word without API call', async () => {
             // Mock database queries
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 3 }]] as any) // COUNT query
-                .mockResolvedValueOnce([[{ word: 'apple' }]] as any) // Word selection
-                .mockResolvedValueOnce([[{ 
-                    is_valid: true, 
-                    validation_data: { cached: true } 
-                }]] as any); // Validation cache hit
+                .mockResolvedValueOnce(createCountResult(3))
+                .mockResolvedValueOnce(createWordResult('apple'))
+                .mockResolvedValueOnce(createValidationResult(true, { cached: true }));
 
             const result = await getWordFromDatabase('a', 5);
 
@@ -61,10 +90,10 @@ describe('getWord', () => {
 
         it('should work with first letter filter only', async () => {
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 10 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'amazing' }]] as any)
-                .mockResolvedValueOnce([[]] as any)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any);
+                .mockResolvedValueOnce(createCountResult(10))
+                .mockResolvedValueOnce(createWordResult('amazing'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult());
 
             mockAxios.get.mockResolvedValue({
                 status: 200,
@@ -83,10 +112,10 @@ describe('getWord', () => {
 
         it('should work with length filter only', async () => {
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 15 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'words' }]] as any)
-                .mockResolvedValueOnce([[]] as any)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any);
+                .mockResolvedValueOnce(createCountResult(15))
+                .mockResolvedValueOnce(createWordResult('words'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult());
 
             mockAxios.get.mockResolvedValue({
                 status: 200,
@@ -105,10 +134,10 @@ describe('getWord', () => {
 
         it('should work without any filters', async () => {
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 198219 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'random' }]] as any)
-                .mockResolvedValueOnce([[]] as any)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any);
+                .mockResolvedValueOnce(createCountResult(198219))
+                .mockResolvedValueOnce(createWordResult('random'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult());
 
             mockAxios.get.mockResolvedValue({
                 status: 200,
@@ -130,15 +159,15 @@ describe('getWord', () => {
         it('should retry when API returns 404 and eventually find valid word', async () => {
             // Mock database queries for invalid word
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 2 }]] as any) // COUNT query
-                .mockResolvedValueOnce([[{ word: 'invalid' }]] as any) // First word (invalid)
-                .mockResolvedValueOnce([[]] as any) // Validation cache check (empty)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any) // UPDATE invalid word
-                // Second attempt
-                .mockResolvedValueOnce([[{ count: 1 }]] as any) // COUNT query
-                .mockResolvedValueOnce([[{ word: 'valid' }]] as any) // Second word (valid)
-                .mockResolvedValueOnce([[]] as any) // Validation cache check (empty)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any); // UPDATE valid word
+                .mockResolvedValueOnce(createCountResult(2))
+                .mockResolvedValueOnce(createWordResult('invalid'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult())
+                // Second attempt with valid word
+                .mockResolvedValueOnce(createCountResult(1))
+                .mockResolvedValueOnce(createWordResult('valid'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult());
 
             // Mock API responses
             const mockAxiosError = new AxiosError('Not found');
@@ -155,26 +184,17 @@ describe('getWord', () => {
         });
 
         it('should throw error after max attempts with invalid words', async () => {
-            // Mock database to always return invalid words
-            // We need to mock each call separately since there will be multiple attempts
-            
-            // For each of the 10 attempts, we need: COUNT, SELECT, cache check, UPDATE
-            const countMock = [{ count: 1 }];
-            const selectMock = [{ word: 'invalid' }];
-            const isValidMock: string[] = [];
-            const updateMock = { affectedRows: 1 };
-
             const mockAxiosError = new AxiosError('Not found');
             mockAxiosError.status = 404;
 
             // Mock all the calls for 10 attempts
             for (let i = 0; i < 10; i++) {
                 mockPool.query
-                    .mockResolvedValueOnce([selectMock] as any) // Word selection
-                    .mockResolvedValueOnce([countMock] as any) // COUNT query
-                    .mockResolvedValueOnce([isValidMock] as any) // COUNT query
-                    .mockResolvedValueOnce([updateMock] as any); // UPDATE query
-                mockAxios.get.mockRejectedValueOnce(mockAxiosError);
+                    .mockResolvedValueOnce(createCountResult(1))
+                    .mockResolvedValueOnce(createWordResult('invalid'))
+                    .mockResolvedValueOnce(createValidationResult())
+                    .mockResolvedValueOnce(createUpdateResult());
+                mockAxios.get.mockRejectedValue(mockAxiosError);
             }
 
             await expect(getWordFromDatabase('x', 5)).rejects.toThrow('Unable to find a valid word after multiple attempts');
@@ -183,10 +203,10 @@ describe('getWord', () => {
 
         it('should not retry on non-404 API errors', async () => {
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 1 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'apple' }]] as any)
-                .mockResolvedValueOnce([[]] as any)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any);
+                .mockResolvedValueOnce(createCountResult(1))
+                .mockResolvedValueOnce(createWordResult('apple'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult());
 
             const mockAxiosError = new AxiosError('Server error');
             mockAxiosError.status = 500;
@@ -202,25 +222,25 @@ describe('getWord', () => {
 
     describe('error handling', () => {
         it('should throw error when no words found for combination', async () => {
-            mockPool.query.mockResolvedValueOnce([[{ count: 0 }]] as any);
+            mockPool.query.mockResolvedValueOnce(createCountResult(0));
 
             await expect(getWordFromDatabase('z', 50)).rejects.toThrow('No words found for the given combination: z, 50');
         });
 
         it('should throw error when no words found with first letter filter', async () => {
-            mockPool.query.mockResolvedValueOnce([[{ count: 0 }]] as any);
+            mockPool.query.mockResolvedValueOnce(createCountResult(0));
 
             await expect(getWordFromDatabase('z')).rejects.toThrow('No words found for the given combination: z, no length filter');
         });
 
         it('should throw error when no words found with length filter', async () => {
-            mockPool.query.mockResolvedValueOnce([[{ count: 0 }]] as any);
+            mockPool.query.mockResolvedValueOnce(createCountResult(0));
 
             await expect(getWordFromDatabase(undefined, 50)).rejects.toThrow('No words found for the given combination: no first letter filter, 50');
         });
 
         it('should throw error when no words found without filters', async () => {
-            mockPool.query.mockResolvedValueOnce([[{ count: 0 }]] as any);
+            mockPool.query.mockResolvedValueOnce(createCountResult(0));
 
             await expect(getWordFromDatabase()).rejects.toThrow('No words found for the given combination: no first letter filter, no length filter');
         });
@@ -235,9 +255,9 @@ describe('getWord', () => {
     describe('database interaction', () => {
         it('should use correct WHERE clause for both filters', async () => {
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 5 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'apple' }]] as any)
-                .mockResolvedValueOnce([[{ is_valid: true, validation_data: null }]] as any);
+                .mockResolvedValueOnce(createCountResult(5))
+                .mockResolvedValueOnce(createWordResult('apple'))
+                .mockResolvedValueOnce(createValidationResult(true, null));
 
             await getWordFromDatabase('a', 5);
 
@@ -249,10 +269,10 @@ describe('getWord', () => {
 
         it('should update database with validation result', async () => {
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 1 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'test' }]] as any)
-                .mockResolvedValueOnce([[]] as any)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any);
+                .mockResolvedValueOnce(createCountResult(1))
+                .mockResolvedValueOnce(createWordResult('test'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult());
 
             mockAxios.get.mockResolvedValue({
                 status: 200,
@@ -262,22 +282,24 @@ describe('getWord', () => {
             await getWordFromDatabase('t', 4);
 
             expect(mockPool.query).toHaveBeenLastCalledWith(
-                'UPDATE words SET is_valid = ?, validation_data = ?, validated_at = NOW() WHERE word = ?',
+                `UPDATE words 
+         SET is_valid = ?, validation_data = ?, validated_at = NOW() 
+         WHERE word = ?`,
                 [true, '{"definition":"examination"}', 'test']
             );
         });
 
         it('should update database with invalid word result', async () => {
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 1 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'invalid' }]] as any)
-                .mockResolvedValueOnce([[]] as any)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any)
+                .mockResolvedValueOnce(createCountResult(1))
+                .mockResolvedValueOnce(createWordResult('invalid'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult())
                 // Second attempt
-                .mockResolvedValueOnce([[{ count: 1 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'valid' }]] as any)
-                .mockResolvedValueOnce([[]] as any)
-                .mockResolvedValueOnce([{ affectedRows: 1 }] as any);
+                .mockResolvedValueOnce(createCountResult(1))
+                .mockResolvedValueOnce(createWordResult('valid'))
+                .mockResolvedValueOnce(createValidationResult())
+                .mockResolvedValueOnce(createUpdateResult());
 
             const mockAxiosError = new AxiosError('Not found');
             mockAxiosError.status = 404;
@@ -288,7 +310,9 @@ describe('getWord', () => {
             await getWordFromDatabase('v', 5);
 
             expect(mockPool.query).toHaveBeenCalledWith(
-                'UPDATE words SET is_valid = ?, validation_data = ?, validated_at = NOW() WHERE word = ?',
+                `UPDATE words 
+         SET is_valid = ?, validation_data = ?, validated_at = NOW() 
+         WHERE word = ?`,
                 [false, null, 'invalid']
             );
         });
@@ -297,21 +321,21 @@ describe('getWord', () => {
     describe('edge cases', () => {
         it('should handle empty database result gracefully', async () => {
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 1 }]] as any)
-                .mockResolvedValueOnce([[]] as any); // Empty result
+                .mockResolvedValueOnce(createCountResult(1))
+                .mockResolvedValueOnce(createWordResult());
 
             await expect(getWordFromDatabase('a', 5)).rejects.toThrow('No words found for the given combination: a, 5');
         });
 
         it('should handle cached invalid words', async () => {
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 1 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'invalid' }]] as any)
-                .mockResolvedValueOnce([[{ is_valid: false, validation_data: null }]] as any)
+                .mockResolvedValueOnce(createCountResult(1))
+                .mockResolvedValueOnce(createWordResult('invalid'))
+                .mockResolvedValueOnce(createValidationResult(false, null))
                 // Second attempt
-                .mockResolvedValueOnce([[{ count: 1 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'valid' }]] as any)
-                .mockResolvedValueOnce([[{ is_valid: true, validation_data: { cached: true } }]] as any);
+                .mockResolvedValueOnce(createCountResult(1))
+                .mockResolvedValueOnce(createWordResult('valid'))
+                .mockResolvedValueOnce(createValidationResult(true, { cached: true }));
 
             const result = await getWordFromDatabase('v', 5);
 
@@ -324,9 +348,9 @@ describe('getWord', () => {
             const mockMathRandom = jest.spyOn(Math, 'random').mockReturnValue(0.5);
 
             mockPool.query
-                .mockResolvedValueOnce([[{ count: 100 }]] as any)
-                .mockResolvedValueOnce([[{ word: 'middle' }]] as any)
-                .mockResolvedValueOnce([[{ is_valid: true, validation_data: null }]] as any);
+                .mockResolvedValueOnce(createCountResult(100))
+                .mockResolvedValueOnce(createWordResult('middle'))
+                .mockResolvedValueOnce(createValidationResult(true, null));
 
             await getWordFromDatabase('m', 6);
 

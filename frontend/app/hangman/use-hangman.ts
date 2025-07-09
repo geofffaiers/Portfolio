@@ -36,7 +36,6 @@ export function useHangman(): UseHangman {
     const [loading, setLoading] = useState<boolean>(false);
     const maxWrong = 6;
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const keyListenerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
 
     const correctLetters = useMemo(() => letters.flat().filter((l) => l.correct).map((l) => l.letter), [letters]);
     const wrongLetters = useMemo(() => letters.flat().filter((l) => l.guessed && !l.correct).map((l) => l.letter), [letters]);
@@ -93,7 +92,7 @@ export function useHangman(): UseHangman {
 
     const guessLetter = useCallback((letter: string) => {
         letter = letter.toLowerCase();
-        
+
         if (
             guessedLetters.includes(letter) ||
             isGameWon ||
@@ -114,13 +113,9 @@ export function useHangman(): UseHangman {
                 })
             );
         });
-    }, [word, guessedLetters, wrongLetters, wordLength]);
+    }, [word, guessedLetters, isGameWon, isGameLost]);
 
     useEffect(() => {
-        if (keyListenerRef.current) {
-            window.removeEventListener('keydown', keyListenerRef.current);
-        }
-
         const handleKeydown = (e: KeyboardEvent) => {
             const letter = e.key;
             if (
@@ -135,14 +130,8 @@ export function useHangman(): UseHangman {
             }
         };
 
-        keyListenerRef.current = handleKeydown;
         window.addEventListener('keydown', handleKeydown);
-
-        return () => {
-            if (keyListenerRef.current) {
-                window.removeEventListener('keydown', keyListenerRef.current);
-            }
-        };
+        return () => window.removeEventListener('keydown', handleKeydown);
     }, [guessLetter]);
 
     useEffect(() => setMounted(true), []);
