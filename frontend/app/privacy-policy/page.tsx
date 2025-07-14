@@ -19,15 +19,7 @@ export const metadata: Metadata = {
         title: 'Privacy Policy',
         description: 'Privacy Policy for gfaiers.com',
         url: '/privacy-policy',
-        siteName: 'Geoff Faiers',
-        images: [
-            {
-                url: '/images/privacy-policy.png',
-                width: 1200,
-                height: 630,
-                alt: 'Privacy Policy',
-            },
-        ],
+        siteName: 'Geoff Faiers'
     }
 };
 

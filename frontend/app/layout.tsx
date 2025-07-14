@@ -20,6 +20,10 @@ import { AppSidebar } from '@/features/nav/app-sidebar';
 
 export const metadata: Metadata = {
     title: 'Geoff Faiers',
+    icons: {
+        icon: '/logos/favicon.ico',
+        apple: '/logos/gfaiers.png',
+    },
     description: 'The personal portfolio of Geoff Faiers',
     metadataBase: new URL('https://gfaiers.com'),
     alternates: {
@@ -35,9 +39,9 @@ export const metadata: Metadata = {
         siteName: 'Geoff Faiers',
         images: [
             {
-                url: '/logo.png',
-                width: 1200,
-                height: 630,
+                url: '/logos/gfaiers.png',
+                width: 1024,
+                height: 1024,
                 alt: 'Geoff Faiers Logo',
             },
         ],

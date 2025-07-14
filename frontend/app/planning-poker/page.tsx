@@ -13,9 +13,9 @@ export const metadata: Metadata = {
         siteName: 'Geoff Faiers',
         images: [
             {
-                url: '/images/planning-poker.png',
-                width: 1200,
-                height: 630,
+                url: '/logos/planning-poker.png',
+                width: 1024,
+                height: 1024,
                 alt: 'Planning Poker Game',
             },
         ],

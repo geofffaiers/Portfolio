@@ -13,9 +13,9 @@ export const metadata: Metadata = {
         siteName: 'Geoff Faiers',
         images: [
             {
-                url: '/images/reactions.png',
-                width: 1200,
-                height: 630,
+                url: '/logos/reactions.png',
+                width: 1024,
+                height: 1024,
                 alt: 'Reactions Game',
             },
         ],
