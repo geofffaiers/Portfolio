@@ -3,7 +3,9 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
 import { Typography } from '@/components/ui/typography';
+import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
 
 import { useHangman } from './use-hangman';
 import { DefinitionDialog } from './definition-dialog/definition-dialog';
@@ -12,6 +14,7 @@ import { DisplayedWord } from './displayed-word';
 import { Keyboard } from './keyboard';
 
 export const Hangman: React.FC = () => {
+    const { isMobile, isTablet } = useDeviceBreakpoints();
     const {
         wordLength,
         setWordLength,
@@ -28,7 +31,10 @@ export const Hangman: React.FC = () => {
     } = useHangman();
 
     return (
-        <div className='w-full h-full flex flex-col items-center p-4 justify-start'>
+        <div className={cn(
+            'w-full h-full flex flex-col items-center',
+            isMobile || isTablet ? 'p-0' : 'p-4'
+        )}>
             {loading ? (
                 <Loader2 className='animate-spin my-auto' />
             ) : !word ? (
@@ -40,7 +46,6 @@ export const Hangman: React.FC = () => {
                         width={300}
                         height={150}
                         className='mb-4'
-                        style={{ backgroundColor: 'var(--background)' }}
                     />
                     <div className='mb-4'>{<DisplayedWord word={word} guessedLetters={guessedLetters} isGameLost={isGameLost}/>}</div>
                     {!isGameWon && !isGameLost && (

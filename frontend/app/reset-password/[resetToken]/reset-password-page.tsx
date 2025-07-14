@@ -11,6 +11,7 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Typography } from '@/components/ui/typography';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 import { ResetPassword } from './reset-password';
 
@@ -39,6 +40,7 @@ export const ResetPasswordPage = (): JSX.Element => {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
                 <Typography variant='h1'>Reset Password</Typography>

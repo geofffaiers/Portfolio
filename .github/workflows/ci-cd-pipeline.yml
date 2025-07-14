@@ -1,4 +1,3 @@
-# .github/workflows/ci-cd-pipeline.yml
 name: CI/CD Pipeline
 
 on:
@@ -25,9 +24,35 @@ jobs:
           username: ${{ secrets.DROPLET_USERNAME }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-          source: "docker-compose.prod.yml,nginx.prod.conf,mysql-db/**"
-          target: "/root/Portfolio/"
+          source: "docker-compose.prod.yml,nginx.prod.conf,mysql-db/**,migrations/**,flyway/**"
+          target: "/home/ci-deploy/Portfolio/"
 
+      - name: Create persistent directories and set permissions
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          script: |
+            # Create persistent directories
+            sudo mkdir -p /opt/portfolio/mysql-data || { echo "Failed to create mysql-data directory"; exit 1; }
+            sudo mkdir -p /var/log/portfolio || { echo "Failed to create log directory"; exit 1; }
+            sudo mkdir -p /etc/letsencrypt || { echo "Failed to create letsencrypt directory"; exit 1; }
+
+            # Set ownership
+            sudo chown -R root:root /opt/portfolio || { echo "Failed to set ownership"; exit 1; }
+            sudo chown -R 999:999 /opt/portfolio/mysql-data || { echo "Failed to set mysql ownership"; exit 1; }
+            sudo chown -R 101:101 /var/log/portfolio || { echo "Failed to set log ownership"; exit 1; }
+            sudo chown -R root:root /etc/letsencrypt || { echo "Failed to set letsencrypt ownership"; exit 1; }
+
+            # Set permissions
+            sudo chmod -R 700 /opt/portfolio/mysql-data || { echo "Failed to set mysql permissions"; exit 1; }
+            sudo chmod -R 755 /opt/portfolio || { echo "Failed to set permissions"; exit 1; }
+            sudo chmod -R 755 /var/log/portfolio || { echo "Failed to set log permissions"; exit 1; }
+            sudo chmod -R 755 /etc/letsencrypt || { echo "Failed to set letsencrypt permissions"; exit 1; }
+
+            echo "Persistent directories created and configured successfully"
       - name: Create a new .env file on Droplet
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -35,37 +60,131 @@ jobs:
           username: ${{ secrets.DROPLET_USERNAME }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-          port: 22
           script: |
-            rm -f /root/Portfolio/.env
-            echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> /root/Portfolio/.env
-            echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> /root/Portfolio/.env
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /root/Portfolio/.env
-            echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> /root/Portfolio/.env
-            echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> /root/Portfolio/.env
-            echo "API_PORT=${{ vars.API_PORT }}" >> /root/Portfolio/.env
-            echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> /root/Portfolio/.env
-            echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> /root/Portfolio/.env
-            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/Portfolio/.env
-            echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /root/Portfolio/.env
-            echo "EMAIL=${{ vars.EMAIL }}" >> /root/Portfolio/.env
-            echo "IPINFO_API_KEY=${{ secrets.IPINFO_API_KEY }}" >> /root/Portfolio/.env
+            ENV_FILE="/home/ci-deploy/Portfolio/.env"
+            rm -f $ENV_FILE
+            touch $ENV_FILE
 
-      - name: Deploy Docker Containers
+            echo "NODE_ENV=production" >> $ENV_FILE
+            echo "NEXT_PUBLIC_NODE_ENV=production" >> $ENV_FILE
+            echo "DOCKER_ENV=true" >> $ENV_FILE
+            echo "APP_ENV=production" >> $ENV_FILE
+            echo "NEXT_PUBLIC_APP_ENV=production" >> $ENV_FILE
+            echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> $ENV_FILE
+            echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> $ENV_FILE
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> $ENV_FILE
+            echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> $ENV_FILE
+            echo "MYSQL_PORT=${{ vars.MYSQL_PORT }}" >> $ENV_FILE
+            echo "API_PORT=${{ vars.API_PORT }}" >> $ENV_FILE
+            echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> $ENV_FILE
+            echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> $ENV_FILE
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $ENV_FILE
+            echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> $ENV_FILE
+            echo "EMAIL=${{ vars.EMAIL }}" >> $ENV_FILE
+            echo "IPINFO_API_KEY=${{ secrets.IPINFO_API_KEY }}" >> $ENV_FILE
+            echo "NEXT_PUBLIC_GA_ID=${{ secrets.GA_ID }}" >> $ENV_FILE
+
+            echo ".env file created successfully"
+
+      - name: Start MySQL Database
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: ${{ secrets.DROPLET_USERNAME }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-          port: 22
           script: |
             echo ${{ secrets.DOCKER_PAT }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-            cd /root/Portfolio
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml pull
-            docker-compose -f docker-compose.prod.yml up -d
-  
+
+            cd /home/ci-deploy/Portfolio
+            
+            # Start only MySQL first
+            docker compose -f docker-compose.prod.yml up -d mysql-db
+            
+            # Wait for MySQL to be healthy
+            echo "Waiting for MySQL to be ready..."
+            timeout 120 sh -c 'until docker compose -f docker-compose.prod.yml ps mysql-db | grep -q healthy; do sleep 2; done'
+            
+            echo "MySQL is ready"
+
+      - name: Run Database Migrations
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          script: |
+            cd /home/ci-deploy/Portfolio
+            
+            # Run Flyway migrations with error handling
+            echo "Running database migrations..."
+            if docker compose -f docker-compose.prod.yml up flyway; then
+              echo "Migrations completed successfully"
+            else
+              echo "Migration failed! Stopping deployment."
+              exit 1
+            fi
+
+      - name: Deploy Application Services
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          script: |
+            cd /home/ci-deploy/Portfolio
+            
+            # Stop application services (keep MySQL running)
+            docker compose -f docker-compose.prod.yml stop api frontend nginx
+            
+            # Pull latest images
+            docker compose -f docker-compose.prod.yml pull api frontend nginx
+            
+            # Start all application services together
+            docker compose -f docker-compose.prod.yml up -d api frontend nginx certbot
+            
+            echo "Application deployment complete"
+
+      - name: Verify Deployment
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          script: |
+            cd /home/ci-deploy/Portfolio
+            
+            # Check all services are running
+            docker compose -f docker-compose.prod.yml ps
+            
+            # Wait for services to be ready
+            sleep 15
+            
+            # Check API health through nginx (port 80)
+            if curl -f http://localhost/api/health > /dev/null 2>&1; then
+              echo "API health check passed"
+            else
+              echo "API health check failed - checking logs"
+              docker compose -f docker-compose.prod.yml logs api --tail=50
+              docker compose -f docker-compose.prod.yml logs nginx --tail=20
+              exit 1
+            fi
+            
+            # Check frontend through nginx
+            if curl -f http://localhost/ > /dev/null 2>&1; then
+              echo "Frontend health check passed"
+            else
+              echo "Frontend health check failed - checking logs"
+              docker compose -f docker-compose.prod.yml logs frontend --tail=50
+              docker compose -f docker-compose.prod.yml logs nginx --tail=20
+              exit 1
+            fi
+            
+            echo "All services are responding correctly"
+
       - name: Clean Up Docker Resources
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -73,6 +192,9 @@ jobs:
           username: ${{ secrets.DROPLET_USERNAME }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-          port: 22
           script: |
-            docker system prune -af --volumes  # Remove all unused containers, networks, images and volumes
+            # Clean up unused images and containers (but preserve volumes)
+            docker image prune -af
+            docker container prune -f
+            
+            echo "Docker cleanup complete"

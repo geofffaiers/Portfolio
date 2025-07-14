@@ -1,15 +1,16 @@
-FROM node:lts
+FROM node:22-alpine AS base
 WORKDIR /usr/src/app
-
 COPY package*.json ./
 
-RUN npm i
-RUN npm i -g typescript
-
+FROM base AS staging
+RUN npm ci
 COPY . .
+EXPOSE ${API_PORT}
+CMD ["npm", "run", "dev"]
 
-RUN npm run build
-
-EXPOSE ${API_PORT} ${STAGING_API_PORT}
-
+FROM base AS production
+RUN npm ci
+COPY . .
+RUN npm run build && npm prune --omit=dev
+EXPOSE ${API_PORT}
 CMD ["node", "build/index.js"]

@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { SignJWT } from 'jose';
 import { Session, User } from '../../models';
 import { pool } from '../../helpers/db';
@@ -7,6 +7,10 @@ import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import { CookieOptions, Request, Response } from 'express';
 import { getLocationFromIp } from '../../helpers/geo-location';
+
+if (!globalThis.crypto) {
+    globalThis.crypto = crypto.webcrypto as Crypto;
+}
 
 export const delay = async (ms: number): Promise<void> => await new Promise(resolve => setTimeout(resolve, ms));
 
@@ -77,16 +81,12 @@ export const getCurrentSessions = async (req: Request, userId: number): Promise<
         [userId]
     );
     const sessions = plainToInstance(Session, result, { excludeExtraneousValues: true });
-    const enhancedSessions = sessions.map(session => {
-        const isCurrentSession = currentTokenHash === session.refreshToken;
-        return {
-            ...session,
-            refreshToken: undefined,
-            thisSession: isCurrentSession
-        };
-    });
-
-    await validateOrReject(enhancedSessions);
+    const enhancedSessions = sessions.map(session => plainToInstance(Session, {
+        ...session,
+        refreshToken: undefined,
+        thisSession: currentTokenHash === session.refreshToken
+    }, { excludeExtraneousValues: true }));
+    await Promise.all(enhancedSessions.map((s: Session) => validateOrReject(s)));
     return enhancedSessions;
 };
 

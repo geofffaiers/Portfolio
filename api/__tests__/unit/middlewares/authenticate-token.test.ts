@@ -2,7 +2,7 @@ import { setPoolImpl } from '@mocks/helpers/db';
 import { authenticateToken, authenticateTokenForSocket } from '@src/middlewares/authenticate-token';
 import { JWTPayload, jwtVerify } from 'jose';
 import { logError } from '@src/helpers';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { WebSocket } from 'ws';
 import { createMockRequest, createMockResponse, createMockNext } from '@mocks/express';
 

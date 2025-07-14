@@ -13,6 +13,7 @@ import {
 import { useConfigContext } from '@/components/providers/config-provider';
 import { Project } from '@/models';
 import { PageLoading } from '@/components/ui/page-loading';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 import { Reactions } from './reactions';
 
@@ -54,6 +55,7 @@ export const ReactionsPage = (): JSX.Element => {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <Reactions />
         </SidebarInset>

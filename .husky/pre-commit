@@ -1,0 +1,8 @@
+set -e
+
+cd frontend
+npm run lint || exit 1
+
+cd ../api
+npm run lint || exit 1
+npm test || exit 1

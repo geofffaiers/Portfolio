@@ -9,12 +9,21 @@ import { Session } from '@/models';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
+import { ConfirmLogout } from './confirm-logout';
 
 import { useActiveSessions } from './use-active-sessions';
 
 export function ActiveSessions(): JSX.Element | null {
     const { user, authLoading } = useAuthContext();
-    const { sessions, loading, handleLogOutSession } = useActiveSessions();
+    const {
+        sessions,
+        loading,
+        openConfirmLogout,
+        handleLogoutSession,
+        setOpenConfirmLogout,
+        confirmLogout,
+        cancelLogout
+    } = useActiveSessions();
 
     if (user == null && !authLoading) {
         return null;
@@ -33,16 +42,22 @@ export function ActiveSessions(): JSX.Element | null {
                         {sessions.length === 0 ? (
                             <p>No active sessions</p>
                         ) : (
-                            <SessionTable sessions={sessions} handleLogOutSession={handleLogOutSession} />
+                            <SessionTable sessions={sessions} handleLogoutSession={handleLogoutSession} />
                         )}
                     </div>
                 )}
             </CardContent>
+            <ConfirmLogout
+                open={openConfirmLogout}
+                setOpen={setOpenConfirmLogout}
+                confirmLogout={confirmLogout}
+                cancelLogout={cancelLogout}
+            />
         </Card>
     );
 }
 
-function SessionTable ({ sessions, handleLogOutSession }: { sessions: Session[]; handleLogOutSession: (session: Session) => void; }) {
+function SessionTable ({ sessions, handleLogoutSession }: { sessions: Session[]; handleLogoutSession: (session: Session) => void; }) {
     return (
         <div className='w-full max-w-[calc(100vw-4rem)] overflow-x-auto'>
             <Table>
@@ -63,14 +78,14 @@ function SessionTable ({ sessions, handleLogOutSession }: { sessions: Session[];
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {sessions.map((session) => <SessionRow key={`row-${session.id}`} session={session} handleLogOutSession={handleLogOutSession} />)}
+                    {sessions.map((session) => <SessionRow key={`row-${session.id}`} session={session} handleLogoutSession={handleLogoutSession} />)}
                 </TableBody>
             </Table>
         </div>
     );
 }
 
-function SessionRow ({ session, handleLogOutSession }: { session: Session; handleLogOutSession: (session: Session) => void; }) {
+function SessionRow ({ session, handleLogoutSession }: { session: Session; handleLogoutSession: (session: Session) => void; }) {
     const { isMobile } = useDeviceBreakpoints();
 
     const truncateUserAgent = useCallback((userAgent: string) => {
@@ -96,7 +111,7 @@ function SessionRow ({ session, handleLogOutSession }: { session: Session; handl
                         title='Log out session'
                         onClick={(event) => {
                             event.preventDefault();
-                            handleLogOutSession(session);
+                            handleLogoutSession(session);
                         }}
                     >
                         <LogOut />

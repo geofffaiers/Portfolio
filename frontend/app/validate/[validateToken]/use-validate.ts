@@ -23,7 +23,7 @@ export function useValidate({ validateToken }: Props): UseValidate {
     const [user, setUser] = useState<User | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
 
-    const getUserForResetToken = useCallback(async (): Promise<void> => {
+    const getUserForValidateToken = useCallback(async (): Promise<void> => {
         try {
             abortControllerRef.current = new AbortController();
             const { signal } = abortControllerRef.current;
@@ -92,7 +92,7 @@ export function useValidate({ validateToken }: Props): UseValidate {
     useEffect(() => {
         try {
             if (user == null) {
-                getUserForResetToken();
+                getUserForValidateToken();
             } else {
                 validateEmail();
             }
@@ -103,7 +103,7 @@ export function useValidate({ validateToken }: Props): UseValidate {
                 setError('An unknown error occurred');
             }
         }
-    }, [user, getUserForResetToken, validateEmail]);
+    }, [user, getUserForValidateToken, validateEmail]);
 
     return {
         error,

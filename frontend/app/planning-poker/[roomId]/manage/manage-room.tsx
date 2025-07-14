@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Room } from '@/models';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -55,6 +55,9 @@ export const ManageRoom: React.FC<Props> = ({ room }) => {
                 <DialogHeader>
                     <DialogTitle>Edit Planning Poker room</DialogTitle>
                 </DialogHeader>
+                <DialogDescription className='sr-only'>
+                    Edit the room name and description. You can also remove players from the room.
+                </DialogDescription>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className='flex flex-col gap-6'>

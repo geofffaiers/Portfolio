@@ -1,4 +1,4 @@
-import IPinfoWrapper, { IPinfo } from 'node-ipinfo';
+import { IPinfoWrapper, type IPinfo } from 'node-ipinfo';
 
 interface GeoLocationData {
   city?: string;

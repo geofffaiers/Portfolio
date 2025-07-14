@@ -12,6 +12,7 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Typography } from '@/components/ui/typography';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 import { useValidate } from './use-validate';
 
@@ -42,6 +43,7 @@ export const ValidatePage = (): JSX.Element => {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
                 {error !== '' ? (

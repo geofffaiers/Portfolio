@@ -45,8 +45,8 @@ export function FloatingMessaging(): JSX.Element | null {
             <div className='flex flex-col h-full justify-end'>
                 <Conversations
                     chatHeaders={chatHeaders}
-                    handleOpenChat={handleOpenChat}
                     displayConversations={displayConversations}
+                    handleOpenChat={handleOpenChat}
                     handleCloseFloatingMessaging={handleCloseFloatingMessaging}
                 />
             </div>

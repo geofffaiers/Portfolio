@@ -13,6 +13,7 @@ import {
 import { useConfigContext } from '@/components/providers/config-provider';
 import { Project } from '@/models';
 import { PageLoading } from '@/components/ui/page-loading';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 import { MessagingAuth } from './messaging-auth';
 
@@ -46,11 +47,12 @@ export const MessagingPage = (): JSX.Element => {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className='hidden md:block' />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Messaging</BreadcrumbPage>
+                                <BreadcrumbPage>{project.name}</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex-1 min-h-0 flex w-full'>
                 <MessagingAuth />

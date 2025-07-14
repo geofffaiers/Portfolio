@@ -19,6 +19,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+            node-version: 'lts/*'
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Lint Frontend
+        run: |
+          cd frontend
+          npm run lint
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -36,6 +59,11 @@ jobs:
 
       - name: Create .env file
         run: |
+          echo "NODE_ENV=production" >> $GITHUB_WORKSPACE/.env
+          echo "NEXT_PUBLIC_NODE_ENV=production" >> $GITHUB_WORKSPACE/.env
+          echo "DOCKER_ENV=true" >> $GITHUB_WORKSPACE/.env
+          echo "APP_ENV=production" >> $GITHUB_WORKSPACE/.env
+          echo "NEXT_PUBLIC_APP_ENV=production" >> $GITHUB_WORKSPACE/.env
           echo "MYSQL_HOST=${{ vars.MYSQL_HOST }}" >> $GITHUB_WORKSPACE/.env
           echo "MYSQL_ROOT_USER=${{ vars.MYSQL_ROOT_USER }}" >> $GITHUB_WORKSPACE/.env
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> $GITHUB_WORKSPACE/.env
@@ -48,11 +76,14 @@ jobs:
           echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> $GITHUB_WORKSPACE/.env
           echo "EMAIL=${{ vars.EMAIL }}" >> $GITHUB_WORKSPACE/.env
           echo "IPINFO_API_KEY=${{ secrets.IPINFO_API_KEY }}" >> $GITHUB_WORKSPACE/.env
+          echo "NEXT_PUBLIC_GA_ID=${{ secrets.GA_ID }}" >> $GITHUB_WORKSPACE/.env
 
       - name: Build Docker images
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
+          file: ./frontend/Dockerfile
+          target: production
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/portfolio-frontend:${{ env.IMAGE_TAG }}

@@ -12,6 +12,7 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { useAuthContext } from '@/components/providers/auth-provider';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { User } from '@/models';
 
 import { LoginForm } from './login-form';
@@ -41,6 +42,7 @@ export const LoginPage = (): JSX.Element => {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
                 <div className='w-full max-w-sm'>

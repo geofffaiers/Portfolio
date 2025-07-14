@@ -13,6 +13,7 @@ import {
 import { useConfigContext } from '@/components/providers/config-provider';
 import { Project } from '@/models';
 import { PageLoading } from '@/components/ui/page-loading';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 import { Hangman } from './hangman';
 
@@ -53,6 +54,7 @@ export const HangmanPage = (): JSX.Element => {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
                 <Hangman />

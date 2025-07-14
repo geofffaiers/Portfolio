@@ -8,6 +8,7 @@ import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Typography } from '@/components/ui/typography';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Footer } from '@/components/ui/footer';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export const metadata: Metadata = {
     title: 'Site map',
@@ -37,6 +38,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex flex-1 flex-col gap-6 p-4'>
                 <Typography variant='h1'>Site Map</Typography>

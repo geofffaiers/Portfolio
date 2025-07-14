@@ -8,6 +8,7 @@ import {
     SidebarInset,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 import { RegisterForm } from './register-form';
 
@@ -39,6 +40,7 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <ThemeToggle />
             </header>
             <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
                 <div className='w-full max-w-sm'>

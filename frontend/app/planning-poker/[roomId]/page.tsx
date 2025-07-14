@@ -16,6 +16,7 @@ import { Project } from '@/models';
 import { PageLoading } from '@/components/ui/page-loading';
 import { Button } from '@/components/ui/button';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 import { PlanningPoker } from './planning-poker';
 
@@ -83,14 +84,18 @@ export default function Page(): JSX.Element {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
-                <Button
-                    variant='outline'
-                    size='default'
-                    onClick={shareRoom}
-                >
-                    Share
-                    <Share2 />
-                </Button>
+                <div className='flex items-end gap-2 ml-auto'>
+                    <Button
+                        variant='outline'
+                        size='sm'
+                        onClick={shareRoom}
+                        className='h-7 border-none'
+                    >
+                        Share
+                        <Share2 />
+                    </Button>
+                    <ThemeToggle isWrapped={false} />
+                </div>
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4'>
                 <PlanningPoker roomId={String(roomId ?? '')} setRoomName={setRoomName}/>
