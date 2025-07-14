@@ -1,6 +1,8 @@
+'use client';
+
 import React, { JSX } from 'react';
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { useParams } from 'next/navigation';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
@@ -8,16 +10,14 @@ import {
     SidebarInset,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { Typography } from '@/components/ui/typography';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
-import { RegisterForm } from './register-form';
+import { ResetPassword } from './reset-password';
 
-export const metadata: Metadata = {
-    title: 'Register',
-    description: 'Register for an account',
-};
-
-export default function Page(): JSX.Element {
+export const ResetPasswordPage = (): JSX.Element => {
+    const { resetToken } = useParams();
+    const token = Array.isArray(resetToken) ? resetToken[0] : resetToken;
     return (
         <SidebarInset>
             <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
@@ -35,18 +35,21 @@ export default function Page(): JSX.Element {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className='hidden md:block' />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Register</BreadcrumbPage>
+                                <BreadcrumbPage>Reset Password</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
                 <ThemeToggle />
             </header>
-            <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
-                <div className='w-full max-w-sm'>
-                    <RegisterForm />
-                </div>
+            <div className='flex flex-1 flex-col gap-4 p-4'>
+                <Typography variant='h1'>Reset Password</Typography>
+                {token == null ? (
+                    <p>Token is undefined</p>
+                ) : (
+                    <ResetPassword resetToken={token}/>
+                )}
             </div>
         </SidebarInset>
     );
-}
+};

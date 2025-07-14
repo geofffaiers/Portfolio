@@ -1,6 +1,7 @@
+import { RefObject, useEffect, useRef, useState } from 'react';
+
 import { useDeviceBreakpoints } from '@/hooks/use-device-breakpoints';
 import { Round } from '@/models';
-import { RefObject, useEffect, useRef, useState } from 'react';
 
 type UseCurrentRound = {
     containerRef: RefObject<HTMLDivElement | null>;

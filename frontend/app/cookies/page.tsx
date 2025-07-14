@@ -1,14 +1,21 @@
 import React, { JSX } from 'react';
+import { Metadata } from 'next';
+import Link from 'next/link';
+
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
     SidebarInset,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import Link from 'next/link';
 import { Typography } from '@/components/ui/typography';
 import { Footer } from '@/components/ui/footer';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+
+export const metadata: Metadata = {
+    title: 'Cookies Policy',
+    description: 'Cookies policy for gfaiers.com'
+};
 
 export default function Page(): JSX.Element {
     const date = new Date();

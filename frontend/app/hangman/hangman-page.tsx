@@ -1,6 +1,8 @@
+'use client';
+
 import React, { JSX } from 'react';
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { useRouter } from 'next/navigation';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
@@ -8,16 +10,28 @@ import {
     SidebarInset,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { useConfigContext } from '@/components/providers/config-provider';
+import { Project } from '@/models';
+import { PageLoading } from '@/components/ui/page-loading';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
-import { RegisterForm } from './register-form';
+import { Hangman } from './hangman';
 
-export const metadata: Metadata = {
-    title: 'Register',
-    description: 'Register for an account',
-};
+export const HangmanPage = (): JSX.Element => {
+    const { configLoading, config: { projects } } = useConfigContext();
+    const project: Project | undefined = projects.find((project) => project.id === 4 && project.isEnabled);
 
-export default function Page(): JSX.Element {
+    const router = useRouter();
+
+    if (configLoading) {
+        return <PageLoading />;
+    }
+
+    if (!project) {
+        router.replace('/page-not-found');
+        return <></>;
+    }
+
     return (
         <SidebarInset>
             <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
@@ -35,18 +49,16 @@ export default function Page(): JSX.Element {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className='hidden md:block' />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Register</BreadcrumbPage>
+                                <BreadcrumbPage>{project.name}</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
                 <ThemeToggle />
             </header>
-            <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
-                <div className='w-full max-w-sm'>
-                    <RegisterForm />
-                </div>
+            <div className='flex flex-1 flex-col gap-4 p-4'>
+                <Hangman />
             </div>
         </SidebarInset>
     );
-}
+};

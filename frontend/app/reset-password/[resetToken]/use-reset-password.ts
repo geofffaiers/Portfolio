@@ -1,22 +1,23 @@
 'use client';
 
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToast } from '@/hooks/use-toast';
 import { DefaultResponse, ErrorCheck, User } from '@/models';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
 
 type UseResetPassword = {
-  error: string
-  loading: boolean
-  saving: boolean
-  passwordScore: number
-  setPasswordScore: (score: number) => void
-  handleResetPassword: (newPassword: string) => Promise<void>
+    error: string
+    loading: boolean
+    saving: boolean
+    passwordScore: number
+    setPasswordScore: (score: number) => void
+    handleResetPassword: (newPassword: string) => Promise<void>
 }
 
 type Props = {
-  resetToken: string
+    resetToken: string
 }
 
 export function useResetPassword({ resetToken }: Props): UseResetPassword {

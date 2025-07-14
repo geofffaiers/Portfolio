@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { User } from '@/models';
 import { SocialIcons } from '@/components/ui/social-icons';
 import { Typography } from '@/components/ui/typography';

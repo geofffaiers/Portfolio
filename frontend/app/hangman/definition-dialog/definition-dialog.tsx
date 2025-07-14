@@ -1,9 +1,10 @@
+import React, { JSX, useMemo, useState } from 'react';
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Typography } from '@/components/ui/typography';
 import { Definition, Meaning, WordData } from '@/models';
-import React, { JSX, useMemo, useState } from 'react';
 
 type Props = {
     wordData: WordData;

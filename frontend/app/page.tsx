@@ -1,4 +1,5 @@
 import React, { JSX } from 'react';
+
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -6,8 +7,9 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Footer } from '@/components/ui/footer';
-import { HomeContent } from './home-content';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+
+import { HomeContent } from './home-content';
 
 export default function Page(): JSX.Element {
     return (

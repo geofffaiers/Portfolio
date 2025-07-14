@@ -1,14 +1,15 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { useToast } from '@/hooks/use-toast';
 import { DefaultResponse } from '@/models';
-import { useCallback, useEffect, useRef, useState } from 'react';
 
 type UseForgotPassword = {
-  loading: boolean
-  open: boolean
-  handleForgotPassword: (email: string) => Promise<void>
-  setOpen: (open: boolean) => void
+    loading: boolean
+    open: boolean
+    handleForgotPassword: (email: string) => Promise<void>
+    setOpen: (open: boolean) => void
 }
 
 export function useForgotPassword(): UseForgotPassword {

@@ -1,12 +1,13 @@
 'use client';
 
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { useLogin } from '@/hooks/use-login';
 import { DefaultResponse, User } from '@/models';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
 
 type UseRegister = {
   loading: boolean

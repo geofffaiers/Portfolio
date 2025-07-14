@@ -1,17 +1,18 @@
 'use client';
 
-import React, { JSX } from 'react';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useResetPassword } from './use-reset-password';
-import { useMemo } from 'react';
+import React, { JSX, useMemo } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { PasswordStrength } from '@/components/ui/password-strength';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+
+import { useResetPassword } from './use-reset-password';
 
 type Props = {
   resetToken: string

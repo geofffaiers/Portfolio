@@ -1,8 +1,9 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { useConfigContext } from '@/components/providers/config-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { DefaultResponse, Score } from '@/models';
-import { useCallback, useEffect, useRef, useState } from 'react';
 
 type UseScoreBoard = {
     loading: boolean;
@@ -49,10 +50,10 @@ export const useScoreBoard = ({ counter, score }: Props): UseScoreBoard => {
             });
             saveControllerRef.current = null;
             const json: DefaultResponse<{
-            globalScores: Score[]
-            userScores: Score[]
-            thisScore: Score
-          }> = await response.json();
+                globalScores: Score[]
+                userScores: Score[]
+                thisScore: Score
+            }> = await response.json();
             if (json.success && json.data != null) {
                 setGlobalScores(json.data.globalScores);
                 setUserScores(json.data.userScores);

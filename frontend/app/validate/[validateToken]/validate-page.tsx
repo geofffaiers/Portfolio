@@ -1,6 +1,9 @@
+'use client';
+
 import React, { JSX } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { Loader2 } from 'lucide-react';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
@@ -8,16 +11,16 @@ import {
     SidebarInset,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { Typography } from '@/components/ui/typography';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
-import { RegisterForm } from './register-form';
+import { useValidate } from './use-validate';
 
-export const metadata: Metadata = {
-    title: 'Register',
-    description: 'Register for an account',
-};
+export const ValidatePage = (): JSX.Element => {
+    const { validateToken } = useParams();
+    const token = Array.isArray(validateToken) ? validateToken[0] : validateToken;
+    const { error } = useValidate({ validateToken: token as string });
 
-export default function Page(): JSX.Element {
     return (
         <SidebarInset>
             <header className='flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4'>
@@ -35,18 +38,26 @@ export default function Page(): JSX.Element {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className='hidden md:block' />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Register</BreadcrumbPage>
+                                <BreadcrumbPage>Validate Email Account</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
                 <ThemeToggle />
             </header>
-            <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
-                <div className='w-full max-w-sm'>
-                    <RegisterForm />
-                </div>
+            <div className='flex flex-1 flex-col gap-4 p-4'>
+                {error !== '' ? (
+                    <>
+                        <Typography variant='h1'>Validate email error</Typography>
+                        <Typography variant='p'>{error}</Typography>
+                    </>
+                ) : (
+                    <>
+                        <Typography variant='h1'>Validate email account</Typography>
+                        <Loader2 className='w-10 h-10 animate-spin' />
+                    </>
+                )}
             </div>
         </SidebarInset>
     );
-}
+};

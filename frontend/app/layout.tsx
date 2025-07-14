@@ -1,24 +1,53 @@
 import 'reflect-metadata';
+import './globals.css';
+
 import React, { JSX } from 'react';
 import type { Metadata } from 'next';
 import { GoogleAnalytics } from '@next/third-parties/google';
-import './globals.css';
 import { zxcvbnOptions } from '@zxcvbn-ts/core';
 import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common';
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en';
+
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { ConfigProvider } from '@/components/providers/config-provider';
-import { Toaster } from '@/components/ui/toaster';
-import { SocketProvider } from '@/components/providers/socket-provider';
-import { Messaging, MessagingProvider } from '@/features/messaging';
 import { CookieProvider } from '@/components/providers/cookie-provider';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { SocketProvider } from '@/components/providers/socket-provider';
+import { Toaster } from '@/components/ui/toaster';
+import { Messaging, MessagingProvider } from '@/features/messaging';
 import { AppSidebar } from '@/features/nav/app-sidebar';
 
 export const metadata: Metadata = {
     title: 'Geoff Faiers',
+    icons: {
+        icon: '/logos/favicon.ico',
+        apple: '/logos/gfaiers.png',
+    },
     description: 'The personal portfolio of Geoff Faiers',
+    metadataBase: new URL('https://gfaiers.com'),
+    alternates: {
+        canonical: '/',
+        languages: {
+            'en-GB': '/en-GB',
+        },
+    },
+    openGraph: {
+        title: 'Geoff Faiers',
+        description: 'The personal portfolio of Geoff Faiers',
+        url: 'https://gfaiers.com/',
+        siteName: 'Geoff Faiers',
+        images: [
+            {
+                url: '/logos/gfaiers.png',
+                width: 1024,
+                height: 1024,
+                alt: 'Geoff Faiers Logo',
+            },
+        ],
+        locale: 'en_GB',
+        type: 'website',
+    }
 };
 
 zxcvbnOptions.setOptions({
