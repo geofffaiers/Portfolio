@@ -29,9 +29,9 @@ export const getUser = async (userId: number): Promise<User> => {
     return user;
 };
 
-export const generateJwt = async (userId: number, duration: string): Promise<string> => {
+export const generateJwt = async (duration: string, userId?: number, guestSessionId?: string): Promise<string> => {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    const jwt = await new SignJWT({ userId })
+    const jwt = await new SignJWT({ userId, guestSessionId })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuer('https://www.gfaiers.com')
         .setIssuedAt()
@@ -91,8 +91,8 @@ export const getCurrentSessions = async (req: Request, userId: number): Promise<
 };
 
 export const saveToUserSessions = async (userId: number, req: Request, res: Response, existingTokenHash?: string): Promise<void> => {
-    const accessToken = await generateJwt(userId, '2h');
-    const refreshToken = await generateJwt(userId, '7d');
+    const accessToken = await generateJwt('2h', userId);
+    const refreshToken = await generateJwt('7d', userId);
 
     const userAgent = req.headers['user-agent'] || '';
     const ip = req.ip || req.socket.remoteAddress || '';

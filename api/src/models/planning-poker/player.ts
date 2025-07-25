@@ -1,8 +1,12 @@
-import { IsBoolean, IsString } from 'class-validator';
-import { Expose, Transform } from 'class-transformer';
+import { IsBoolean, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Expose, Transform, Type } from 'class-transformer';
 import { User } from '../user';
 
-export class Player extends User {
+export class Player {
+    @IsNumber()
+    @Expose({ name: 'id' })
+        id: number = 0;
+
     @IsString()
     @Expose({ name: 'roomId' })
     @Transform(({ value, obj }) => value ?? obj.room_id, { toClassOnly: true })
@@ -16,4 +20,22 @@ export class Player extends User {
     @IsString()
     @Expose({ name: 'role' })
         role: 'owner' | 'player' | 'observer' = 'player';
+
+    @Type(() => User)
+    @ValidateNested()
+    @Expose({ name: 'user' })
+        user: User | null = null;
+
+    @IsOptional()
+    @IsString()
+    @Expose({ name: 'guestName' })
+    @Transform(({ value, obj }) => value ?? obj.guest_name, { toClassOnly: true })
+        guestName?: string;
+
+    @IsOptional()
+    @IsString()
+    @Expose({ name: 'guestSessionId' })
+    @Transform(({ value, obj }) => value ?? obj.guest_session_id, { toClassOnly: true })
+        guestSessionId?: string;
+
 }

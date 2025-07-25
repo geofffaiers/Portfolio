@@ -1,9 +1,10 @@
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { getRandomString, pool } from '../../helpers';
-import { Client, Game, Player, Room, Round, SubmitScore, UpdatedGame, UpdatedRoom, UpdatedRound, Vote } from '../../models';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
-import { findMatchingClientsForUserIds, sendMessageToClient } from '../sockets/methods';
+
+import { getRandomString, pool } from '../../helpers';
+import { Client, Game, Player, Room, Round, SubmitScore, UpdatedGame, UpdatedRoom, UpdatedRound, User, Vote } from '../../models';
+import { findMatchingClients, sendMessageToClient } from '../sockets/methods';
 import { UpdatedPlayers } from '../../models/sockets/planning-poker/updated-players';
 
 export const saveRoomToDb = async (room: Room, userId: number, generateId: boolean = true): Promise<Room> => {
@@ -27,10 +28,20 @@ export const saveRoomToDb = async (room: Room, userId: number, generateId: boole
     return room;
 };
 
-export const getRoomsFromDbForUser = async (userId: number): Promise<Room[]> => {
+export const getRoomsFromDbForPlayer = async (userId?: number, guestSessionId?: string): Promise<Room[]> => {
+    let where: string = '';
+    const params: (string | number)[] = [];
+    if (userId != null) {
+        where = 'user_id = ?';
+        params.push(userId);
+    } else if (guestSessionId != null) {
+        where = 'guest_session_id = ?';
+        params.push(guestSessionId);
+    }
+
     const [roomIdsRows] = await pool.query<RowDataPacket[]>(
-        'SELECT room_id FROM pp_room_players WHERE user_id = ?',
-        [userId]
+        `SELECT room_id FROM pp_room_players WHERE ${where}`,
+        params
     );
 
     if (roomIdsRows.length === 0) {
@@ -47,15 +58,15 @@ export const getRoomsFromDbForUser = async (userId: number): Promise<Room[]> => 
     return rooms;
 };
 
-export const joinRoomByRoomId = async (roomId: string, userId: number): Promise<void> => {
+export const joinRoomByRoomId = async (roomId: string, userId?: number, guestSessionId?: string): Promise<void> => {
     await pool.query(
         `INSERT INTO pp_room_players
-            (room_id, user_id, online)
+            (room_id, user_id, guest_session_id, online)
         VALUES
-            (?, ?, 1)
+            (?, ?, ?, 1)
         ON DUPLICATE KEY UPDATE
             online = true`,
-        [roomId, userId]
+        [roomId, userId, guestSessionId]
     );
 };
 
@@ -343,8 +354,7 @@ const convertResultToRooms = async (result: Room[]): Promise<Room[]> => {
  * @returns Array of Players
  */
 const getPlayersForRoom = async (roomId?: string, gameId?: number, roundId?: number): Promise<Player[]> => {
-    let sql = 'SELECT u.*, rp.room_id, rp.online, rp.role FROM users u JOIN pp_room_players rp ON u.id = rp.user_id';
-
+    const joins: string[] = [];
     const conditions: string[] = [];
     const params: (string | number)[] = [];
 
@@ -352,35 +362,48 @@ const getPlayersForRoom = async (roomId?: string, gameId?: number, roundId?: num
         conditions.push('rp.room_id = ?');
         params.push(roomId);
     }
-
     if (gameId) {
-        sql += ' JOIN pp_games g ON g.room_id = rp.room_id';
+        joins.push(' JOIN pp_games g ON g.room_id = rp.room_id');
         conditions.push('g.id = ?');
         params.push(gameId);
     }
-
     if (roundId) {
         if (!gameId) {
-            sql += ' JOIN pp_games g ON g.room_id = rp.room_id';
+            joins.push(' JOIN pp_games g ON g.room_id = rp.room_id');
         }
-        sql += ' JOIN pp_rounds r ON r.game_id = g.id';
+        joins.push(' JOIN pp_rounds r ON r.game_id = g.id');
         conditions.push('r.id = ?');
         params.push(roundId);
     }
-
     conditions.push('rp.updated_at > DATE_SUB(NOW(), INTERVAL 7 DAY)');
 
+    let sql = 'SELECT rp.* FROM pp_room_players rp';
+    if (joins.length > 0) {
+        sql += ' ' + joins.join(' ');
+    }
     if (conditions.length > 0) {
         sql += ' WHERE ' + conditions.join(' AND ');
     }
 
-    const [result] = await pool.query<Player[] & RowDataPacket[]>(sql, params);
-
-    const players = result.map((row: Player) => {
-        const player: Player = plainToInstance(Player, row, { excludeExtraneousValues: true });
-        player.password = '';
-        return player;
+    const [playersResult] = await pool.query<RowDataPacket[]>(sql, params);
+    const userIds = playersResult.filter(rp => rp.user_id != null).map(rp => rp.user_id);
+    const [users] = await pool.query<User[] & RowDataPacket[]>(
+        `SELECT * FROM users WHERE id IN (${userIds.map(() => '?').join(',')})`,
+        userIds
+    );
+    const players = playersResult.map((row: RowDataPacket) => {
+        if (row.user_id != null) {
+            // Registered user
+            row.user = users.find(user => user.id === row.user_id) || null;
+            if (row.user) {
+                row.user.password = '';
+            }
+            row.guest_name = null;
+            row.guest_session_id = null;
+        }
+        return plainToInstance(Player, row, { excludeExtraneousValues: true });
     });
+
     await Promise.all(players.map(player => validateOrReject(player)));
     return players;
 };
@@ -423,21 +446,21 @@ const getVotesForRound = async (roundId: number): Promise<Vote[]> => {
     return votes;
 };
 
-export const connectToRoom = async (roomId: string, userId: number): Promise<void> => {
+export const setOnline = async (roomId: string, online: boolean, userId?: number, guestSessionId?: string): Promise<void> => {
+    let where: string = 'WHERE room_id = ? AND ';
+    const params: (boolean | string | number)[] = [online, roomId];
+    if (userId != null) {
+        where += 'user_id = ?';
+        params.push(userId);
+    } else if (guestSessionId != null) {
+        where += 'guest_session_id = ?';
+        params.push(guestSessionId);
+    }
     await pool.query(
         `UPDATE pp_room_players
-        SET online = 1
-        WHERE room_id = ? AND user_id = ?`,
-        [roomId, userId]
-    );
-};
-
-export const disconnectFromRoom = async (roomId: string, userId: number): Promise<void> => {
-    await pool.query(
-        `UPDATE pp_room_players
-        SET online = 0
-        WHERE room_id = ? AND user_id = ?`,
-        [roomId, userId]
+        SET online = ?
+        ${where}`,
+        params
     );
 };
 
@@ -446,19 +469,27 @@ export const saveScoreToDb = async (submitScore: SubmitScore): Promise<void> => 
     await validateOrReject(vote);
     await pool.query(
         `INSERT INTO pp_votes
-            (room_id, round_id, user_id, value, created_at)
+            (room_id, round_id, user_id, guest_session_id, value, created_at)
         VALUES
-            (?, ?, ?, ?, ?)
+            (?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
             value = ?,
             created_at = ?`,
-        [vote.roomId, vote.roundId, vote.userId, vote.value, vote.createdAt, vote.value, vote.createdAt]
+        [vote.roomId, vote.roundId, vote.userId, vote.guestSessionId, vote.value, vote.createdAt, vote.value, vote.createdAt]
     );
 };
 
 export const getClients = async (roomId?: string, gameId?: number, roundId?: number): Promise<Client[]> => {
     const players = await getPlayersForRoom(roomId, gameId, roundId);
-    return findMatchingClientsForUserIds(players.map(player => player.id));
+    const [userIds, guestSessionIds] = players.reduce((acc, player) => {
+        if (player.user?.id != null) {
+            acc[0].push(player.user.id);
+        } else if (player.guestSessionId != null) {
+            acc[1].push(player.guestSessionId);
+        }
+        return acc;
+    }, [[], []] as [number[], string[]]);
+    return findMatchingClients(userIds, guestSessionIds);
 };
 
 export const getGameById = async (gameId: number): Promise<Game | undefined> => {
@@ -503,7 +534,7 @@ export const validateThenUpdateRoom = async (
         throw new Error('Room not found');
     }
     if (!completed) {
-        const player = room.players.find(player => player.id === userId);
+        const player = room.players.find(player => player.user?.id === userId);
         if (player == null) {
             throw new Error('User is not part of room');
         }
@@ -528,7 +559,7 @@ const updatePlayersForRoom = async (userId: number, roomId: string, updatedPlaye
     if (players.length === 0) {
         throw new Error('Room has no players');
     }
-    const player = players.find(p => p.id === userId);
+    const player = players.find(p => p.user?.id === userId);
     if (player == null) {
         throw new Error('User not found in room');
     }
@@ -540,7 +571,7 @@ const updatePlayersForRoom = async (userId: number, roomId: string, updatedPlaye
     }
     if (removedPlayers.length > 0) {
         await pool.query<ResultSetHeader>(
-            'DELETE FROM pp_room_players WHERE room_id = ? AND user_id IN (?)',
+            'DELETE FROM pp_room_players WHERE room_id = ? AND id IN (?)',
             [roomId, removedPlayers.map((p) => p.id)]
         );
     }
@@ -550,7 +581,7 @@ const updatePlayersForRoom = async (userId: number, roomId: string, updatedPlaye
             pool.query<ResultSetHeader>(
                 `UPDATE pp_room_players 
                 SET role = ? 
-                WHERE room_id = ? AND user_id = ?`,
+                WHERE room_id = ? AND id = ?`,
                 [player.role, roomId, player.id]
             )
         );
@@ -572,7 +603,7 @@ export const sendRoomToClients = async (roomId: string, room?: Room): Promise<vo
     }
     const message: UpdatedRoom = new UpdatedRoom(room);
     foundClients.forEach((clientForRoom: Client) => {
-        sendMessageToClient(message, clientForRoom.userId);
+        sendMessageToClient(message, clientForRoom.userId, clientForRoom.guestSessionId);
     });
 };
 
@@ -586,7 +617,7 @@ export const sendPlayersToClients = async (roomId: string, players?: Player[]): 
     }
     const message: UpdatedPlayers = new UpdatedPlayers(players);
     foundClients.forEach((clientForRoom: Client) => {
-        sendMessageToClient(message, clientForRoom.userId);
+        sendMessageToClient(message, clientForRoom.userId, clientForRoom.guestSessionId);
     });
 };
 
@@ -603,7 +634,7 @@ export const sendGameToClients = async (gameId: number, game?: Game): Promise<vo
     }
     const message: UpdatedGame = new UpdatedGame(game);
     foundClients.forEach((clientForGame: Client) => {
-        sendMessageToClient(message, clientForGame.userId);
+        sendMessageToClient(message, clientForGame.userId, clientForGame.guestSessionId);
     });
 };
 
@@ -620,6 +651,6 @@ export const sendRoundToClients = async (roundId: number, round?: Round): Promis
     }
     const message: UpdatedRound = new UpdatedRound(round);
     foundClients.forEach((clientForRound: Client) => {
-        sendMessageToClient(message, clientForRound.userId);
+        sendMessageToClient(message, clientForRound.userId, clientForRound.guestSessionId);
     });
 };

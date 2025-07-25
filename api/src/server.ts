@@ -21,6 +21,7 @@ declare module 'express' {
     interface Request {
         server?: Server
         userId?: number
+        guestSessionId?: string;
     }
 }
 

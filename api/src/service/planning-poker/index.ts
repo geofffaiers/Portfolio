@@ -1,3 +1,4 @@
+export * from './http/connect-guest';
 export * from './http/create-game';
 export * from './http/create-room';
 export * from './http/disconnect';

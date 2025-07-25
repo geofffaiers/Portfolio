@@ -16,10 +16,15 @@ export class Vote {
     @Transform(({ value, obj }) => value ?? obj.round_id, { toClassOnly: true })
         roundId: number = -1;
 
-    @IsNumber()
     @Expose({ name: 'userId' })
     @Transform(({ value, obj }) => value ?? obj.user_id, { toClassOnly: true })
-        userId: number = -1;
+        userId: number | null = null;
+
+    @IsOptional()
+    @IsString()
+    @Transform(({ value, obj }) => value ?? obj.guest_session_id, { toClassOnly: true })
+    @Expose({ name: 'guestSessionId' })
+        guestSessionId?: string;
 
     @IsString()
     @IsOptional()

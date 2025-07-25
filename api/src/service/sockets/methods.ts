@@ -2,28 +2,34 @@ import { ErrorMessage, MessageType, SocketMessage } from '../../models/sockets';
 import { Client } from '../../models/sockets/client';
 import { clients } from '../../routes/ws';
 
-export const findMatchingClientUserId = (userId: number): Client[] => {
+export const findMatchingClient = (userId?: number, guestSessionId?: string): Client[] => {
     const foundClients: Client[] = [];
     clients.forEach((client: Client) => {
         if (client.userId === userId) {
             foundClients.push(client);
         }
-    });
-    return foundClients;
-};
-
-export const findMatchingClientsForUserIds = (userIds: number[]): Client[] => {
-    const foundClients: Client[] = [];
-    clients.forEach((client: Client) => {
-        if (userIds.includes(client.userId)) {
+        if (client.guestSessionId === guestSessionId) {
             foundClients.push(client);
         }
     });
     return foundClients;
 };
 
-export const sendMessageToClient = (message: SocketMessage, to: number): void => {
-    const toClient: Client[] = findMatchingClientUserId(to);
+export const findMatchingClients = (userIds: number[], guestSessionIds: string[]): Client[] => {
+    const foundClients: Client[] = [];
+    clients.forEach((client: Client) => {
+        if (client.userId != null && userIds.includes(client.userId)) {
+            foundClients.push(client);
+        }
+        if (client.guestSessionId != null && guestSessionIds.includes(client.guestSessionId)) {
+            foundClients.push(client);
+        }
+    });
+    return foundClients;
+};
+
+export const sendMessageToClient = (message: SocketMessage, userId?: number, guestSessionId?: string): void => {
+    const toClient: Client[] = findMatchingClient(userId, guestSessionId);
     toClient.forEach((client: Client) => {
         client.ws.send(JSON.stringify(message));
     });

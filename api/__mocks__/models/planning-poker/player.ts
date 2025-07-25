@@ -3,7 +3,8 @@ import { mockUser1 } from '../user';
 export const mockOwner = (roomId: string) => {
     const user = mockUser1();
     return {
-        ...user,
+        id: 1,
+        user,
         roomId,
         online: true,
         role: 'owner'
@@ -13,7 +14,8 @@ export const mockOwner = (roomId: string) => {
 export const mockPlayer = (roomId: string) => {
     const user = mockUser1();
     return {
-        ...user,
+        id: 1,
+        user,
         roomId,
         online: true,
         role: 'player'
@@ -23,7 +25,8 @@ export const mockPlayer = (roomId: string) => {
 export const mockObserver = (roomId: string) => {
     const user = mockUser1();
     return {
-        ...user,
+        id: 1,
+        user,
         roomId,
         online: true,
         role: 'observer'

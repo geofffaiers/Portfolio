@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { DefaultResponse } from '../../../models';
 import { handleError } from '../../../helpers';
-import { disconnectFromRoom, sendPlayersToClients } from '../methods';
+import { sendPlayersToClients, setOnline } from '../methods';
 
 export const disconnect = async (req: Request): Promise<DefaultResponse> => {
     try {
@@ -11,22 +11,15 @@ export const disconnect = async (req: Request): Promise<DefaultResponse> => {
         } else {
             body = req.body;
         }
-        const { userId, roomId } = body;
-        if (roomId == null) {
+        const { userId, guestSessionId, roomId } = body;
+        if (roomId == null || (userId == null && guestSessionId == null)) {
             return {
                 code: 400,
                 success: false,
-                message: 'No room id provided'
+                message: 'Invalid request'
             };
         }
-        if (userId == null) {
-            return {
-                code: 400,
-                success: false,
-                message: 'User not found'
-            };
-        }
-        await disconnectFromRoom(roomId, userId);
+        await setOnline(roomId, false, userId, guestSessionId);
         await sendPlayersToClients(roomId);
         return {
             success: true,

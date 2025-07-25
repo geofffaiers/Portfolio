@@ -127,7 +127,6 @@ describe('Vote model', () => {
         expect(properties).toContain('id');
         expect(properties).toContain('roomId');
         expect(properties).toContain('roundId');
-        expect(properties).toContain('userId');
         expect(properties).toContain('createdAt');
         expect(properties).toContain('updatedAt');
     });
@@ -137,7 +136,6 @@ describe('Vote model', () => {
             id: 'not-a-number',
             roomId: 123,
             roundId: 'not-a-number',
-            userId: 'not-a-number',
             value: 42,
             createdAt: 'not-a-date',
             updatedAt: 'not-a-date'
@@ -152,7 +150,6 @@ describe('Vote model', () => {
         expect(properties).toContain('id');
         expect(properties).toContain('roomId');
         expect(properties).toContain('roundId');
-        expect(properties).toContain('userId');
         expect(properties).toContain('value');
         expect(properties).toContain('createdAt');
         expect(properties).toContain('updatedAt');
