@@ -6,12 +6,12 @@ import { RowDataPacket } from 'mysql2';
 
 import { logError, pool } from '@src/helpers';
 
-export const authenticateGuest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const authenticateGuest = async (req: Request, res: Response): Promise<boolean> => {
     const token: string | undefined = req.cookies.token;
     if (token) {
         req.guestSessionId = undefined;
         // If a token is present, skip guest authentication as it's a user session
-        next();
+        return true;
     }
     const guestSessionToken = req.cookies.guestSessionToken;
     if (guestSessionToken == null || typeof guestSessionToken !== 'string') {
@@ -20,7 +20,7 @@ export const authenticateGuest = async (req: Request, res: Response, next: NextF
             success: false,
             message: 'Unauthorized'
         });
-        return;
+        return false;
     }
     try {
         const secret = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -42,7 +42,7 @@ export const authenticateGuest = async (req: Request, res: Response, next: NextF
                     success: false,
                     message: 'Invalid session'
                 });
-                return;
+                return false;
             }
         } else {
             res.clearCookie('guestSessionToken');
@@ -51,10 +51,10 @@ export const authenticateGuest = async (req: Request, res: Response, next: NextF
                 success: false,
                 message: 'Invalid session'
             });
-            return;
+            return false;
         }
         req.guestSessionId = guestSessionId;
-        next();
+        return true;
     } catch (err: unknown) {
         logError(err);
         res.status(403).json({
@@ -63,18 +63,13 @@ export const authenticateGuest = async (req: Request, res: Response, next: NextF
             message: 'Forbidden'
         });
     }
+    return false;
 };
 
 
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    if (req.guestSessionId) {
-        // Skip authentication for guest sessions
-        req.userId = undefined;
-        next();
-        return;
-    }
     const token: string | undefined = req.cookies.token;
-    if (token == null || typeof token !== 'string') {
+    if (req.guestSessionId || token == null || typeof token !== 'string') {
         res.status(401).json({
             code: 401,
             success: false,
@@ -132,6 +127,17 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
             success: false,
             message: 'Forbidden'
         });
+    }
+};
+
+export const authenticateGuestOrUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const success = await authenticateGuest(req, res);
+    if (success) {
+        if (req.guestSessionId) {
+            next();
+            return;
+        }
+        await authenticateToken(req, res, next);
     }
 };
 

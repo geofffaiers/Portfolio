@@ -199,8 +199,6 @@ paths:
       summary: Get chat headers
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: Chat headers retrieved successfully
@@ -233,7 +231,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: userId
           schema:
@@ -312,15 +309,6 @@ paths:
       security:
         - CookieAuth: []
         - GuestCookie: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
-        - $ref: "#/components/parameters/GuestCookie"
-        - in: query
-          name: guestSessionId
-          schema:
-            type: string
-          required: false
-          description: Guest session ID to filter rooms by
       responses:
         "200":
           description: Rooms retrieved successfully
@@ -356,8 +344,6 @@ paths:
       summary: Create a new room
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         required: true
         content:
@@ -408,8 +394,6 @@ paths:
         - CookieAuth: []
         - GuestCookie: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
-        - $ref: "#/components/parameters/GuestCookie"
         - in: query
           name: roomId
           schema:
@@ -451,8 +435,6 @@ paths:
         - CookieAuth: []
         - GuestCookie: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
-        - $ref: "#/components/parameters/GuestCookie"
         - in: query
           name: roomId
           schema:
@@ -492,8 +474,6 @@ paths:
       summary: Create a new game for a room
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         required: true
         content:
@@ -539,7 +519,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: roundId
           schema:
@@ -576,7 +555,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: gameId
           schema:
@@ -613,7 +591,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: gameId
           schema:
@@ -660,8 +637,6 @@ paths:
       summary: Update rom
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         required: true
         content:
@@ -764,8 +739,6 @@ paths:
       summary: Save user scores
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         required: true
         content:
@@ -925,8 +898,6 @@ paths:
       summary: Get user sessions
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: User sessions retrieved successfully
@@ -950,7 +921,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: path
           name: sessionId
           schema:
@@ -1101,8 +1071,6 @@ paths:
       summary: Refresh user token
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: Token refreshed successfully
@@ -1125,8 +1093,6 @@ paths:
       summary: Logout a user
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: User logged out successfully
@@ -1149,8 +1115,6 @@ paths:
       summary: Update user details
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         content:
           application/json:
@@ -1178,8 +1142,6 @@ paths:
       summary: Delete a user
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: User deleted successfully
@@ -1236,8 +1198,6 @@ paths:
       summary: Resend email verification
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: Verification email resent successfully
@@ -1271,28 +1231,6 @@ components:
       name: guestSessionToken
       description: >
         Authentication for guests requires the following cookie:
-        - `guestSessionToken`: A JWT for guest session access.
-  parameters:
-    AuthCookie:
-      name: Cookie
-      in: header
-      required: true
-      schema:
-        type: string
-        example: "token=eyJhbGciOiJI...; refreshToken=eyJhbGciOiJI..."
-      description: >
-        Authentication requires the Cookie header to contain:
-        - `token`: A JWT for accessing protected resources.
-        - `refreshToken`: A JWT for renewing the session.
-    GuestCookie:
-      name: Cookie
-      in: header
-      required: true
-      schema:
-        type: string
-        example: "guestSessionToken=eyJhbGciOiJI..."
-      description: >
-        Authentication requires the Cookie header to contain:
         - `guestSessionToken`: A JWT for guest session access.
   responses:
     BadRequest:

@@ -1,5 +1,5 @@
 import { setPoolImpl } from '@mocks/helpers/db';
-import { authenticateGuest, authenticateToken, socketAuthentication } from '@src/middlewares/authenticate-token';
+import { authenticateGuestOrUser, authenticateToken, socketAuthentication } from '@src/middlewares/authenticate-token';
 import { JWTPayload, jwtVerify } from 'jose';
 import { logError } from '@src/helpers';
 import crypto from 'node:crypto';
@@ -19,7 +19,7 @@ setPoolImpl({
     query
 });
 
-describe('authenticateGuest', () => {
+describe('authenticateGuestOrUser', () => {
     beforeEach(() => {
         process.env.JWT_SECRET = 'testsecret';
     });
@@ -37,7 +37,7 @@ describe('authenticateGuest', () => {
         const res = createMockResponse();
         const next = createMockNext();
 
-        await authenticateGuest(req, res, next);
+        await authenticateGuestOrUser(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(401);
         expect(res.json).toHaveBeenCalledWith({
@@ -61,7 +61,7 @@ describe('authenticateGuest', () => {
         const res = createMockResponse();
         const next = createMockNext();
 
-        await authenticateGuest(req, res, next);
+        await authenticateGuestOrUser(req, res, next);
 
         expect(query).toHaveBeenCalled();
         expect(res.clearCookie).toHaveBeenCalledWith('guestSessionToken');
@@ -74,16 +74,24 @@ describe('authenticateGuest', () => {
         expect(next).not.toHaveBeenCalled();
     });
 
-    it('should set req.guestSessionId to undefined if user is authenticated', async () => {
+    it('should set req.guestSessionId to undefined if user authentication is included', async () => {
+        mockJwtVerify.mockResolvedValue({ payload: { userId: 1 } } as { payload: JWTPayload });
+        (crypto.createHash as jest.Mock).mockReturnValue({
+            update: jest.fn().mockReturnThis(),
+            digest: jest.fn().mockReturnValue('hashed')
+        });
+        query.mockResolvedValue([[{ id: 1 }]]);
+
         const req = createMockRequest();
         req.cookies.token = 'token';
         req.cookies.refreshToken = 'refresh';
         const res = createMockResponse();
         const next = createMockNext();
 
-        await authenticateGuest(req, res, next);
+        await authenticateGuestOrUser(req, res, next);
 
         expect(req.guestSessionId).toBeUndefined();
+        expect(req.userId).toBe(1);
         expect(next).toHaveBeenCalled();
     });
 
@@ -100,7 +108,7 @@ describe('authenticateGuest', () => {
         const res = createMockResponse();
         const next = createMockNext();
 
-        await authenticateGuest(req, res, next);
+        await authenticateGuestOrUser(req, res, next);
 
         expect(req.guestSessionId).toBe(1);
         expect(next).toHaveBeenCalled();
@@ -113,7 +121,7 @@ describe('authenticateGuest', () => {
         const res = createMockResponse();
         const next = createMockNext();
 
-        await authenticateGuest(req, res, next);
+        await authenticateGuestOrUser(req, res, next);
 
         expect(res.clearCookie).toHaveBeenCalledWith('guestSessionToken');
         expect(res.status).toHaveBeenCalledWith(401);
@@ -132,7 +140,7 @@ describe('authenticateGuest', () => {
         const res = createMockResponse();
         const next = createMockNext();
 
-        await authenticateGuest(req, res, next);
+        await authenticateGuestOrUser(req, res, next);
 
         expect(logError).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(403);
@@ -154,28 +162,27 @@ describe('authenticateToken', () => {
         jest.clearAllMocks();
     });
 
-    it('should return 401 when token is missing', async () => {
+    it.each([
+        {
+            guestSessionId: undefined,
+            token: undefined
+        },
+        {
+            guestSessionId: undefined,
+            token: null
+        },
+        {
+            guestSessionId: undefined,
+            token: 123 as unknown as string
+        },
+        {
+            guestSessionId: 'guestSessionId',
+            token: 'token'
+        }
+    ])('should return 401 when token is $token', async ({ guestSessionId, token }) => {
         const req = createMockRequest();
-        req.cookies.token = undefined;
-        req.cookies.refreshToken = 'refresh';
-        const res = createMockResponse();
-        const next = createMockNext();
-
-        await authenticateToken(req, res, next);
-
-        expect(res.status).toHaveBeenCalledWith(401);
-        expect(res.json).toHaveBeenCalledWith({
-            code: 401,
-            success: false,
-            message: 'Unauthorized'
-        });
-        expect(next).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 when token is not a string', async () => {
-        const req = createMockRequest();
-        req.cookies.token = 123 as unknown as string;
-        req.cookies.refreshToken = 'refresh';
+        req.cookies.token = token;
+        req.guestSessionId = guestSessionId;
         const res = createMockResponse();
         const next = createMockNext();
 
@@ -237,18 +244,6 @@ describe('authenticateToken', () => {
             message: 'Invalid session'
         });
         expect(next).not.toHaveBeenCalled();
-    });
-
-    it('should set req.userId to undefined if guest is authenticated', async () => {
-        const req = createMockRequest();
-        req.guestSessionId = 'guestSessionId';
-        const res = createMockResponse();
-        const next = createMockNext();
-
-        await authenticateToken(req, res, next);
-
-        expect(req.userId).toBeUndefined();
-        expect(next).toHaveBeenCalled();
     });
 
     it('should set req.userId and call next when session is valid', async () => {
