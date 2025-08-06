@@ -11,15 +11,15 @@ export const disconnect = async (req: Request): Promise<DefaultResponse> => {
         } else {
             body = req.body;
         }
-        const { userId, guestSessionId, roomId } = body;
-        if (roomId == null || (userId == null && guestSessionId == null)) {
+        const { playerId, roomId } = body;
+        if (roomId == null || playerId == null) {
             return {
                 code: 400,
                 success: false,
                 message: 'Invalid request'
             };
         }
-        await setOnline(roomId, false, userId, guestSessionId);
+        await setOnline(roomId, false, undefined, undefined, playerId);
         await sendPlayersToClients(roomId);
         return {
             success: true,

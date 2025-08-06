@@ -34,6 +34,7 @@ export const login = async (req: Request, res: Response): Promise<DefaultRespons
             };
         }
         user.password = '';
+        res.clearCookie('guestSessionToken');
         await saveToUserSessions(user.id, req, res);
 
         return {

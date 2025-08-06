@@ -9,6 +9,7 @@ import { Cards } from './cards';
 import { CreateGame } from './create-game';
 import { CurrentRound } from './current-round';
 import { usePlanningPoker } from './use-planning-poker';
+import { GuestNamePrompt } from './guest-name-prompt';
 
 type Props = {
     roomId: string;
@@ -22,11 +23,14 @@ export const PlanningPoker: React.FC<Props> = ({ roomId, setRoomName }) => {
         room,
         game,
         round,
+        promptGuestName,
+        handleSetGuestName
     } = usePlanningPoker({ roomId, setRoomName });
 
     return (
         <>
-            {loading && (<Loader2 className='animate-spin' />)}
+            {loading && <Loader2 className='animate-spin' />}
+            {promptGuestName && <GuestNamePrompt setGuestName={handleSetGuestName} />}
             {!loading && player && room && (
                 <>
                     <Header player={player} room={room} game={game}/>
@@ -34,7 +38,7 @@ export const PlanningPoker: React.FC<Props> = ({ roomId, setRoomName }) => {
                         <div className='w-full h-full max-w-[calc(100vh)] flex flex-col gap-4'>
                             {game && round && <CurrentRound player={player} room={room} game={game} round={round}/>}
                             {!game && <CreateGame player={player} room={room}/>}
-                            {player.role !== 'observer' && round && <Cards round={round}/>}
+                            {player.role !== 'observer' && round && <Cards playerId={player.id} round={round}/>}
                         </div>
                     </div>
                 </>

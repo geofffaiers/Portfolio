@@ -143,6 +143,7 @@ describe('authenticateGuestOrUser', () => {
         await authenticateGuestOrUser(req, res, next);
 
         expect(logError).toHaveBeenCalled();
+        expect(res.clearCookie).toHaveBeenCalledWith('guestSessionToken');
         expect(res.status).toHaveBeenCalledWith(403);
         expect(res.json).toHaveBeenCalledWith({
             code: 403,

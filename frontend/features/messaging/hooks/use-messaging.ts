@@ -10,7 +10,7 @@ import { Messaging } from '../types/messaging.types';
 
 export function useMessaging(): Messaging {
     const { config } = useConfigContext();
-    const { authReady } = useAuthContext();
+    const { userReady } = useAuthContext();
     const { displayError } = useToastWrapper();
     const [chatHeaders, setChatHeaders] = useState<ChatHeader[]>([]);
     const [floatingOpen, setFloatingOpen] = useState<boolean>(true);
@@ -55,11 +55,11 @@ export function useMessaging(): Messaging {
     }, [config.apiUrl, displayError, initialLoading]);
 
     useEffect(() => {
-        if (initialLoadRef.current && authReady && config.apiUrl != null) {
+        if (initialLoadRef.current && userReady && config.apiUrl != null) {
             initialLoadRef.current = false;
             getConversations();
         }
-    }, [authReady, config.apiUrl, displayError, getConversations]);
+    }, [userReady, config.apiUrl, displayError, getConversations]);
 
     const handleOpenChat = (user: User): void => {
         setOpenChats((chats) => {

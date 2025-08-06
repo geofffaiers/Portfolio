@@ -58,13 +58,13 @@ export const useRoundControls = ({ game, round }: Props): UseRoundControls => {
             });
             const json: DefaultResponse = await response.json();
             if (!json.success) {
-                displayError(json.message ?? 'Failed to reveal votes');
+                displayError(json.message ?? 'Failed to start a new round');
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
                 displayError(error.message);
             } else {
-                displayError('Failed to reveal votes');
+                displayError('Failed to start a new round');
             }
         } finally {
             setLoading(false);
@@ -84,13 +84,13 @@ export const useRoundControls = ({ game, round }: Props): UseRoundControls => {
             });
             const json: DefaultResponse = await response.json();
             if (!json.success) {
-                displayError(json.message ?? 'Failed to reveal votes');
+                displayError(json.message ?? 'Failed to end the game');
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
                 displayError(error.message);
             } else {
-                displayError('Failed to reveal votes');
+                displayError('Failed to end the game');
             }
         } finally {
             setLoading(false);

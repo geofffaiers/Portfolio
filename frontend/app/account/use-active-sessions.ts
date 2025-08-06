@@ -18,7 +18,7 @@ type UseActiveSessions = {
 };
 
 export function useActiveSessions(): UseActiveSessions {
-    const { authReady, setUser } = useAuthContext();
+    const { userReady, setUser } = useAuthContext();
     const { config } = useConfigContext();
     const { displayError } = useToastWrapper();
     const [sessions, setSessions] = useState<Session[]>([]);
@@ -53,10 +53,10 @@ export function useActiveSessions(): UseActiveSessions {
     }, [config.apiUrl, displayError]);
 
     useEffect(() => {
-        if (authReady) {
+        if (userReady) {
             fetchSessions();
         }
-    }, [authReady, fetchSessions]);
+    }, [userReady, fetchSessions]);
 
     const handleLogoutSession = async (session: Session) => {
         if (session.thisSession) {

@@ -8,12 +8,13 @@ import { useCards } from './use-cards';
 import { Card } from './card';
 
 type CardsProps = {
+    playerId: number;
     round: Round;
 };
 
-export const Cards: React.FC<CardsProps> = ({ round }) => {
+export const Cards: React.FC<CardsProps> = ({ playerId, round }) => {
     const { isMobile, isTablet } = useDeviceBreakpoints();
-    const { options, selected, submitVote } = useCards({ round });
+    const { options, selected, submitVote } = useCards({ playerId, round });
     return (
         <div className={cn(
             'flex flex-wrap gap-4 justify-center my-auto',

@@ -57,6 +57,7 @@ const authenticateGuest = async (req: Request, res: Response): Promise<boolean> 
         return true;
     } catch (err: unknown) {
         logError(err);
+        res.clearCookie('guestSessionToken');
         res.status(403).json({
             code: 403,
             success: false,
@@ -143,7 +144,7 @@ export const authenticateGuestOrUser = async (req: Request, res: Response, next:
 
 export const socketAuthentication = async (ws: WebSocket, req: Request): Promise<[number | null, string | null]> => {
     const guestSessionToken: string | undefined =
-        req.cookies.guestSessionToken ??
+        req.cookies?.guestSessionToken ??
         getCookieValue(req.headers?.cookie, 'guestSessionToken');
 
     if (guestSessionToken != null && typeof guestSessionToken === 'string') {
@@ -151,7 +152,7 @@ export const socketAuthentication = async (ws: WebSocket, req: Request): Promise
     }
 
     const token: string | undefined =
-        req.cookies.token ??
+        req.cookies?.token ??
         getCookieValue(req.headers?.cookie, 'token');
 
     if (token != null && typeof token === 'string') {

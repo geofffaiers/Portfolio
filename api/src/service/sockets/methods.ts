@@ -5,10 +5,10 @@ import { clients } from '../../routes/ws';
 export const findMatchingClient = (userId?: number, guestSessionId?: string): Client[] => {
     const foundClients: Client[] = [];
     clients.forEach((client: Client) => {
-        if (client.userId === userId) {
+        if (userId && client.userId === userId) {
             foundClients.push(client);
         }
-        if (client.guestSessionId === guestSessionId) {
+        if (guestSessionId && client.guestSessionId === guestSessionId) {
             foundClients.push(client);
         }
     });
@@ -18,10 +18,10 @@ export const findMatchingClient = (userId?: number, guestSessionId?: string): Cl
 export const findMatchingClients = (userIds: number[], guestSessionIds: string[]): Client[] => {
     const foundClients: Client[] = [];
     clients.forEach((client: Client) => {
-        if (client.userId != null && userIds.includes(client.userId)) {
+        if (userIds.length > 0 && client.userId != null && userIds.includes(client.userId)) {
             foundClients.push(client);
         }
-        if (client.guestSessionId != null && guestSessionIds.includes(client.guestSessionId)) {
+        if (guestSessionIds.length > 0 && client.guestSessionId != null && guestSessionIds.includes(client.guestSessionId)) {
             foundClients.push(client);
         }
     });

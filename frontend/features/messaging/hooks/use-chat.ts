@@ -32,7 +32,7 @@ type Props = {
 }
 
 export function useChat({ chatHeader }: Props): UseChat {
-    const { authReady, user } = useAuthContext();
+    const { userReady, user } = useAuthContext();
     const { config } = useConfigContext();
     // TODO: Still need to implement unsubscribe
     const { sendSocketMessage, subscribe, unsubscribe: _unsubscribe } = useSocketContext();
@@ -158,13 +158,13 @@ export function useChat({ chatHeader }: Props): UseChat {
     }, [config.apiUrl, userId, page, handleMessages, addError]);
 
     useEffect(() => {
-        if (initialLoadRef.current && authReady) {
+        if (initialLoadRef.current && userReady) {
             initialLoadRef.current = false;
             getMessagesForPage();
             subscribe(MessageType.NEW_MESSAGE, handleSocketMessage);
             subscribe(MessageType.UPDATED_MESSAGE, handleSocketMessage);
         }
-    }, [getMessagesForPage, handleSocketMessage, subscribe, authReady]);
+    }, [getMessagesForPage, handleSocketMessage, subscribe, userReady]);
 
     useEffect(() => {
         if (loadMore.current) {

@@ -35,6 +35,8 @@ export function useLogin(): UseLogin {
             if (json.success) {
                 const u: User = json.data;
                 localStorage.setItem('loggedInUser', JSON.stringify(u));
+                localStorage.removeItem('guestName');
+                localStorage.removeItem('guestIds');
                 setUser(u);
             } else {
                 displayError(json.message ?? 'Login failed');

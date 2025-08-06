@@ -1,10 +1,10 @@
 export * from './planning-poker';
 export * from './sockets';
-
 export * from './config-response';
 export * from './default-response';
 export * from './definition';
 export * from './error-check';
+export * from './guest';
 export * from '../features/messaging/types/message';
 export * from './session';
 export * from './license';

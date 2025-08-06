@@ -15,7 +15,7 @@ describe('Vote model', () => {
         expect(instance.id).toBe(plain.id);
         expect(instance.roomId).toBe(plain.roomId);
         expect(instance.roundId).toBe(plain.roundId);
-        expect(instance.userId).toBe(plain.userId);
+        expect(instance.playerId).toBe(plain.playerId);
         expect(instance.value).toBe(plain.value);
         expect(instance.createdAt).toEqual(plain.createdAt);
         expect(instance.updatedAt).toEqual(plain.updatedAt);
@@ -36,7 +36,7 @@ describe('Vote model', () => {
         expect(instance.id).toBe(plain.id);
         expect(instance.roomId).toBe(plain.roomId);
         expect(instance.roundId).toBe(plain.roundId);
-        expect(instance.userId).toBe(plain.userId);
+        expect(instance.playerId).toBe(plain.playerId);
         expect(instance.value).toBe(plain.value);
         expect(instance.createdAt).toEqual(plain.createdAt);
         expect(instance.updatedAt).toEqual(plain.updatedAt);
@@ -53,7 +53,7 @@ describe('Vote model', () => {
             id: 3,
             room_id: 'snake-room',
             round_id: 3,
-            user_id: 303,
+            player_id: 303,
             value: '13',
             created_at: now,
             updated_at: now
@@ -63,7 +63,7 @@ describe('Vote model', () => {
 
         expect(instance.roomId).toBe('snake-room');
         expect(instance.roundId).toBe(3);
-        expect(instance.userId).toBe(303);
+        expect(instance.playerId).toBe(303);
         expect(instance.value).toBe('13');
         expect(instance.createdAt).toEqual(now);
         expect(instance.updatedAt).toEqual(now);

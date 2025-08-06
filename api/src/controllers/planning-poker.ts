@@ -6,7 +6,7 @@ import { createGame, createRoom, getRoom, getRooms, joinRoom, disconnect, endRou
 export default class PlanningPokerController {
     async connectGuest (req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const response: DefaultResponse = await connectGuest(req, res);
+            const response: DefaultResponse<{ ids: number[] }> = await connectGuest(req, res);
             res.status(response.code).json(response);
         } catch (err: unknown) {
             handleRoutingError(err, next);

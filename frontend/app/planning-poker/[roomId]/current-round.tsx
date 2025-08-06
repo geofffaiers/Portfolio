@@ -30,7 +30,7 @@ export const CurrentRound: React.FC<Props> = ({ player, room, game, round }) => 
             )}>
                 {players.map((p: Player, index: number) => {
                     const isUser = p.id === player.id;
-                    const vote = round.votes.find((v) => v.userId === p.id);
+                    const vote = round.votes.find((v) => v.playerId === p.id);
                     if (isMobile) {
                         return <MobileVoteContainer key={`vote-container-${index}`} isUser={isUser} round={round} player={p} vote={vote?.value ?? ''}/>;
                     }

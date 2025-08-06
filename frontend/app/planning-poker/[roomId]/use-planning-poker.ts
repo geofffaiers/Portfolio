@@ -23,30 +23,43 @@ type UsePlanningPoker = {
     room: Room | null;
     game: Game | null;
     round: Round | null;
+    promptGuestName: boolean;
+    handleSetGuestName: (name: string) => void;
 };
 
 export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPoker {
     const router = useRouter();
-    const { authReady, user } = useAuthContext();
+    const { authLoading, authReady, user, guest, handleSetGuest } = useAuthContext();
     const { config } = useConfigContext();
-    const { displayError } = useToastWrapper();
+    const { displayError, displayWarning } = useToastWrapper();
     const { subscribe, unsubscribe } = useSocketContext();
+    const [promptGuestName, setPromptGuestName] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [room, setRoom] = useState<Room | null>(null);
     const [player, setPlayer] = useState<Player | null>(null);
     const [game, setGame] = useState<Game | null>(null);
     const [round, setRound] = useState<Round | null>(null);
     const subscriptions = useRef<number[]>([]);
+    const hasDisconnected = useRef<boolean>(false);
+
+    const getPlayer = useCallback((players: Player[]): Player | undefined => {
+        const userPlayer = user
+            ? players.find((p) => p.user?.id === user.id)
+            : undefined;
+        const guestPlayer = guest
+            ? players.find((p) => guest.ids.includes(p.id))
+            : undefined;
+        return userPlayer ?? guestPlayer;
+    }, [user, guest]);
 
     const populateState = useCallback(async (room: Room, joinRoomHandler?: () => Promise<void>) => {
-        if (user == null) {
+        if (user == null && guest == null) {
             return;
         }
         setRoom(room);
         setRoomName(room.name);
-        const player: Player | undefined = room.players
-            .filter((p) => p.roomId === room.id)
-            .find((p) => p.id === user.id);
+        const playersForRoom: Player[] = room.players.filter((p) => p.roomId === room.id);
+        const player = getPlayer(playersForRoom);
         if (player) {
             setPlayer(player);
             const game: Game | undefined = room.games
@@ -69,7 +82,7 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
             displayError('Failed to join room');
             router.push('/planning-poker');
         }
-    }, [user, setRoomName, router, displayError]);
+    }, [user, guest, setRoomName, router, displayError, getPlayer]);
 
     const joinRoom = useCallback(async () => {
         try {
@@ -129,10 +142,14 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
     }, [config.apiUrl, roomId, joinRoom, displayError, populateState, router]);
 
     useEffect(() => {
-        if (authReady) {
-            fetchRoom();
+        if (!authLoading) {
+            if (authReady) {
+                fetchRoom();
+            } else {
+                setPromptGuestName(true);
+            }
         }
-    }, [authReady, fetchRoom]);
+    }, [authLoading, authReady, fetchRoom]);
 
     const handleUpdateRoom = useCallback(async (socketMessage: BaseMessage) => {
         try {
@@ -160,7 +177,7 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
             setRoom((room) => {
                 if (room) {
                     room.players = playersForRoom;
-                    const player: Player | undefined = room.players.find((p) => p.id === user?.id);
+                    const player = getPlayer(playersForRoom);
                     if (player) {
                         setPlayer(player);
                     }
@@ -174,7 +191,7 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
                 displayError('An unknown error occurred');
             }
         }
-    }, [displayError, user, room]);
+    }, [displayError, getPlayer, room]);
 
     const handleUpdateGame = useCallback(async (socketMessage: BaseMessage) => {
         try {
@@ -223,6 +240,37 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
         }
     }, [displayError, room]);
 
+    const handleSetGuestName = useCallback(async (name: string) => {
+        if (name.trim() === '') {
+            displayWarning('Guest name cannot be empty');
+            return;
+        }
+        try {
+            setLoading(true);
+            const response = await fetch(`${config.apiUrl}/planning-poker/connect-guest`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ guestName: name, roomId })
+            });
+            const json: DefaultResponse<{ ids: number[] }> = await response.json();
+            if (json.success && json.data) {
+                setPromptGuestName(false);
+                handleSetGuest(json.data.ids, name);
+            } else {
+                displayError(json.message ?? 'Failed to connect as guest');
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                displayError(err.message);
+            } else {
+                displayError('An unknown error occurred');
+            }
+        }
+    }, [config.apiUrl, displayError, displayWarning, handleSetGuest, roomId]);
+
 
     useEffect(() => {
         const subs = subscriptions.current;
@@ -240,15 +288,14 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
     }, [room, subscribe, unsubscribe, handleUpdateRoom, handleUpdateGame, handleUpdateRound, handleUpdatePlayers]);
 
     useEffect(() => {
-        let hasDisconnected = false;
         const disconnect = () => {
-            if (!hasDisconnected && user?.id && roomId) {
-                const blob = new Blob([JSON.stringify({ roomId, userId: user.id })], {
+            if (!hasDisconnected.current && player && roomId) {
+                const blob = new Blob([JSON.stringify({ roomId, playerId: player.id })], {
                     type: 'application/json'
                 });
 
                 navigator.sendBeacon(`${config.apiUrl}/planning-poker/disconnect`, blob);
-                hasDisconnected = true;
+                hasDisconnected.current = true;
             }
         };
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -257,10 +304,9 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
         };
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => {
-            disconnect();
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-    }, [config.apiUrl, roomId, user?.id]);
+    }, [config.apiUrl, player, roomId]);
 
     return {
         loading,
@@ -268,5 +314,7 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
         room,
         game,
         round,
+        promptGuestName,
+        handleSetGuestName
     };
 }

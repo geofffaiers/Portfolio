@@ -339,6 +339,12 @@ const convertResultToRooms = async (result: Room[]): Promise<Room[]> => {
     const rooms = await Promise.all(result.map(async (row: Room) => {
         const room = plainToInstance(Room, row, { excludeExtraneousValues: true });
         room.players = await getPlayersForRoom(room.id);
+        room.players.forEach(player => {
+            // We aren't exposing guestSessionId to the frontend.
+            if (player.guestSessionId) {
+                player.guestSessionId = undefined;
+            }
+        });
         room.games = await getGamesForRoom(room.id);
         return room;
     }));
@@ -446,7 +452,7 @@ const getVotesForRound = async (roundId: number): Promise<Vote[]> => {
     return votes;
 };
 
-export const setOnline = async (roomId: string, online: boolean, userId?: number, guestSessionId?: string): Promise<void> => {
+export const setOnline = async (roomId: string, online: boolean, userId?: number, guestSessionId?: string, playerId?: number): Promise<void> => {
     let where: string = 'WHERE room_id = ? AND ';
     const params: (boolean | string | number)[] = [online, roomId];
     if (userId != null) {
@@ -455,6 +461,11 @@ export const setOnline = async (roomId: string, online: boolean, userId?: number
     } else if (guestSessionId != null) {
         where += 'guest_session_id = ?';
         params.push(guestSessionId);
+    } else if (playerId != null) {
+        where += 'id = ?';
+        params.push(playerId);
+    } else {
+        throw new Error('Invalid player identifier');
     }
     await pool.query(
         `UPDATE pp_room_players
@@ -469,13 +480,13 @@ export const saveScoreToDb = async (submitScore: SubmitScore): Promise<void> => 
     await validateOrReject(vote);
     await pool.query(
         `INSERT INTO pp_votes
-            (room_id, round_id, user_id, guest_session_id, value, created_at)
+            (room_id, round_id, player_id, value, created_at)
         VALUES
-            (?, ?, ?, ?, ?, ?)
+            (?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
             value = ?,
             created_at = ?`,
-        [vote.roomId, vote.roundId, vote.userId, vote.guestSessionId, vote.value, vote.createdAt, vote.value, vote.createdAt]
+        [vote.roomId, vote.roundId, vote.playerId, vote.value, vote.createdAt, vote.value, vote.createdAt]
     );
 };
 

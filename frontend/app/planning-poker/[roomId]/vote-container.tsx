@@ -14,14 +14,15 @@ type Props = {
 };
 
 export const MobileVoteContainer: React.FC<Props> = ({ round, isUser, player, vote }) => {
-    const { userName } = useUserDetails({ user: player });
+    const { userName } = useUserDetails({ user: player.user });
+
     return (
         <div className='flex flex-col items-center justify-center w-24'>
             <Card value={vote} length={1} selected={null} hiddenVote={round.inProgress} player={player}/>
             <div className={cn(
                 'mt-4 text-center overflow-hidden text-ellipsis',
                 isUser && 'font-bold',
-            )}>{isUser ? 'You' : userName}</div>
+            )}>{isUser ? 'You' : userName ?? player.guestName ?? 'Guest'}</div>
         </div>
     );
 };
@@ -29,8 +30,10 @@ export const MobileVoteContainer: React.FC<Props> = ({ round, isUser, player, vo
 export const VoteContainer: React.FC<
     Props & { coordinates: { x: number, y: number } }
 > = ({ round, isUser, player, vote, coordinates: { x, y } }) => {
-    const { userName } = useUserDetails({ user: player });
-    const title = `${userName} (${player.role.charAt(0).toUpperCase() + player.role.slice(1)}) - ${player.online ? 'Online' : 'Offline'}`;
+    const { userName } = useUserDetails({ user: player.user });
+    const displayName = userName ?? player.guestName ?? 'Guest';
+
+    const title = `${displayName} (${player.role.charAt(0).toUpperCase() + player.role.slice(1)}) - ${player.online ? 'Online' : 'Offline'}`;
     return (
         <div
             title={title}
@@ -45,7 +48,7 @@ export const VoteContainer: React.FC<
             <div className={cn(
                 'mt-4 text-center overflow-hidden text-ellipsis',
                 isUser && 'font-bold',
-            )}>{isUser ? 'You' : userName}</div>
+            )}>{isUser ? 'You' : displayName}</div>
         </div>
     );
 };

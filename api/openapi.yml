@@ -89,10 +89,6 @@ paths:
                               $ref: "#/components/schemas/Project"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -139,10 +135,6 @@ paths:
                           - word
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -186,10 +178,6 @@ paths:
                         example: true
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/messaging/get-chat-headers:
@@ -292,13 +280,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DefaultResponse"
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: object
+                        required:
+                          - ids
+                        properties:
+                          ids:
+                            type: array
+                            items:
+                              type: number
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/planning-poker/rooms:
@@ -699,12 +697,11 @@ paths:
             schema:
               type: object
               required:
+                - playerId
                 - roomId
               properties:
-                userId:
+                playerId:
                   type: number
-                guestSessionId:
-                  type: string
                 roomId:
                   type: string
       responses:
@@ -724,10 +721,6 @@ paths:
                         example: true
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -815,10 +808,6 @@ paths:
                               type: number
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -854,10 +843,6 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/generate-reset-token:
@@ -885,10 +870,6 @@ paths:
                 $ref: "#/components/schemas/DefaultResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/sessions:
@@ -961,10 +942,6 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/get-user-for-validate-token:
@@ -987,10 +964,6 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/login:
@@ -1021,10 +994,6 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/reset-password:
@@ -1058,10 +1027,6 @@ paths:
                 $ref: "#/components/schemas/DefaultResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/refresh-token:
@@ -1080,10 +1045,6 @@ paths:
                 $ref: "#/components/schemas/DefaultResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/logout:
@@ -1185,10 +1146,6 @@ paths:
                 $ref: "#/components/schemas/DefaultResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/resend-verification:
@@ -1458,9 +1415,6 @@ components:
         guestName:
           type: string
           nullable: true
-        guestSessionId:
-          type: string
-          nullable: true
     Game:
       type: object
       required:
@@ -1561,11 +1515,8 @@ components:
           type: string
         roundId:
           type: number
-        userId:
+        playerId:
           type: number
-          nullable: true
-        guestSessionId:
-          type: string
           nullable: true
         value:
           type: string

@@ -6,27 +6,32 @@ import { handleError, pool } from '../../../helpers';
 import { generateJwt } from '@src/service/users/methods';
 import { JWTPayload, jwtVerify } from 'jose';
 
-export const connectGuest = async (req: Request, res: Response): Promise<DefaultResponse> => {
+type ErrorTuple = [string | null, number[] | null];
+
+export const connectGuest = async (req: Request, res: Response): Promise<DefaultResponse<{ ids: number[] }>> => {
     try {
-        const message = await connectGuestSession(req, res);
-        if (message) {
+        const [error, playerIds] = await connectGuestSession(req, res);
+        if (error) {
             return {
                 success: false,
                 code: 400,
-                message
+                message: error
             };
         }
 
         return {
             success: true,
-            code: 200
+            code: 200,
+            data: {
+                ids: playerIds || [],
+            }
         };
     } catch (error: unknown) {
         return handleError(error);
     }
 };
 
-const connectGuestSession = async (req: Request, res: Response): Promise<string | void> => {
+const connectGuestSession = async (req: Request, res: Response): Promise<ErrorTuple> => {
     const guestSessionToken: string | undefined = req.cookies.guestSessionToken;
     if (guestSessionToken == null || typeof guestSessionToken !== 'string') {
         return await generateNewGuestSession(req, res);
@@ -37,47 +42,52 @@ const connectGuestSession = async (req: Request, res: Response): Promise<string 
     const guestSessionId = payload.guestSessionId as string;
     if (guestSessionId == null) {
         res.clearCookie('guestSessionToken');
-        return 'Invalid request';
+        return ['Invalid request', null];
     }
 
     const { guestName, roomId } = req.body;
     if (typeof guestName !== 'string' || guestName.length < 1 || guestName.length > 32) {
-        return 'Invalid request';
+        return ['Invalid request', null];
     }
-    const [rows] = await pool.query<RowDataPacket[]>(
+    const [roomRows] = await pool.query<RowDataPacket[]>(
         'SELECT id FROM pp_rooms WHERE id = ?',
         [roomId]
     );
-    if (rows.length === 0) {
-        return 'Invalid request';
+    if (roomRows.length === 0) {
+        return ['Invalid request', null];
     }
-    const [updatedRows] = await pool.query<ResultSetHeader>(
+    const [playerRows] = await pool.query<RowDataPacket[]>(
+        'SELECT id FROM pp_room_players WHERE guest_session_id = ?',
+        [guestSessionId]
+    );
+    if (playerRows.length === 0) {
+        return ['Invalid request', null];
+    }
+    await pool.query<ResultSetHeader>(
         `UPDATE pp_room_players SET
             guest_name = ?
         WHERE guest_session_id = ?
         `,
         [guestName, guestSessionId]
     );
-    if (updatedRows.affectedRows > 0) {
-        await generateNewGuestToken(guestSessionId, res);
-        return;
-    }
+    await generateNewGuestToken(guestSessionId, res);
+    return [null, playerRows.map((row) => row.id)];
 };
 
-const generateNewGuestSession = async (req: Request, res: Response): Promise<string | void> => {
+const generateNewGuestSession = async (req: Request, res: Response): Promise<ErrorTuple> => {
     const { guestName, roomId } = req.body;
     if (typeof guestName !== 'string' || guestName.length < 1 || guestName.length > 32) {
-        return 'Invalid request';
+        return ['Invalid request', null];
     }
     const [rows] = await pool.query<RowDataPacket[]>(
         'SELECT id FROM pp_rooms WHERE id = ?',
         [roomId]
     );
     if (rows.length === 0) {
-        return 'Invalid request';
+        return ['Invalid request', null];
     }
     const guestSessionId = crypto.randomUUID();
-    await pool.query(
+    const [result] = await pool.query<ResultSetHeader>(
         `INSERT INTO pp_room_players
             (room_id, guest_session_id, guest_name, online)
         VALUES
@@ -85,6 +95,7 @@ const generateNewGuestSession = async (req: Request, res: Response): Promise<str
         [roomId, guestSessionId, guestName]
     );
     await generateNewGuestToken(guestSessionId, res);
+    return [null, [result.insertId]];
 };
 
 const generateNewGuestToken = async (guestSessionId: string, res: Response) => {

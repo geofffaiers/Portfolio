@@ -15,9 +15,10 @@ export class Vote {
     @Expose({ name: 'roundId' })
         roundId: number = -1;
 
+    @IsOptional()
     @IsNumber()
-    @Expose({ name: 'userId' })
-        userId: number = -1;
+    @Expose({ name: 'playerId' })
+        playerId: number = -1;
 
     @IsString()
     @IsOptional()
