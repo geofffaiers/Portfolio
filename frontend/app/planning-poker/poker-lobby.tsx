@@ -21,7 +21,11 @@ export const PokerLobby: React.FC = () => {
                     <AccessGranted />
                 )
                 : (
-                    <AccessRestricted message='To join the Planning Poker session, please sign in or register. A live connection is required to receive real-time updates.'/>
+                    <AccessRestricted message={`
+                        To create a Planning Poker session, please sign in or register.
+                        To join an already running session, either sign in or register, or connect directly to the room link to join as a guest.
+                        A live connection is required to receive real-time updates.
+                    `}/>
                 )
             }
         </>
@@ -30,6 +34,7 @@ export const PokerLobby: React.FC = () => {
 
 const AccessGranted: React.FC = () => {
     const { rooms, handleJoinRoom, handleCreateRoom } = usePokerLobby();
+    const { userReady } = useAuthContext();
     return (
         <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
             <div className='w-full max-w-sm'>
@@ -41,14 +46,18 @@ const AccessGranted: React.FC = () => {
                             {rooms.length > 0 && (
                                 <>
                                     <JoinRoom rooms={rooms} handleJoinRoom={handleJoinRoom}/>
-                                    <div className='flex items-center'>
-                                        <Separator className='flex-grow w-auto' />
-                                        <span className='mx-2'>Or</span>
-                                        <Separator className='flex-grow w-auto' />
-                                    </div>
+                                    {userReady && (
+                                        <div className='flex items-center'>
+                                            <Separator className='flex-grow w-auto' />
+                                            <span className='mx-2'>Or</span>
+                                            <Separator className='flex-grow w-auto' />
+                                        </div>
+                                    )}
                                 </>
                             )}
-                            <NewRoom rooms={rooms} handleCreateRoom={handleCreateRoom}/>
+                            {userReady && (
+                                <NewRoom rooms={rooms} handleCreateRoom={handleCreateRoom}/>
+                            )}
                         </>
                     )}
                 </div>

@@ -28,7 +28,7 @@ describe('SubmitScore model', () => {
         expect(instance.vote.id).toBe(1);
         expect(instance.vote.roomId).toBe('room-1');
         expect(instance.vote.roundId).toBe(10);
-        expect(instance.vote.userId).toBe(101);
+        expect(instance.vote.playerId).toBe(101);
         expect(instance.vote.value).toBe('5');
     });
 
@@ -38,7 +38,7 @@ describe('SubmitScore model', () => {
             id: 2,
             room_id: 'snake-room',
             round_id: 3,
-            user_id: 4,
+            player_id: 4,
             value: '8',
             created_at: now,
             updated_at: now
@@ -51,7 +51,7 @@ describe('SubmitScore model', () => {
         expect(instance.vote.id).toBe(2);
         expect(instance.vote.roomId).toBe('snake-room');
         expect(instance.vote.roundId).toBe(3);
-        expect(instance.vote.userId).toBe(4);
+        expect(instance.vote.playerId).toBe(4);
         expect(instance.vote.value).toBe('8');
         expect(instance.vote.createdAt).toEqual(now);
         expect(instance.vote.updatedAt).toEqual(now);

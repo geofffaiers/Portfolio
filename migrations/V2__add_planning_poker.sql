@@ -4,6 +4,14 @@ DELIMITER //
 
 CREATE PROCEDURE init_planning_poker_schema()
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    START TRANSACTION;
+
     CREATE TABLE IF NOT EXISTS `pp_rooms` (
         `id` VARCHAR(36) PRIMARY KEY,
         `name` VARCHAR(255) NOT NULL,
@@ -70,6 +78,9 @@ BEGIN
         FOREIGN KEY (`round_id`) REFERENCES `pp_rounds`(`id`),
         FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+    COMMIT;
+    
 END //
 
 DELIMITER ;

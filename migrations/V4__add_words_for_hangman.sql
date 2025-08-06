@@ -1,11 +1,17 @@
 USE portfolio;
 
--- First create the table using a procedure
 DELIMITER //
 CREATE PROCEDURE add_words_for_hangman()
 BEGIN
--- Add to your existing init script
-  CREATE TABLE IF NOT EXISTS `words` (
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    START TRANSACTION;
+
+    CREATE TABLE IF NOT EXISTS `words` (
       `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
       `word` VARCHAR(50) NOT NULL UNIQUE,
       `length` TINYINT NOT NULL,
@@ -20,10 +26,11 @@ BEGIN
       INDEX `idx_first_letter` (`first_letter`),
       INDEX `idx_valid_words` (`is_valid`, `length`, `first_letter`),
       INDEX `idx_word_lookup` (`word`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+    COMMIT;
 END //
 DELIMITER ;
 
--- Call the procedure to create the table
 CALL add_words_for_hangman();
 DROP PROCEDURE add_words_for_hangman;

@@ -1,22 +1,22 @@
 import { Request } from 'express';
 import { DefaultResponse, GetRooms } from '../../../models';
 import { handleError } from '../../../helpers';
-import { getRoomsFromDbForUser } from '../methods';
+import { getRoomsFromDbForPlayer } from '../methods';
 
 export const getRooms = async (req: Request): Promise<DefaultResponse<GetRooms>> => {
     try {
-        if (req.userId == null) {
+        if (req.userId == null && req.guestSessionId == null) {
             return {
                 code: 400,
                 success: false,
-                message: 'User not found'
+                message: 'Invalid request'
             };
         }
         return {
             success: true,
             code: 200,
             data: {
-                rooms: await getRoomsFromDbForUser(req.userId)
+                rooms: await getRoomsFromDbForPlayer(req.userId, req.guestSessionId)
             }
         };
     } catch (error: unknown) {

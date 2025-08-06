@@ -54,7 +54,9 @@ export const Card: React.FC<CardProps> = ({ value, length, selected, player, hid
                 <Typography
                     variant='h3'
                     style={{ fontSize: `${width}px` }}
-                >{label}</Typography>
+                >
+                    {label}
+                </Typography>
             )}
         </div>
     );

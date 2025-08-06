@@ -2,7 +2,7 @@ import { WebSocket, Server as WebSocketServer } from 'ws';
 import { Request } from 'express';
 import { v4 as uuid } from 'uuid';
 import { Client } from '../models/sockets/client';
-import { authenticateTokenForSocket } from '../middlewares';
+import { socketAuthentication } from '../middlewares';
 import { logError, pool } from '../helpers';
 import { ResultSetHeader } from 'mysql2';
 import { getUser } from '../service/users/methods';
@@ -19,18 +19,26 @@ export const handleWebSocketConnection = (wss: WebSocketServer): void => {
         const clientId: string = uuid();
         const client: Client = { clientId, ws, userId: -1 };
         try {
-            authenticateTokenForSocket(ws, req)
-                .then(async (userId: number) => {
-                    client.userId = userId;
-                    clients.set(clientId, client);
-                    await setUserActive(userId, true);
-                    const user: User = await getUser(userId);
-                    user.password = '';
-                    const message: UpdatedProfile = {
-                        type: MessageType.UPDATED_PROFILE,
-                        user
-                    };
-                    sendMessageToClient(message, userId);
+            socketAuthentication(ws, req)
+                .then(async ([userId, guestSessionId]) => {
+                    if (userId != null) {
+                        client.userId = userId;
+                        clients.set(clientId, client);
+                        await setUserActive(userId, true);
+                        const user: User = await getUser(userId);
+                        user.password = '';
+                        const message: UpdatedProfile = {
+                            type: MessageType.UPDATED_PROFILE,
+                            user
+                        };
+                        sendMessageToClient(message, userId);
+                    } else if (guestSessionId != null) {
+                        client.guestSessionId = guestSessionId;
+                        clients.set(clientId, client);
+                    } else {
+                        ws.close(1008, 'Unauthorized');
+                        return;
+                    }
                 })
                 .catch((err: unknown) => {
                     logError(err);
@@ -58,19 +66,23 @@ export const handleWebSocketConnection = (wss: WebSocketServer): void => {
             });
             ws.on('close', () => {
                 clients.delete(clientId);
-                setUserActive(client.userId, false)
-                    .catch((err: unknown) => {
-                        logError(new Error(`Error setting user inactive: ${JSON.stringify(err)}`));
-                    });
+                if (client.userId != null && client.userId !== -1) {
+                    setUserActive(client.userId, false)
+                        .catch((err: unknown) => {
+                            logError(new Error(`Error setting user inactive: ${JSON.stringify(err)}`));
+                        });
+                }
             });
         } catch (err: unknown) {
             const client: Client | undefined = clients.get(clientId);
             if (client != null) {
                 clients.delete(clientId);
-                setUserActive(client.userId, false)
-                    .catch((err: unknown) => {
-                        logError(`Error setting user inactive: ${JSON.stringify(err)}`);
-                    });
+                if (client.userId != null) {
+                    setUserActive(client.userId, false)
+                        .catch((err: unknown) => {
+                            logError(`Error setting user inactive: ${JSON.stringify(err)}`);
+                        });
+                }
             }
             const error: string = err instanceof Error ? err.message : JSON.stringify(err);
             ws.close(1002, error);

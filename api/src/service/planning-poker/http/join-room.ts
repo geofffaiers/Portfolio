@@ -8,21 +8,14 @@ export const joinRoom = async (req: Request): Promise<DefaultResponse<GetRoom>> 
         const roomId: string | undefined = req.query.roomId
             ? String(req.query.roomId)
             : undefined;
-        if (roomId == null) {
+        if (roomId == null || (req.userId == null && req.guestSessionId == null)) {
             return {
                 code: 400,
                 success: false,
-                message: 'No room id provided'
+                message: 'Invalid request'
             };
         }
-        if (req.userId == null) {
-            return {
-                code: 400,
-                success: false,
-                message: 'User not found'
-            };
-        }
-        await joinRoomByRoomId(roomId, req.userId);
+        await joinRoomByRoomId(roomId, req.userId, req.guestSessionId);
         const room: Room | undefined = await getRoomDetails(roomId);
         if (room == null) {
             return {

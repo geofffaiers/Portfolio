@@ -4,6 +4,14 @@ DELIMITER //
 
 CREATE PROCEDURE fix_planning_poker_user_deletion()
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    START TRANSACTION;
+
     -- Create new tables with correct structure
     CREATE TABLE `pp_rooms_new` (
         `id` VARCHAR(36) PRIMARY KEY,
@@ -67,7 +75,7 @@ BEGIN
         `value` VARCHAR(50),
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        KEY `idx_round_user_nullable` (`round_id`, `user_id`),
+        UNIQUE KEY `idx_round_user_nullable` (`round_id`, `user_id`),
         FOREIGN KEY (`room_id`) REFERENCES `pp_rooms_new`(`id`),
         FOREIGN KEY (`round_id`) REFERENCES `pp_rounds_new`(`id`),
         FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
@@ -96,6 +104,8 @@ BEGIN
     RENAME TABLE `pp_games_new` TO `pp_games`;
     RENAME TABLE `pp_rounds_new` TO `pp_rounds`;
     RENAME TABLE `pp_votes_new` TO `pp_votes`;
+
+    COMMIT;
 
 END //
 

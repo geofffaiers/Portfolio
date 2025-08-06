@@ -10,9 +10,9 @@ export const getChatHeaders = async (req: Request): Promise<DefaultResponse<Chat
         const users: User[] = await getUsers(req.userId);
         if (users.length === 0) {
             return {
-                code: 400,
-                success: false,
-                message: 'User has no conversations'
+                code: 200,
+                success: true,
+                data: []
             };
         }
         const messages: Message[] = await getLatestMessages(req.userId);

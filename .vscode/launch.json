@@ -12,21 +12,7 @@
             "command": "npm run dev",
         },
         {
-            "name": "Debug Next.js server side",
-            "type": "node-terminal",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/frontend",
-            "command": "npm run dev",
-        },
-        {
-            "name": "Launch Chrome with Next.js",
-            "type": "chrome",
-            "request": "launch",
-            "url": "http://localhost:3001",
-            "webRoot": "${workspaceFolder}/frontend",
-        },
-        {
-            "name": "Debug Next.js in Edge",
+            "name": "Debug Next.js in Chrome",
             "type": "chrome",
             "request": "launch",
             "url": "http://localhost:3001",
@@ -35,11 +21,13 @@
             "preLaunchTask": "npm: dev",
         },
         {
-            "name": "Debug Storybook",
-            "type": "node-terminal",
+            "name": "Debug Next.js in Edge",
+            "type": "msedge",
             "request": "launch",
-            "cwd": "${workspaceFolder}/frontend",
-            "command": "npm run storybook",
+            "url": "http://localhost:3001",
+            "webRoot": "${workspaceFolder}/frontend",
+            "sourceMaps": true,
+            "preLaunchTask": "npm: dev",
         },
         {
             "type": "node",
@@ -60,10 +48,10 @@
     ],
     "compounds": [
         {
-            "name": "API, Frontend",
+            "name": "API, Frontend Chrome",
             "configurations": [
                 "Debug Express.js server side",
-                "Debug Next.js server side"
+                "Debug Next.js in Chrome"
             ],
             "presentation": {
                 "reveal": "always",
@@ -73,30 +61,15 @@
             }
         },
         {
-            "name": "API, Frontend 2",
+            "name": "API, Frontend Edge",
             "configurations": [
                 "Debug Express.js server side",
-                "Debug Next.js server side",
-                "Launch Chrome with Next.js"
+                "Debug Next.js in Edge"
             ],
             "presentation": {
                 "reveal": "always",
                 "group": "Compounds",
                 "order": 1,
-                "hidden": false
-            }
-        },
-        {
-            "name": "API, Frontend, Storybook",
-            "configurations": [
-                "Debug Express.js server side",
-                "Debug Next.js server side",
-                "Debug Storybook"
-            ],
-            "presentation": {
-                "reveal": "always",
-                "group": "Compounds",
-                "order": 2,
                 "hidden": false
             }
         }

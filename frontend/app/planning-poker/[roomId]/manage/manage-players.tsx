@@ -51,10 +51,18 @@ type ManagePlayerProps = {
 };
 
 const ManagePlayer: React.FC<ManagePlayerProps> = ({ player, handleUpdatePlayer, handleRemovePlayer }) => {
-    const { userName } = useUserDetails({ user: player });
+    const isGuest = !player.user;
+    const { userName } = useUserDetails({ user: player.user });
+
+
+    let displayText = userName ?? player.guestName ?? 'Guest';
+    if (!isGuest) {
+        displayText += ` (${player.user?.username})`;
+    }
+
     return (
         <TableRow>
-            <TableCell className={player.removed ? 'line-through text-red-500' : ''}>{userName} ({player.username})</TableCell>
+            <TableCell className={player.removed ? 'line-through text-red-500' : ''}>{displayText}</TableCell>
             <TableCell className='w-[125px]'>
                 <Select onValueChange={(option) => handleUpdatePlayer(player, option)} defaultValue={player.role} disabled={player.removed}>
                     <SelectTrigger className='w-full'>
@@ -62,7 +70,7 @@ const ManagePlayer: React.FC<ManagePlayerProps> = ({ player, handleUpdatePlayer,
                     </SelectTrigger>
                     <SelectContent>
                         {roleOptions.map((r) => (
-                            <SelectItem key={`item-${r}`} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</SelectItem>
+                            <SelectItem key={`item-${r}`} value={r} disabled={isGuest && r === 'owner'}>{r.charAt(0).toUpperCase() + r.slice(1)}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>

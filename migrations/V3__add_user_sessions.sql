@@ -4,6 +4,14 @@ USE portfolio;
 DELIMITER //
 CREATE PROCEDURE add_user_sessions_table()
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    START TRANSACTION;
+
     CREATE TABLE IF NOT EXISTS `users_sessions` (
         `id` INT NOT NULL AUTO_INCREMENT,
         `user_id` INT DEFAULT NULL,
@@ -23,6 +31,9 @@ BEGIN
         KEY `idx_user_active` (`user_id`,`is_active`),
         CONSTRAINT `fk_user_sessions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+    COMMIT;
+    
 END //
 DELIMITER ;
 

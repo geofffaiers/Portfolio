@@ -29,22 +29,23 @@ const SocketContext = createContext<SocketContextProps>({
 });
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-    const { user, setUser, authLoading } = useAuthContext();
+    const { user, guest, setUser, authLoading } = useAuthContext();
     const { config } = useConfigContext();
     const { displayError } = useToastWrapper();
     const socketRef = useRef<WebSocket | null>(null);
     const handlersRef = useRef<Array<Subscription>>([]);
     const subscriptionNextIdRef = useRef<number>(0);
-    const prevUserIdRef = useRef<number | null>(null);
+    const prevId = useRef<string>('');
 
     useEffect(() => {
         if (!config.wsUrl) return;
-        if (authLoading || user == null) {
+        if (authLoading || (user == null && guest == null)) {
             socketRef.current?.close();
             return;
         }
-        if (user.id === prevUserIdRef.current) return;
-        prevUserIdRef.current = user.id;
+        const currentId = user?.id.toString() ?? JSON.stringify(guest?.ids) ?? '';
+        if (currentId === prevId.current) return;
+        prevId.current = currentId;
         let wsUrl = config.wsUrl;
         if (wsUrl.startsWith('/') && window.location.hostname !== 'localhost') {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -59,7 +60,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         };
 
         socketRef.current.onclose = () => {
-            prevUserIdRef.current = null;
+            prevId.current = '';
             // eslint-disable-next-line no-console
             console.log('Disconnected', new Date());
         };
@@ -74,12 +75,14 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
                 const errorRequest: ErrorMessage = plainToInstance(ErrorMessage, message, { excludeExtraneousValues: true });
                 displayError(errorRequest.message);
             }
-            if (message.type === MessageType.UPDATED_PROFILE) {
-                const profileUpdatedRequest: UpdatedProfile = plainToInstance(UpdatedProfile, message, { excludeExtraneousValues: true });
-                setUser(profileUpdatedRequest.user);
-            }
-            if (message.type === MessageType.DELETE_PROFILE) {
-                setUser(null);
+            if (user != null) {
+                if (message.type === MessageType.UPDATED_PROFILE) {
+                    const profileUpdatedRequest: UpdatedProfile = plainToInstance(UpdatedProfile, message, { excludeExtraneousValues: true });
+                    setUser(profileUpdatedRequest.user);
+                }
+                if (message.type === MessageType.DELETE_PROFILE) {
+                    setUser(null);
+                }
             }
             handlersRef.current.forEach(async (sub) => {
                 if (sub.type === message.type) {
@@ -88,11 +91,12 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             });
         };
         return () => {
-            if (socketRef.current != null && (user == null || user.id !== prevUserIdRef.current)) {
+            const currentId = user?.id.toString() ?? JSON.stringify(guest?.ids) ?? '';
+            if (socketRef.current != null && currentId !== prevId.current) {
                 socketRef.current.close();
             }
         };
-    }, [authLoading, user, setUser, displayError, config.wsUrl]);
+    }, [authLoading, user, guest, setUser, displayError, config.wsUrl]);
 
     const sendSocketMessage = useCallback((data: BaseMessage) => {
         if (socketRef.current) {

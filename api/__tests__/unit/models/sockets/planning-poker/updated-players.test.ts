@@ -20,14 +20,15 @@ const newPlainObject = (players?: Player[]) => {
 describe('UpdatedPlayers model', () => {
     it('should transform plain object to UpdatedPlayers instance with nested Player array', () => {
         const plain = newPlainObject([mockPlayerInstance()]);
+        const mockPlayerData = mockPlayer('room-1');
 
         const instance = plainToInstance(UpdatedPlayers, plain);
 
         expect(instance).toBeInstanceOf(UpdatedPlayers);
         expect(Array.isArray(instance.players)).toBe(true);
         expect(instance.players[0]).toBeInstanceOf(Player);
-        expect(instance.players[0].id).toBe(mockPlayer('room-1').id);
-        expect(instance.players[0].username).toBe(mockPlayer('room-1').username);
+        expect(instance.players[0].id).toBe(mockPlayerData.id);
+        expect(instance.players[0].user).toEqual(mockPlayerData.user);
         expect(instance.players[0].roomId).toBe('room-1');
         expect(instance.players[0].online).toBe(true);
         expect(instance.players[0].role).toBe('player');
@@ -36,7 +37,6 @@ describe('UpdatedPlayers model', () => {
     it('should transform snake_case fields to camelCase properties in Player', () => {
         const player = {
             id: 2,
-            username: 'snake-player',
             room_id: 'snake-room',
             online: 1,
             role: 'owner'
@@ -47,7 +47,6 @@ describe('UpdatedPlayers model', () => {
         const instance = plainToInstance(UpdatedPlayers, plain);
 
         expect(instance.players[0].id).toBe(2);
-        expect(instance.players[0].username).toBe('snake-player');
         expect(instance.players[0].roomId).toBe('snake-room');
         expect(instance.players[0].online).toBe(true);
         expect(instance.players[0].role).toBe('owner');

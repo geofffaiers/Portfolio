@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useAuthContext } from '@/components/providers/auth-provider';
 import { useToastWrapper } from '@/hooks/use-toast-wrapper';
 import { Round, SubmitMessage, Vote } from '@/models';
 import { useSocketContext } from '@/components/providers/socket-provider';
@@ -8,6 +7,7 @@ import { useSocketContext } from '@/components/providers/socket-provider';
 import { useOptions } from '../use-options';
 
 type Props = {
+    playerId: number;
     round: Round;
 };
 
@@ -17,37 +17,32 @@ type UseCards = {
     submitVote: (value: string) => Promise<void>;
 };
 
-export const useCards = ({ round }: Props): UseCards => {
-    const { user } = useAuthContext();
+export const useCards = ({ playerId, round }: Props): UseCards => {
     const { displayError } = useToastWrapper();
     const { sendSocketMessage } = useSocketContext();
     const [selected, setSelected] = useState<Vote | null>(null);
     const options = useOptions();
 
     useEffect(() => {
-        const vote = round.votes.find((v) => v.userId === user?.id) ?? null;
+        const vote = round.votes.find((v) => v.playerId === playerId) ?? null;
         if (vote != null) {
             setSelected(vote);
         }
-    }, [user?.id, round.votes]);
+    }, [playerId, round.votes]);
 
     const submitVote = useCallback(async (value: string) => {
-        if (user == null) {
-            displayError('Unable to vote when not logged in');
-            return;
-        }
         if (round == null) {
             displayError('No round to vote on');
             return;
         }
         const vote = new Vote();
         vote.roomId = round.roomId;
-        vote.userId = user?.id;
+        vote.playerId = playerId;
         vote.roundId = round?.id;
         vote.value = value;
         sendSocketMessage(new SubmitMessage(vote));
         setSelected(vote);
-    }, [round, user, displayError, sendSocketMessage]);
+    }, [round, playerId, displayError, sendSocketMessage]);
 
     useEffect(() => {
         setSelected(null);

@@ -1,14 +1,15 @@
 import express, { Router } from 'express';
 import PlanningPokerController from '../../controllers/planning-poker';
-import { authenticateToken } from '../../middlewares';
+import { authenticateGuestOrUser, authenticateToken } from '../../middlewares';
 
 const router: Router = Router();
 const controller: PlanningPokerController = new PlanningPokerController();
 
-router.get('/rooms', authenticateToken, controller.getRooms);
-router.get('/room', authenticateToken, controller.getRoom);
+router.post('/connect-guest', controller.connectGuest);
+router.get('/rooms', authenticateGuestOrUser, controller.getRooms);
+router.get('/room', authenticateGuestOrUser, controller.getRoom);
 router.post('/rooms', authenticateToken, controller.createRoom);
-router.post('/join-room', authenticateToken, controller.joinRoom);
+router.post('/join-room', authenticateGuestOrUser, controller.joinRoom);
 router.post('/create-game', authenticateToken, controller.createGame);
 router.post('/end-round', authenticateToken, controller.endRound);
 router.post('/new-round', authenticateToken, controller.newRound);

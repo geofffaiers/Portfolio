@@ -4,6 +4,13 @@ DELIMITER //
 
 CREATE PROCEDURE add_email_validation()
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    START TRANSACTION;
     -- Check if the column 'validate_token' exists before adding it
     IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
                    WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'validate_token') THEN
@@ -25,6 +32,9 @@ BEGIN
         
         UPDATE `users` SET `verified_email` = TRUE WHERE `email` = 'geoff@gfaiers.com';
     END IF;
+
+    COMMIT;
+    
 END //
 
 DELIMITER ;

@@ -13,11 +13,7 @@ describe('Player model', () => {
         expect(instance).toBeInstanceOf(Player);
 
         expect(instance.id).toBe(plain.id);
-        expect(instance.username).toBe(plain.username);
-        expect(instance.password).toBe(plain.password);
-        expect(instance.email).toBe(plain.email);
-        expect(instance.firstName).toBe(plain.firstName);
-        expect(instance.lastName).toBe(plain.lastName);
+        expect(instance.user).toEqual(plain.user);
         expect(instance.roomId).toBe(plain.roomId);
         expect(instance.online).toBe(plain.online);
         expect(instance.role).toBe('player');
@@ -36,11 +32,7 @@ describe('Player model', () => {
         expect(instance).toBeInstanceOf(Player);
 
         expect(instance.id).toBe(plain.id);
-        expect(instance.username).toBe(plain.username);
-        expect(instance.password).toBe(plain.password);
-        expect(instance.email).toBe(plain.email);
-        expect(instance.firstName).toBe(plain.firstName);
-        expect(instance.lastName).toBe(plain.lastName);
+        expect(instance.user).toEqual(plain.user);
         expect(instance.roomId).toBe(plain.roomId);
         expect(instance.online).toBe(plain.online);
         expect(instance.role).toBe('owner');
@@ -59,11 +51,7 @@ describe('Player model', () => {
         expect(instance).toBeInstanceOf(Player);
 
         expect(instance.id).toBe(plain.id);
-        expect(instance.username).toBe(plain.username);
-        expect(instance.password).toBe(plain.password);
-        expect(instance.email).toBe(plain.email);
-        expect(instance.firstName).toBe(plain.firstName);
-        expect(instance.lastName).toBe(plain.lastName);
+        expect(instance.user).toEqual(plain.user);
         expect(instance.roomId).toBe(plain.roomId);
         expect(instance.online).toBe(plain.online);
         expect(instance.role).toBe('observer');
@@ -112,7 +100,11 @@ describe('Player model', () => {
 
     it('should fail validation if required fields are missing', async () => {
         const plain = {
-            username: 'missingfields'
+            id: undefined,
+            roomId: undefined,
+            role: undefined,
+            user: null, // Assuming user can be null
+            online: undefined
         };
 
         const instance = plainToInstance(Player, plain);
@@ -122,8 +114,6 @@ describe('Player model', () => {
         expect(errors.length).toBeGreaterThan(0);
         const properties = errors.map(e => e.property);
         expect(properties).toContain('id');
-        expect(properties).toContain('password');
-        expect(properties).toContain('email');
         expect(properties).toContain('roomId');
         expect(properties).toContain('role');
     });
@@ -131,11 +121,7 @@ describe('Player model', () => {
     it('should fail validation if types are incorrect', async () => {
         const plain = {
             id: 'not-a-number',
-            username: 123,
-            password: 456,
-            email: 789,
-            firstName: 101112,
-            lastName: 131415,
+            user: 'not-a-user',
             roomId: 161718,
             online: 'not-a-boolean',
             role: 192021
@@ -148,11 +134,7 @@ describe('Player model', () => {
         expect(errors.length).toBeGreaterThan(0);
         const properties = errors.map(e => e.property);
         expect(properties).toContain('id');
-        expect(properties).toContain('username');
-        expect(properties).toContain('password');
-        expect(properties).toContain('email');
-        expect(properties).toContain('firstName');
-        expect(properties).toContain('lastName');
+        expect(properties).toContain('user');
         expect(properties).toContain('roomId');
         expect(properties).toContain('role');
     });

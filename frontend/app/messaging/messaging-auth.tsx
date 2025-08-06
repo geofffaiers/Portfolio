@@ -6,11 +6,11 @@ import { AccessRestricted } from '@/components/ui/access-restricted';
 import { Messaging } from '@/features/messaging';
 
 export const MessagingAuth: React.FC = () => {
-    const { authLoading, authReady } = useAuthContext();
+    const { authLoading, userReady } = useAuthContext();
     return (
         <>
             {authLoading && <Loader2 className='animate-spin' />}
-            {authReady
+            {userReady
                 ? (
                     <Messaging type='page' />
                 )

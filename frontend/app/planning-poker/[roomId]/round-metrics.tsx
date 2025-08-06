@@ -48,11 +48,11 @@ export const RoundMetrics: React.FC<Props> = ({ displayMetrics, setDisplayMetric
                         </TableRow>
                         <TableRow>
                             <TableHead>Highest score</TableHead>
-                            <TableHead>{parseInt(`${round.highestScore}`)}</TableHead>
+                            <TableHead>{round.highestScore}</TableHead>
                         </TableRow>
                         <TableRow>
                             <TableHead>Lowest score</TableHead>
-                            <TableHead>{parseInt(`${round.lowestScore}`)}</TableHead>
+                            <TableHead>{round.lowestScore}</TableHead>
                         </TableRow>
                     </TableBody>
                 </Table>

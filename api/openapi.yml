@@ -89,10 +89,6 @@ paths:
                               $ref: "#/components/schemas/Project"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -139,10 +135,6 @@ paths:
                           - word
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -186,10 +178,6 @@ paths:
                         example: true
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/messaging/get-chat-headers:
@@ -199,8 +187,6 @@ paths:
       summary: Get chat headers
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: Chat headers retrieved successfully
@@ -233,7 +219,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: userId
           schema:
@@ -270,6 +255,50 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
   # Planning poker section
+  /api/planning-poker/connect-guest:
+    post:
+      tags:
+        - Planning Poker
+      summary: Connect as a guest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                guestName:
+                  type: string
+                roomId:
+                  type: string
+              required:
+                - guestName
+                - roomId
+      responses:
+        "200":
+          description: Guest connected successfully and joined room
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - data
+                    properties:
+                      data:
+                        type: object
+                        required:
+                          - ids
+                        properties:
+                          ids:
+                            type: array
+                            items:
+                              type: number
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/planning-poker/rooms:
     get:
       tags:
@@ -277,8 +306,7 @@ paths:
       summary: Get all rooms user is registered to
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
+        - GuestCookie: []
       responses:
         "200":
           description: Rooms retrieved successfully
@@ -314,8 +342,6 @@ paths:
       summary: Create a new room
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         required: true
         content:
@@ -364,8 +390,8 @@ paths:
       summary: Get a specific room
       security:
         - CookieAuth: []
+        - GuestCookie: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: roomId
           schema:
@@ -405,8 +431,8 @@ paths:
       summary: Join a room
       security:
         - CookieAuth: []
+        - GuestCookie: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: roomId
           schema:
@@ -446,8 +472,6 @@ paths:
       summary: Create a new game for a room
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         required: true
         content:
@@ -493,7 +517,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: roundId
           schema:
@@ -530,7 +553,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: gameId
           schema:
@@ -567,7 +589,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: query
           name: gameId
           schema:
@@ -614,8 +635,6 @@ paths:
       summary: Update rom
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         required: true
         content:
@@ -678,10 +697,10 @@ paths:
             schema:
               type: object
               required:
-                - userId
+                - playerId
                 - roomId
               properties:
-                userId:
+                playerId:
                   type: number
                 roomId:
                   type: string
@@ -702,10 +721,6 @@ paths:
                         example: true
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -717,8 +732,6 @@ paths:
       summary: Save user scores
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         required: true
         content:
@@ -795,10 +808,6 @@ paths:
                               type: number
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -834,10 +843,6 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/generate-reset-token:
@@ -865,10 +870,6 @@ paths:
                 $ref: "#/components/schemas/DefaultResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/sessions:
@@ -878,8 +879,6 @@ paths:
       summary: Get user sessions
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: User sessions retrieved successfully
@@ -903,7 +902,6 @@ paths:
       security:
         - CookieAuth: []
       parameters:
-        - $ref: "#/components/parameters/AuthCookie"
         - in: path
           name: sessionId
           schema:
@@ -944,10 +942,6 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/get-user-for-validate-token:
@@ -970,10 +964,6 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/login:
@@ -1004,10 +994,6 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/reset-password:
@@ -1041,10 +1027,6 @@ paths:
                 $ref: "#/components/schemas/DefaultResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/refresh-token:
@@ -1054,8 +1036,6 @@ paths:
       summary: Refresh user token
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: Token refreshed successfully
@@ -1065,10 +1045,6 @@ paths:
                 $ref: "#/components/schemas/DefaultResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/logout:
@@ -1078,8 +1054,6 @@ paths:
       summary: Logout a user
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: User logged out successfully
@@ -1102,8 +1076,6 @@ paths:
       summary: Update user details
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       requestBody:
         content:
           application/json:
@@ -1131,8 +1103,6 @@ paths:
       summary: Delete a user
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: User deleted successfully
@@ -1176,10 +1146,6 @@ paths:
                 $ref: "#/components/schemas/DefaultResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/users/resend-verification:
@@ -1189,8 +1155,6 @@ paths:
       summary: Resend email verification
       security:
         - CookieAuth: []
-      parameters:
-        - $ref: "#/components/parameters/AuthCookie"
       responses:
         "200":
           description: Verification email resent successfully
@@ -1218,18 +1182,13 @@ components:
         - `token`: A JWT for accessing protected resources.
         - `refreshToken`: A JWT for renewing the session.
         These cookies must be included in requests for authorized access.
-  parameters:
-    AuthCookie:
-      name: Cookie
-      in: header
-      required: true
-      schema:
-        type: string
-        example: "token=eyJhbGciOiJI...; refreshToken=eyJhbGciOiJI..."
+    GuestCookie:
+      type: apiKey
+      in: cookie
+      name: guestSessionToken
       description: >
-        Authentication requires the Cookie header to contain:
-        - `token`: A JWT for accessing protected resources.
-        - `refreshToken`: A JWT for renewing the session.
+        Authentication for guests requires the following cookie:
+        - `guestSessionToken`: A JWT for guest session access.
   responses:
     BadRequest:
       description: Bad request
@@ -1433,18 +1392,29 @@ components:
           items:
             $ref: "#/components/schemas/Game"
     Player:
-      allOf:
-        - $ref: "#/components/schemas/User"
-        - type: object
-          required:
-            - roomId
-            - online
-          properties:
-            roomId:
-              type: string
-            online:
-              type: boolean
-              example: true
+      type: object
+      required:
+        - id
+        - roomId
+        - online
+        - role
+      properties:
+        id:
+          type: number
+        roomId:
+          type: string
+        online:
+          type: boolean
+          example: true
+        role:
+          type: string
+          enum: ["owner", "player", "observer"]
+          example: "user"
+        user:
+          $ref: "#/components/schemas/User"
+        guestName:
+          type: string
+          nullable: true
     Game:
       type: object
       required:
@@ -1536,7 +1506,6 @@ components:
         - id
         - roomId
         - roundId
-        - userId
         - createdAt
         - updatedAt
       properties:
@@ -1546,8 +1515,9 @@ components:
           type: string
         roundId:
           type: number
-        userId:
+        playerId:
           type: number
+          nullable: true
         value:
           type: string
           nullable: true
