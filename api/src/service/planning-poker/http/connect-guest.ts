@@ -46,7 +46,7 @@ const connectGuestSession = async (req: Request, res: Response): Promise<ErrorTu
     }
 
     const { guestName, roomId } = req.body;
-    if (typeof guestName !== 'string' || guestName.length < 1 || guestName.length > 32) {
+    if (isInvalidGuestName(guestName)) {
         return ['Invalid request', null];
     }
     const [roomRows] = await pool.query<RowDataPacket[]>(
@@ -74,9 +74,13 @@ const connectGuestSession = async (req: Request, res: Response): Promise<ErrorTu
     return [null, playerRows.map((row) => row.id)];
 };
 
+const isInvalidGuestName = (name: string): boolean => {
+    return typeof name !== 'string' || name.length < 1 || name.length > 32;
+};
+
 const generateNewGuestSession = async (req: Request, res: Response): Promise<ErrorTuple> => {
     const { guestName, roomId } = req.body;
-    if (typeof guestName !== 'string' || guestName.length < 1 || guestName.length > 32) {
+    if (isInvalidGuestName(guestName)) {
         return ['Invalid request', null];
     }
     const [rows] = await pool.query<RowDataPacket[]>(

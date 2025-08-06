@@ -38,7 +38,6 @@ export class Player {
         this.roomId = player.roomId;
         this.online = player.online;
         this.role = player.role;
-        this.role = player.role;
         this.user = player.user;
         this.guestName = player.guestName;
     }
