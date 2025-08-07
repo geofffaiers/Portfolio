@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { DefaultResponse, GetRooms } from '../../../models';
 import { handleError } from '../../../helpers';
-import { getRoomsFromDbForPlayer } from '../methods';
+import { getRoomsFromDbForPlayer, updateUserLastActive } from '../methods';
 
 export const getRooms = async (req: Request): Promise<DefaultResponse<GetRooms>> => {
     try {
@@ -12,6 +12,7 @@ export const getRooms = async (req: Request): Promise<DefaultResponse<GetRooms>>
                 message: 'Invalid request'
             };
         }
+        await updateUserLastActive(req.userId, req.guestSessionId);
         return {
             success: true,
             code: 200,

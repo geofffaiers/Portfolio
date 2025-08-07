@@ -49,7 +49,9 @@ export const getRoomsFromDbForPlayer = async (userId?: number, guestSessionId?: 
     }
 
     const roomIds = roomIdsRows.map((row: RowDataPacket) => row.room_id);
-
+    if (roomIds.length === 0) {
+        return [];
+    }
     const [result] = await pool.query<Room[] & RowDataPacket[]>(
         'SELECT * FROM pp_rooms WHERE id IN (?)',
         [roomIds]
@@ -393,6 +395,9 @@ const getPlayersForRoom = async (roomId?: string, gameId?: number, roundId?: num
 
     const [playersResult] = await pool.query<RowDataPacket[]>(sql, params);
     const userIds = playersResult.filter(rp => rp.user_id != null).map(rp => rp.user_id);
+    if (userIds.length === 0) {
+        return [];
+    }
     const [users] = await pool.query<User[] & RowDataPacket[]>(
         `SELECT * FROM users WHERE id IN (${userIds.map(() => '?').join(',')})`,
         userIds
@@ -599,6 +604,20 @@ const updatePlayersForRoom = async (userId: number, roomId: string, updatedPlaye
         await Promise.all(promises);
     }
     return true;
+};
+
+export const updateUserLastActive = async (userId?: number, guestSessionId?: string): Promise<void> => {
+    if (userId != null && guestSessionId != null) {
+        throw new Error('Only one of userId or guestSessionId can be provided');
+    }
+    if (userId == null && guestSessionId == null) {
+        throw new Error('At least one of userId or guestSessionId must be provided');
+    }
+    if (userId) {
+        await pool.query('UPDATE pp_room_players SET updated_at = NOW() WHERE user_id = ?', [userId]);
+    } else if (guestSessionId) {
+        await pool.query('UPDATE pp_room_players SET updated_at = NOW() WHERE guest_session_id = ?', [guestSessionId]);
+    }
 };
 
 export const sendRoomToClients = async (roomId: string, room?: Room): Promise<void> => {
