@@ -285,7 +285,7 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ roomId, playerId: player.id })
+                body: JSON.stringify({ roomId })
             });
             const json: DefaultResponse = await response.json();
             if (json.success) {
