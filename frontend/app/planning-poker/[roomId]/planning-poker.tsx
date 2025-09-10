@@ -10,6 +10,7 @@ import { CreateGame } from './create-game';
 import { CurrentRound } from './current-round';
 import { usePlanningPoker } from './use-planning-poker';
 import { GuestNamePrompt } from './guest-name-prompt';
+import { Button } from '@/components/ui/button';
 
 type Props = {
     roomId: string;
@@ -24,7 +25,8 @@ export const PlanningPoker: React.FC<Props> = ({ roomId, setRoomName }) => {
         game,
         round,
         promptGuestName,
-        handleSetGuestName
+        handleSetGuestName,
+        handleLeaveRoom
     } = usePlanningPoker({ roomId, setRoomName });
 
     return (
@@ -33,7 +35,7 @@ export const PlanningPoker: React.FC<Props> = ({ roomId, setRoomName }) => {
             {promptGuestName && <GuestNamePrompt setGuestName={handleSetGuestName} />}
             {!loading && player && room && (
                 <>
-                    <Header player={player} room={room} game={game}/>
+                    <Header player={player} room={room} game={game} handleLeaveRoom={handleLeaveRoom}/>
                     <div className='w-full h-full flex items-center justify-center'>
                         <div className='w-full h-full max-w-[calc(100vh)] flex flex-col gap-4'>
                             {game && round && <CurrentRound player={player} room={room} game={game} round={round}/>}
@@ -47,7 +49,7 @@ export const PlanningPoker: React.FC<Props> = ({ roomId, setRoomName }) => {
     );
 };
 
-const Header: React.FC<{ player: Player; room: Room, game: Game | null }> = ({ player, room, game }) => {
+const Header: React.FC<{ player: Player; room: Room, game: Game | null, handleLeaveRoom: () => void }> = ({ player, room, game, handleLeaveRoom }) => {
     if (!room.description && game == null) {
         return null;
     }
@@ -61,7 +63,11 @@ const Header: React.FC<{ player: Player; room: Room, game: Game | null }> = ({ p
                     {game != null && game.rounds.length > 0 && (<span>Round {game.rounds.length}</span>)}
                 </div>
             </div>
-            {player.role === 'owner' && (<ManageRoom room={room}/>)}
+            {
+                player.role === 'owner'
+                    ? <ManageRoom room={room}/>
+                    : <Button variant='outline' size='default' onClick={handleLeaveRoom}>Leave Room</Button>
+            }
         </div>
     );
 };

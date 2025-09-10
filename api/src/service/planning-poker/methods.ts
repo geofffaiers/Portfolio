@@ -620,6 +620,13 @@ export const updateUserLastActive = async (userId?: number, guestSessionId?: str
     }
 };
 
+export const leaveRoomByRoomId = async (roomId: string, userId?: number, guestSessionId?: string): Promise<void> => {
+    if (userId == null && guestSessionId == null) {
+        throw new Error('At least one of userId or guestSessionId must be provided');
+    }
+    await pool.query('DELETE FROM pp_room_players WHERE room_id = ? AND (user_id = ? OR guest_session_id = ?)', [roomId, userId, guestSessionId]);
+};
+
 export const sendRoomToClients = async (roomId: string, room?: Room): Promise<void> => {
     const foundClients = await getClients(roomId);
     if (foundClients.length === 0) {

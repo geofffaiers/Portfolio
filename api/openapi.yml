@@ -465,6 +465,48 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /api/planning-poker/leave-room:
+    post:
+      tags:
+        - Planning Poker
+      summary: Leave a room
+      security:
+        - CookieAuth: []
+        - GuestCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - roomId
+              properties:
+                roomId:
+                  type: string
+      responses:
+        "200":
+          description: Room left successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DefaultResponse"
+                  - type: object
+                    required:
+                      - success
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/planning-poker/create-game:
     post:
       tags:
