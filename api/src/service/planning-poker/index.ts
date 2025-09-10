@@ -7,6 +7,7 @@ export * from './http/end-round';
 export * from './http/get-room';
 export * from './http/get-rooms';
 export * from './http/join-room';
+export * from './http/leave-room';
 export * from './http/new-round';
 export * from './http/update-room';
 export * from './socket/submit-score';

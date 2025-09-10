@@ -25,6 +25,7 @@ type UsePlanningPoker = {
     round: Round | null;
     promptGuestName: boolean;
     handleSetGuestName: (name: string) => void;
+    handleLeaveRoom: () => void;
 };
 
 export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPoker {
@@ -271,6 +272,38 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
         }
     }, [config.apiUrl, displayError, displayWarning, handleSetGuest, roomId]);
 
+    const handleLeaveRoom = useCallback(async () => {
+        if (player == null || room == null) {
+            displayError('Unable to leave room, please re-load the page');
+            return;
+        }
+        try {
+            setLoading(true);
+            const response = await fetch(`${config.apiUrl}/planning-poker/leave-room`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ roomId, playerId: player.id })
+            });
+            const json: DefaultResponse = await response.json();
+            if (json.success) {
+                router.push('/planning-poker');
+            } else {
+                displayError(json.message ?? 'Failed to leave room');
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                displayError(err.message);
+            } else {
+                displayError('An unknown error occurred');
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, [config.apiUrl, displayError, player, room, roomId, router]);
+
 
     useEffect(() => {
         const subs = subscriptions.current;
@@ -315,6 +348,7 @@ export function usePlanningPoker({ roomId, setRoomName }: Props): UsePlanningPok
         game,
         round,
         promptGuestName,
-        handleSetGuestName
+        handleSetGuestName,
+        handleLeaveRoom
     };
 }

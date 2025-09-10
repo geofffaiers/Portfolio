@@ -10,6 +10,7 @@ router.get('/rooms', authenticateGuestOrUser, controller.getRooms);
 router.get('/room', authenticateGuestOrUser, controller.getRoom);
 router.post('/rooms', authenticateToken, controller.createRoom);
 router.post('/join-room', authenticateGuestOrUser, controller.joinRoom);
+router.post('/leave-room', authenticateGuestOrUser, controller.leaveRoom);
 router.post('/create-game', authenticateToken, controller.createGame);
 router.post('/end-round', authenticateToken, controller.endRound);
 router.post('/new-round', authenticateToken, controller.newRound);

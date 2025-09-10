@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { CreateRoom, DefaultResponse, GetRoom, GetRooms } from '../models';
 import { handleRoutingError } from '../helpers';
-import { createGame, createRoom, getRoom, getRooms, joinRoom, disconnect, endRound, newRound, endGame, updateRoom, connectGuest } from '../service/planning-poker';
+import { createGame, createRoom, getRoom, getRooms, joinRoom, disconnect, endRound, newRound, endGame, updateRoom, connectGuest, leaveRoom } from '../service/planning-poker';
 
 export default class PlanningPokerController {
     async connectGuest (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -34,6 +34,15 @@ export default class PlanningPokerController {
     async joinRoom (req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const response: DefaultResponse<GetRoom> = await joinRoom(req);
+            res.status(response.code).json(response);
+        } catch (err: unknown) {
+            handleRoutingError(err, next);
+        }
+    }
+
+    async leaveRoom (req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const response: DefaultResponse = await leaveRoom(req);
             res.status(response.code).json(response);
         } catch (err: unknown) {
             handleRoutingError(err, next);
